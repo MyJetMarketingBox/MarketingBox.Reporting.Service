@@ -14,7 +14,6 @@ namespace MarketingBox.Reporting.Service.Postgres.ReadModels.Deposits
         public long AffiliateId { get; set; }
         public long CampaignId { get; set; }
         public long BoxId { get; set; }
-        public long DepositId { get; set; }
         public long BrandId { get; set; }
         public ApprovedType Type { get; set; }
         public DateTimeOffset RegisterDate { get; set; }

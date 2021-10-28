@@ -32,20 +32,9 @@ namespace MarketingBox.Reporting.Service.Modules
                 "marketingbox-reporting-service",
                 TopicQueueType.Permanent);
 
-            // subscriber (ISubscriber<MarketingBox.Registration.Service.Messages.Deposits.DepositUpdateMessage>)
-            builder.RegisterMyServiceBusSubscriberSingle<MarketingBox.Registration.Service.Messages.Deposits.DepositUpdateMessage>(
-                serviceBusClient,
-                MarketingBox.Registration.Service.Messages.Topics.DepositUpdateTopic,
-                "marketingbox-reporting-service",
-                TopicQueueType.Permanent);
-
             #endregion
 
             builder.RegisterType<LeadUpdateMessageSubscriber>()
-                .SingleInstance()
-                .AutoActivate();
-
-            builder.RegisterType<DepositUpdateMessageSubscriber>()
                 .SingleInstance()
                 .AutoActivate();
         }

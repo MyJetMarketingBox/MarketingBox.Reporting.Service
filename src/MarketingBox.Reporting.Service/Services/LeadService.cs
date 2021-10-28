@@ -113,7 +113,7 @@ namespace MarketingBox.Reporting.Service.Services
                     Sub8 = lead.Sub8,
                     Sub9 = lead.Sub9,
                 },
-                CallStatus = lead.Status.MapEnum<MarketingBox.Reporting.Service.Domain.Models.Lead.LeadStatus>(),
+                //CrmStatus = lead.CrmStatus.MapEnum<MarketingBox.Reporting.Service.Domain.Models.Lead.LeadCrmStatus>(),
                 GeneralInfo = new LeadGeneralInfo()
                 {
                     CreatedAt = lead.CreatedAt.UtcDateTime,
@@ -131,7 +131,7 @@ namespace MarketingBox.Reporting.Service.Services
                     BrandId = lead.BrandId,
                 },
                 TenantId = lead.TenantId,
-                Type = lead.Type.MapEnum<MarketingBox.Reporting.Service.Domain.Models.Lead.LeadType>(),
+                Status = lead.Status.MapEnum<MarketingBox.Reporting.Service.Domain.Models.Lead.LeadStatus>(),
                 UniqueId = lead.UniqueId
             };
         }

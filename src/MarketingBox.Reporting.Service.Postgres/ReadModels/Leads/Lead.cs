@@ -17,8 +17,8 @@ namespace MarketingBox.Reporting.Service.Postgres.ReadModels.Leads
         public long CampaignId { get; set; }
         public long BoxId { get; set; }
         public long BrandId { get; set; }
-        public LeadType Type { get; set; }
-        public LeadStatus Status{ get; set; }
+        public LeadStatus Status { get; set; }
+        public LeadCrmStatus CrmStatus{ get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public long Sequence { get; set; }
         public string So { get; set; }
@@ -33,5 +33,9 @@ namespace MarketingBox.Reporting.Service.Postgres.ReadModels.Leads
         public string Sub8 { get; set; }
         public string Sub9 { get; set; }
         public string Sub10 { get; set; }
+        public DateTimeOffset UpdatedAt { get; set; }
+        public DateTimeOffset? ConversionDate { get; set; }
+        public DateTimeOffset? DepositDate { get; set; }
+        public string Country { get; set; }
     }
 }

@@ -1,10 +1,26 @@
 ﻿namespace MarketingBox.Reporting.Service.Domain.Lead
 {
-    public enum LeadType
+    public enum LeadCrmStatus
     {
-        Unsigned,
-        Lead,
-        Failure,
-        SoftFailure
+        New,
+        FullyActivated,
+        NoAnswer,
+        HighPriority,
+        Callback,
+        AutoCall,
+        FailedExpectation,
+        NotValidDeletedAccount,
+        NotValidWrongNumber,
+        NotValidNoPhonenumber,
+        NotValidDuplicateUser,
+        NotValidTestLead,
+        NotValidUnderage,
+        NotValidNoLanguageSupport,
+        NotValidNeverRegistered,
+        NotValidNonEligibleCountries,
+        NotInterested,
+        Transfer,
+        FollowUp,
+        ConversionRenew,
     }
 }

@@ -11,7 +11,9 @@ using MarketingBox.Affiliate.Service.Grpc.Models.Campaigns.Requests;
 using MarketingBox.Affiliate.Service.MyNoSql.Campaigns;
 using MarketingBox.Registration.Service.Messages.Leads;
 using MarketingBox.Reporting.Service.Domain.Extensions;
+using MarketingBox.Reporting.Service.Domain.Lead;
 using MarketingBox.Reporting.Service.Postgres;
+using MarketingBox.Reporting.Service.Postgres.ReadModels.Deposits;
 using MarketingBox.Reporting.Service.Postgres.ReadModels.Leads;
 using MarketingBox.Reporting.Service.Postgres.ReadModels.Reports;
 using Microsoft.EntityFrameworkCore;
@@ -48,8 +50,8 @@ namespace MarketingBox.Reporting.Service.Subscribers
                 CampaignNoSql.GeneratePartitionKey(message.TenantId),
                 CampaignNoSql.GenerateRowKey(message.RouteInfo.CampaignId));
 
-            decimal payoutAmount;
-            decimal revenueAmount;
+            decimal leadPayoutAmount;
+            decimal leadRevenueAmount;
             if (campaignNoSql == null)
             {
                 var campaign = await _campaignService.GetAsync(new CampaignGetRequest() { CampaignId = message.RouteInfo.CampaignId });
@@ -60,19 +62,59 @@ namespace MarketingBox.Reporting.Service.Subscribers
                     throw new Exception($"Company can not be found {message.RouteInfo.CampaignId} ");
                 }
 
-                payoutAmount = campaign.Campaign.Payout.Plan == Plan.CPL ? campaign.Campaign.Payout.Amount : 0;
-                revenueAmount = campaign.Campaign.Revenue.Plan == Plan.CPL ? campaign.Campaign.Revenue.Amount : 0;
+                leadPayoutAmount = campaign.Campaign.Payout.Plan == Plan.CPL ? campaign.Campaign.Payout.Amount : 0;
+                leadRevenueAmount = campaign.Campaign.Revenue.Plan == Plan.CPL ? campaign.Campaign.Revenue.Amount : 0;
             }
             else
             {
-                payoutAmount = campaignNoSql.Payout.Plan == Plan.CPL ? campaignNoSql.Payout.Amount : 0;
-                revenueAmount = campaignNoSql.Revenue.Plan == Plan.CPL ? campaignNoSql.Revenue.Amount : 0;
+                leadPayoutAmount = campaignNoSql.Payout.Plan == Plan.CPL ? campaignNoSql.Payout.Amount : 0;
+                leadRevenueAmount = campaignNoSql.Revenue.Plan == Plan.CPL ? campaignNoSql.Revenue.Amount : 0;
+            }
+
+            decimal depositPayoutAmount;
+            decimal depositRevenueAmount;
+
+            if (campaignNoSql != null)
+            {
+                depositPayoutAmount = campaignNoSql.Payout.Plan == Plan.CPA ? campaignNoSql.Payout.Amount : 0;
+                depositRevenueAmount = campaignNoSql.Revenue.Plan == Plan.CPA ? campaignNoSql.Revenue.Amount : 0;
+            }
+            else
+            {
+                var campaign = await _campaignService.GetAsync(new CampaignGetRequest() { CampaignId = message.RouteInfo.CampaignId });
+
+                //Error
+                if (campaign?.Campaign == null)
+                {
+                    _logger.LogError("There is no campaign! Skipping message: {@context}", message);
+
+                    throw new Exception("Retry!");
+                }
+
+                if (campaign.Error != null)
+                {
+                    _logger.LogError("Error from affiliate service while processing message: {@context}", message);
+
+                    throw new Exception("Retry!");
+                }
+
+                if (campaign.Campaign == null)
+                {
+                    _logger.LogError("There is no campaign! Skipping message: {@context}", message);
+                    return;
+                }
+
+                depositPayoutAmount = campaign.Campaign.Payout.Plan == Plan.CPA ? campaign.Campaign.Payout.Amount : 0;
+                depositRevenueAmount = campaign.Campaign.Revenue.Plan == Plan.CPA ? campaign.Campaign.Revenue.Amount : 0;
             }
 
             await using var context = new DatabaseContext(_dbContextOptionsBuilder.Options);
 
             var lead = MapToReadModel(message);
             await using var transaction = context.Database.BeginTransaction();
+            var isDeposit = lead.Status == LeadStatus.Deposited ||
+                            lead.Status == LeadStatus.Approved;
+            ReportEntity reportEntity;
 
             try
             {
@@ -87,20 +129,52 @@ namespace MarketingBox.Reporting.Service.Subscribers
                     return;
                 }
 
-                var reportEntity = new ReportEntity()
+                if (isDeposit)
                 {
-                    CreatedAt = lead.CreatedAt,
-                    AffiliateId = lead.AffiliateId,
-                    BoxId = lead.BoxId,
-                    BrandId = lead.BrandId,
-                    CampaignId = lead.CampaignId,
-                    LeadId = lead.LeadId,
-                    Payout = payoutAmount,
-                    ReportType = ReportType.Lead,
-                    Revenue = revenueAmount,
-                    TenantId = lead.TenantId,
-                    UniqueId = lead.UniqueId
-                };
+                    var deposit = MapDeposit(message);
+                    var affectedRowsDepositCount = await context.Deposits.Upsert(deposit)
+                        .UpdateIf((depositPrev) => depositPrev.Sequence < deposit.Sequence)
+                        .RunAsync();
+
+                    if (affectedRowsDepositCount != 1)
+                    {
+                        _logger.LogInformation("There is nothing to update: {@context}", message);
+                        await transaction.RollbackAsync();
+                        return;
+                    }
+
+                    reportEntity = new ReportEntity()
+                    {
+                        CreatedAt = lead.CreatedAt,
+                        AffiliateId = lead.AffiliateId,
+                        BoxId = lead.BoxId,
+                        BrandId = lead.BrandId,
+                        CampaignId = lead.CampaignId,
+                        LeadId = lead.LeadId,
+                        Payout = depositPayoutAmount,
+                        ReportType = ReportType.Deposit,
+                        Revenue = depositRevenueAmount,
+                        TenantId = lead.TenantId,
+                        UniqueId = lead.UniqueId,
+                    };
+                }
+                else
+                {
+                    reportEntity = new ReportEntity()
+                    {
+                        CreatedAt = lead.CreatedAt,
+                        AffiliateId = lead.AffiliateId,
+                        BoxId = lead.BoxId,
+                        BrandId = lead.BrandId,
+                        CampaignId = lead.CampaignId,
+                        LeadId = lead.LeadId,
+                        Payout = leadPayoutAmount,
+                        ReportType = ReportType.Lead,
+                        Revenue = leadRevenueAmount,
+                        TenantId = lead.TenantId,
+                        UniqueId = lead.UniqueId
+                    };
+                }
 
                 await context.Reports.Upsert(reportEntity).RunAsync();
 
@@ -117,11 +191,33 @@ namespace MarketingBox.Reporting.Service.Subscribers
             _logger.LogInformation("Has been consumed {@context}", message);
         }
 
+        private static Deposit MapDeposit(LeadUpdateMessage message)
+        {
+            return new Deposit()
+            {
+                LeadId = message.GeneralInfo.LeadId,
+                Sequence = message.Sequence,
+                AffiliateId = message.RouteInfo.AffiliateId,
+                BoxId = message.RouteInfo.BoxId,
+                BrandId = message.RouteInfo.BrandId,
+                CampaignId = message.RouteInfo.CampaignId,
+                ConversionDate = message.RouteInfo.ConversionDate,
+                Country = message.GeneralInfo.Country,
+                CustomerId = message.RouteInfo.CustomerInfo.CustomerId,
+                Email = message.GeneralInfo.Email,
+                RegisterDate = message.GeneralInfo.CreatedAt.ToUtc(),
+                CreatedAt = message.GeneralInfo.CreatedAt.ToUtc(),
+                TenantId = message.TenantId, 
+                Type = message.RouteInfo.ApprovedType.MapEnum<MarketingBox.Reporting.Service.Domain.Deposit.ApprovedType>(),
+                UniqueId = message.GeneralInfo.UniqueId,
+                BrandStatus = message.RouteInfo.CrmCrmStatus,
+            };
+        }
+
         private static Postgres.ReadModels.Leads.Lead MapToReadModel(LeadUpdateMessage message)
         {
             return new Postgres.ReadModels.Leads.Lead()
             {
-
                 So = message.AdditionalInfo.So,
                 Sub = message.AdditionalInfo.Sub,
                 Sub1 = message.AdditionalInfo.Sub1,
@@ -140,17 +236,21 @@ namespace MarketingBox.Reporting.Service.Subscribers
                 BrandId = message.RouteInfo.BrandId,
                 CampaignId = message.RouteInfo.CampaignId,
                 CreatedAt = DateTime.SpecifyKind(message.GeneralInfo.CreatedAt, DateTimeKind.Utc),
+                UpdatedAt = DateTime.SpecifyKind(message.GeneralInfo.UpdatedAt, DateTimeKind.Utc),
                 Email = message.GeneralInfo.Email,
+                ConversionDate = message.RouteInfo.ConversionDate != null ?DateTime.SpecifyKind(message.RouteInfo.ConversionDate.Value, DateTimeKind.Utc) : null,
+                DepositDate = message.RouteInfo.DepositDate != null ? DateTime.SpecifyKind(message.RouteInfo.DepositDate.Value, DateTimeKind.Utc) : null,
                 FirstName = message.GeneralInfo.FirstName,
                 Ip = message.GeneralInfo.Ip,
                 LastName = message.GeneralInfo.LastName,
-                LeadId = message.LeadId,
+                LeadId = message.GeneralInfo.LeadId,
                 Phone = message.GeneralInfo.Phone,
                 Sequence = message.Sequence,
-                Status = message.CallStatus.MapEnum<MarketingBox.Reporting.Service.Domain.Lead.LeadStatus>(),
+                //CrmStatus = message.RouteInfo.CrmCrmStatus.MapEnum<MarketingBox.Reporting.Service.Domain.Lead.LeadCrmStatus>(),
                 TenantId = message.TenantId,
-                Type = message.Type.MapEnum<MarketingBox.Reporting.Service.Domain.Lead.LeadType>(),
-                UniqueId = message.UniqueId,
+                Status = message.RouteInfo.Status.MapEnum<MarketingBox.Reporting.Service.Domain.Lead.LeadStatus>(),
+                UniqueId = message.GeneralInfo.UniqueId,
+                Country = message.GeneralInfo.Country,
             };
         }
     }

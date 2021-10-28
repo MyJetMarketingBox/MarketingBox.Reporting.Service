@@ -28,10 +28,10 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Leads
         public LeadAdditionalInfo AdditionalInfo { get; set; }
 
         [DataMember(Order = 8)] 
-        public LeadType Type  { get; set; }
+        public LeadStatus Status  { get; set; }
 
         [DataMember(Order = 9)]
-        public LeadStatus CallStatus{ get; set; }
+        public LeadCrmStatus CrmStatus{ get; set; }
 
 
     }

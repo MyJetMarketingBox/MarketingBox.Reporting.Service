@@ -52,19 +52,19 @@ namespace MarketingBox.Reporting.Service.Services
                 {
                     if (request.Cursor != null)
                     {
-                        query = query.Where(x => x.DepositId > request.Cursor);
+                        query = query.Where(x => x.LeadId > request.Cursor);
                     }
 
-                    query = query.OrderBy(x => x.DepositId);
+                    query = query.OrderBy(x => x.LeadId);
                 }
                 else
                 {
                     if (request.Cursor != null)
                     {
-                        query = query.Where(x => x.DepositId < request.Cursor);
+                        query = query.Where(x => x.LeadId < request.Cursor);
                     }
 
-                    query = query.OrderByDescending(x => x.DepositId);
+                    query = query.OrderByDescending(x => x.LeadId);
                 }
 
                 query = query.Take(limit);
@@ -116,7 +116,6 @@ namespace MarketingBox.Reporting.Service.Services
                 TenantId = deposit.TenantId,
                 Type = deposit.Type.MapEnum<MarketingBox.Reporting.Service.Domain.Models.Deposit.ApprovedType>(),
                 UniqueId = deposit.UniqueId,
-                DepositId = deposit.DepositId
             };
         }
     }

@@ -40,8 +40,5 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Deposits
         public long Sequence { get; set; }
         [DataMember(Order = 16)]
         public string BrandStatus { get; set; }
-
-        [DataMember(Order = 17)]
-        public long DepositId { get; set; }
     }
 }
