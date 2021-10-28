@@ -29,8 +29,8 @@
     <Authors>MyJetWallet</Authors>
     <Company>MyJetWallet</Company>
     <Product>MarketingBox</Product>
-    <PackageProjectUrl>https://github.com/MyJetWallet/MarketingBox.Reporting.Service</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/MyJetWallet/MarketingBox.Reporting.Service</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/MyJetMarketingBox/MarketingBox.Reporting.Service</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/MyJetMarketingBox/MarketingBox.Reporting.Service</RepositoryUrl>
   </PropertyGroup>
 
   <Target Name="PackReferencedProjectOutputs" DependsOnTargets="BuildOnlySettings;ResolveReferences">
