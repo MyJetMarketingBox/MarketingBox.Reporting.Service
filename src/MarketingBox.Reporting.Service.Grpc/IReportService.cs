@@ -11,5 +11,8 @@ namespace MarketingBox.Reporting.Service.Grpc
     {
         [OperationContract]
         Task<ReportSearchResponse> SearchAsync(ReportSearchRequest request);
+
+        [OperationContract]
+        Task<ReportByDaySearchResponse> SearchByDayAsync(ReportByDaySearchRequest request);
     }
 }

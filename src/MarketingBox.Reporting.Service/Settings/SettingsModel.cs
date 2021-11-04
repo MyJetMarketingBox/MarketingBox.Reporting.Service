@@ -25,5 +25,8 @@ namespace MarketingBox.Reporting.Service.Settings
 
         [YamlProperty("MarketingBoxReportingService.AffiliateServiceUrl")]
         public string AffiliateServiceUrl { get; set; }
+
+        [YamlProperty("MarketingBoxReportingService.JaegerUrl")]
+        public string JaegerUrl { get; set; }
     }
 }

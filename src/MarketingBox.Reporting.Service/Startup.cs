@@ -18,6 +18,7 @@ using System.Reflection;
 using MarketingBox.Affiliate.Service.Grpc;
 using MarketingBox.Reporting.Service.Postgres;
 using MyJetWallet.Sdk.Postgres;
+using SimpleTrading.Telemetry;
 
 namespace MarketingBox.Reporting.Service
 {
@@ -36,7 +37,7 @@ namespace MarketingBox.Reporting.Service
 
             DatabaseContext.LoggerFactory = null;
 
-            services.AddMyTelemetry("SP-", Program.Settings.ZipkinUrl);
+            services.BindTelemetry("ReportingService", "MB-", Program.Settings.JaegerUrl);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -34,6 +34,16 @@ namespace TestApp
                 Take = 1000
             });
 
+            var searchByDay = await reportService.SearchByDayAsync(new ReportByDaySearchRequest()
+            {
+                TenantId = "default-tenant-id",
+                ToDate = DateTime.UtcNow,
+                Asc = true,
+                Cursor = null,
+                FromDate = DateTime.Parse("2021-11-01 00:00:00"),
+                Take = 31
+            });
+
             var searchLead = await leadService.SearchAsync(new LeadSearchRequest()
             {
                 TenantId = "default-tenant-id",
