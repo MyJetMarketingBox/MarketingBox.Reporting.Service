@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using MarketingBox.Affiliate.Service.Client;
+using MarketingBox.Affiliate.Service.MyNoSql.Brands;
 using MarketingBox.Affiliate.Service.MyNoSql.Campaigns;
 using MarketingBox.Reporting.Service.Subscribers;
 using MyJetWallet.Sdk.NoSql;
@@ -21,20 +22,20 @@ namespace MarketingBox.Reporting.Service.Modules
                     Program.ReloadedSettings(e => e.MarketingBoxServiceBusHostPort), 
                     Program.LogFactory);
 
-            builder.RegisterMyNoSqlReader<CampaignNoSql>(noSqlClient, CampaignNoSql.TableName);
+            builder.RegisterMyNoSqlReader<BrandNoSql>(noSqlClient, BrandNoSql.TableName);
 
-            #region MarketingBox.Registration.Service.Messages.Leads.LeadBusUpdatedMessage
+            #region MarketingBox.Registration.Service.Messages.Registrations.RegistrationUpdateMessage
 
-            // subscriber (ISubscriber<MarketingBox.Registration.Service.Messages.Leads.LeadBusUpdatedMessage>)
-            builder.RegisterMyServiceBusSubscriberSingle<MarketingBox.Registration.Service.Messages.Leads.LeadUpdateMessage>(
+            // subscriber (ISubscriber<MarketingBox.Registration.Service.Messages.Registrations.RegistrationUpdateMessage>)
+            builder.RegisterMyServiceBusSubscriberSingle<MarketingBox.Registration.Service.Messages.Registrations.RegistrationUpdateMessage>(
                 serviceBusClient,
-                MarketingBox.Registration.Service.Messages.Topics.LeadUpdateTopic,
+                MarketingBox.Registration.Service.Messages.Topics.RegistrationUpdateTopic,
                 "marketingbox-reporting-service",
                 TopicQueueType.Permanent);
 
             #endregion
 
-            builder.RegisterType<LeadUpdateMessageSubscriber>()
+            builder.RegisterType<RegistrationUpdateMessageSubscriber>()
                 .SingleInstance()
                 .AutoActivate();
         }

@@ -22,13 +22,10 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
 
             modelBuilder.Entity("MarketingBox.Reporting.Service.Postgres.ReadModels.Deposits.Deposit", b =>
                 {
-                    b.Property<long>("LeadId")
+                    b.Property<long>("RegistrationId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("AffiliateId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("BoxId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("BrandId")
@@ -55,6 +52,9 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("text");
 
+                    b.Property<long>("IntegrationId")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTimeOffset>("RegisterDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -70,24 +70,21 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                     b.Property<string>("UniqueId")
                         .HasColumnType("text");
 
-                    b.HasKey("LeadId", "AffiliateId");
+                    b.HasKey("RegistrationId", "AffiliateId");
 
                     b.HasIndex("AffiliateId");
 
-                    b.HasIndex("TenantId", "LeadId");
+                    b.HasIndex("TenantId", "RegistrationId");
 
                     b.ToTable("deposits");
                 });
 
-            modelBuilder.Entity("MarketingBox.Reporting.Service.Postgres.ReadModels.Leads.Lead", b =>
+            modelBuilder.Entity("MarketingBox.Reporting.Service.Postgres.ReadModels.Leads.Registration", b =>
                 {
-                    b.Property<long>("LeadId")
+                    b.Property<long>("RegistrationId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("AffiliateId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("BoxId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("BrandId")
@@ -116,6 +113,9 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
 
                     b.Property<string>("FirstName")
                         .HasColumnType("text");
+
+                    b.Property<long>("IntegrationId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Ip")
                         .HasColumnType("text");
@@ -177,13 +177,13 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("LeadId");
+                    b.HasKey("RegistrationId");
 
                     b.HasIndex("AffiliateId");
 
-                    b.HasIndex("TenantId", "LeadId");
+                    b.HasIndex("TenantId", "RegistrationId");
 
-                    b.ToTable("leads");
+                    b.ToTable("registrations");
                 });
 
             modelBuilder.Entity("MarketingBox.Reporting.Service.Postgres.ReadModels.Reports.ReportEntity", b =>
@@ -191,14 +191,11 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                     b.Property<long>("AffiliateId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("LeadId")
+                    b.Property<long>("RegistrationId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("ReportType")
                         .HasColumnType("integer");
-
-                    b.Property<long>("BoxId")
-                        .HasColumnType("bigint");
 
                     b.Property<long>("BrandId")
                         .HasColumnType("bigint");
@@ -208,6 +205,9 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("IntegrationId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal>("Payout")
                         .HasColumnType("numeric");
@@ -221,7 +221,7 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                     b.Property<string>("UniqueId")
                         .HasColumnType("text");
 
-                    b.HasKey("AffiliateId", "LeadId", "ReportType");
+                    b.HasKey("AffiliateId", "RegistrationId", "ReportType");
 
                     b.HasIndex("CreatedAt");
 

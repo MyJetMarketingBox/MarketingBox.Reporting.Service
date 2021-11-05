@@ -5,7 +5,7 @@ using Destructurama.Attributed;
 namespace MarketingBox.Reporting.Service.Grpc.Models.Leads
 {
     [DataContract]
-    public class LeadGeneralInfo
+    public class RegistrationGeneralInfo
     {
         [DataMember(Order = 1)]
         [LogMasked(PreserveLength = true, ShowFirst = 2, ShowLast = 2)]

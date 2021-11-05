@@ -3,20 +3,20 @@ using MarketingBox.Reporting.Service.Domain.Lead;
 
 namespace MarketingBox.Reporting.Service.Postgres.ReadModels.Leads
 {
-    public class Lead
+    public class Registration
     {
         public string TenantId { get; set; }
         public string UniqueId { get; set; }
-        public long LeadId { get; set; }
+        public long RegistrationId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
         public string Ip { get; set; }
         public long AffiliateId { get; set; }
-        public long CampaignId { get; set; }
-        public long BoxId { get; set; }
         public long BrandId { get; set; }
+        public long CampaignId { get; set; }
+        public long IntegrationId { get; set; }
         public LeadStatus Status { get; set; }
         public LeadCrmStatus CrmStatus{ get; set; }
         public DateTimeOffset CreatedAt { get; set; }

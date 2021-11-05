@@ -10,7 +10,7 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Reports
         public DateTime CreatedAt { get; set; }
 
         [DataMember(Order = 2)]
-        public long LeadCount { get; set; }
+        public long RegistrationCount { get; set; }
 
         [DataMember(Order = 3)]
         public long FtdCount { get; set; }

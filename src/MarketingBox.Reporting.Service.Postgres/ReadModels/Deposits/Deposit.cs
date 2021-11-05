@@ -9,12 +9,12 @@ namespace MarketingBox.Reporting.Service.Postgres.ReadModels.Deposits
         public string UniqueId { get; set; }
         public string CustomerId { get; set; }
         public string Country { get; set; }
-        public long LeadId { get; set; }
+        public long RegistrationId { get; set; }
         public string Email { get; set; }
         public long AffiliateId { get; set; }
-        public long CampaignId { get; set; }
-        public long BoxId { get; set; }
         public long BrandId { get; set; }
+        public long CampaignId { get; set; }
+        public long IntegrationId { get; set; }
         public ApprovedType Type { get; set; }
         public DateTimeOffset RegisterDate { get; set; }
         public DateTimeOffset CreatedAt { get; set; }

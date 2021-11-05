@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Linq;
 using MarketingBox.Reporting.Service.Grpc;
-using MarketingBox.Reporting.Service.Grpc.Models;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using MarketingBox.Affiliate.Service.Grpc.Models.Partners;
 using MarketingBox.Reporting.Service.Grpc.Models.Reports;
 using MarketingBox.Reporting.Service.Grpc.Models.Reports.Requests;
 using MarketingBox.Reporting.Service.Postgres;
@@ -33,17 +31,17 @@ namespace MarketingBox.Reporting.Service.Services
             var searchQuery = $@"
             CREATE TEMP TABLE reports_total (
             ""AffiliateId"" bigint NOT NULL,
-            ""LeadId"" bigint NOT NULL,
+            ""RegistrationId"" bigint NOT NULL,
             ""ReportType"" integer NOT NULL,
             ""TenantId"" text COLLATE pg_catalog.""default"",
             ""UniqueId"" text COLLATE pg_catalog.""default"",
-            ""BoxId"" bigint NOT NULL,
             ""CampaignId"" bigint NOT NULL,
             ""BrandId"" bigint NOT NULL,
+            ""IntegrationId"" bigint NOT NULL,
             ""CreatedAt"" timestamp with time zone NOT NULL,
             ""Payout"" numeric NOT NULL,
             ""Revenue"" numeric NOT NULL,
-                CONSTRAINT ""PK_reports_total"" PRIMARY KEY(""AffiliateId"", ""LeadId"", ""ReportType"")
+                CONSTRAINT ""PK_reports_total"" PRIMARY KEY(""AffiliateId"", ""RegistrationId"", ""ReportType"")
                 ) ON COMMIT DROP;
 
             CREATE INDEX ""IX_reports_total_ReportType""
@@ -61,17 +59,17 @@ namespace MarketingBox.Reporting.Service.Services
             select aggregateRep.""AffiliateId"", 
             SUM(aggregateRep.""SumPayout"") as ""SumPayout"", 
             SUM(aggregateRep.""SumRevenue"") as ""SumRevenue"", 
-            Sum(aggregateRep.""LeadCount"") as ""LeadCount"", 
+            Sum(aggregateRep.""RegistrationCount"") as ""RegistrationCount"", 
             Sum(aggregateRep.""DepositCount"") as ""DepositCount""
             from
-                (SELECT rep.""AffiliateId"", SUM(""Payout"") as ""SumPayout"", SUM(""Revenue"") as ""SumRevenue"", COUNT(*) as ""LeadCount"", 0 As ""DepositCount""
+                (SELECT rep.""AffiliateId"", SUM(""Payout"") as ""SumPayout"", SUM(""Revenue"") as ""SumRevenue"", COUNT(*) as ""RegistrationCount"", 0 As ""DepositCount""
 
             FROM reports_total as rep
 
             where rep.""ReportType"" = 0
             GROUP BY rep.""AffiliateId""
             UNION
-                SELECT rep2.""AffiliateId"", SUM(""Payout"") as ""SumPayout"", SUM(""Revenue"") as ""SumRevenue"", 0 as ""LeadCount"", COUNT(*) As ""DepositCount""
+                SELECT rep2.""AffiliateId"", SUM(""Payout"") as ""SumPayout"", SUM(""Revenue"") as ""SumRevenue"", 0 as ""RegistrationCount"", COUNT(*) As ""DepositCount""
 
             FROM reports_total as rep2
 
@@ -100,9 +98,9 @@ namespace MarketingBox.Reporting.Service.Services
                         AffiliateId = x.AffiliateId,
                         Revenue = x.SumRevenue,
                         Payout = x.SumPayout,
-                        Ctr = x.DepositCount / (decimal)x.LeadCount,
+                        Cr = x.DepositCount / (decimal)x.RegistrationCount,
                         FtdCount = x.DepositCount,
-                        LeadCount = x.LeadCount
+                        RegistrationCount = x.RegistrationCount
                     }).ToArray()
                 };
             }
@@ -128,17 +126,17 @@ namespace MarketingBox.Reporting.Service.Services
             var searchQuery = $@"
             CREATE TEMP TABLE reports_total (
             ""AffiliateId"" bigint NOT NULL,
-            ""LeadId"" bigint NOT NULL,
+            ""RegistrationId"" bigint NOT NULL,
             ""ReportType"" integer NOT NULL,
             ""TenantId"" text COLLATE pg_catalog.""default"",
             ""UniqueId"" text COLLATE pg_catalog.""default"",
-            ""BoxId"" bigint NOT NULL,
             ""CampaignId"" bigint NOT NULL,
             ""BrandId"" bigint NOT NULL,
+            ""IntegrationId"" bigint NOT NULL,
             ""CreatedAt"" timestamp with time zone NOT NULL,
             ""Payout"" numeric NOT NULL,
             ""Revenue"" numeric NOT NULL,
-                CONSTRAINT ""PK_reports_total"" PRIMARY KEY(""AffiliateId"", ""LeadId"", ""ReportType"")
+                CONSTRAINT ""PK_reports_total"" PRIMARY KEY(""AffiliateId"", ""RegistrationId"", ""ReportType"")
                 ) ON COMMIT DROP;
 
             CREATE INDEX ""IX_reports_total_ReportType""
@@ -153,17 +151,17 @@ namespace MarketingBox.Reporting.Service.Services
             rep.""CreatedAt"" <= @ToDate;;
 
             select date_trunc('day', aggregateRep.""CreatedAt"") as ""CreatedAt"", 
-            Sum(aggregateRep.""LeadCount"") as ""LeadCount"", 
+            Sum(aggregateRep.""RegistrationCount"") as ""RegistrationCount"", 
             Sum(aggregateRep.""DepositCount"") as ""DepositCount""
             from
-                (SELECT date_trunc('day', rep.""CreatedAt"") as ""CreatedAt"", COUNT(*) as ""LeadCount"", 0 As ""DepositCount""
+                (SELECT date_trunc('day', rep.""CreatedAt"") as ""CreatedAt"", COUNT(*) as ""RegistrationCount"", 0 As ""DepositCount""
 
             FROM reports_total as rep
 
             where rep.""ReportType"" = 0
             GROUP BY date_trunc('day', rep.""CreatedAt"")
             UNION
-                SELECT date_trunc('day', rep2.""CreatedAt"") as ""CreatedAt"", 0 as ""LeadCount"", COUNT(*) As ""DepositCount""
+                SELECT date_trunc('day', rep2.""CreatedAt"") as ""CreatedAt"", 0 as ""RegistrationCount"", COUNT(*) As ""DepositCount""
 
             FROM reports_total as rep2
 
@@ -190,7 +188,7 @@ namespace MarketingBox.Reporting.Service.Services
                     Reports = aggregatedReport.Select(x => new ReportByDay()
                     {
                         FtdCount = x.DepositCount,
-                        LeadCount = x.LeadCount,
+                        RegistrationCount = x.RegistrationCount,
                         CreatedAt = x.CreatedAt.UtcDateTime
                     }).ToArray()
                 };
@@ -216,14 +214,14 @@ namespace MarketingBox.Reporting.Service.Services
         public long AffiliateId { get; set; }
         public long SumPayout { get; set; }
         public long SumRevenue { get; set; }
-        public long LeadCount { get; set; }
+        public long RegistrationCount { get; set; }
         public long DepositCount { get; set; }
     }
 
     public class AggregatedReportByDayEntity
     {
         public DateTimeOffset CreatedAt { get; set; }
-        public long LeadCount { get; set; }
+        public long RegistrationCount { get; set; }
         public long DepositCount { get; set; }
     }
 }

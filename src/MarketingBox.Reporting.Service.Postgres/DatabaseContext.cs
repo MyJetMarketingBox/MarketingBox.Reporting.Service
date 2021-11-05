@@ -14,11 +14,11 @@ namespace MarketingBox.Reporting.Service.Postgres
 
         public const string Schema = "reporting-service";
 
-        public const string LeadTableName = "leads";
+        public const string RegistrationTableName = "registrations";
         public const string ReportTableName = "reports";
         public const string DepositTableName = "deposits";
 
-        public DbSet<Lead> Leads { get; set; }
+        public DbSet<Registration> Registrations { get; set; }
 
         public DbSet<ReportEntity> Reports { get; set; }
 
@@ -51,26 +51,26 @@ namespace MarketingBox.Reporting.Service.Postgres
 
         private void SetLeadReadModel(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Lead>().ToTable(LeadTableName);
-            modelBuilder.Entity<Lead>().HasKey(e => e.LeadId);
-            modelBuilder.Entity<Lead>().HasIndex(e => new { e.TenantId, e.LeadId });
-            modelBuilder.Entity<Lead>().HasIndex(e => new { e.AffiliateId });
-            modelBuilder.Entity<Lead>().Property(m => m.LeadId)
+            modelBuilder.Entity<Registration>().ToTable(RegistrationTableName);
+            modelBuilder.Entity<Registration>().HasKey(e => e.RegistrationId);
+            modelBuilder.Entity<Registration>().HasIndex(e => new { e.TenantId, e.RegistrationId });
+            modelBuilder.Entity<Registration>().HasIndex(e => new { e.AffiliateId });
+            modelBuilder.Entity<Registration>().Property(m => m.RegistrationId)
                 .ValueGeneratedNever();
         }
 
         private void SetDepositReadModel(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Deposit>().ToTable(DepositTableName);
-            modelBuilder.Entity<Deposit>().HasKey(e => new { e.LeadId, e.AffiliateId });
-            modelBuilder.Entity<Deposit>().HasIndex(e => new { e.TenantId, e.LeadId });
+            modelBuilder.Entity<Deposit>().HasKey(e => new { e.RegistrationId, e.AffiliateId });
+            modelBuilder.Entity<Deposit>().HasIndex(e => new { e.TenantId, e.RegistrationId });
             modelBuilder.Entity<Deposit>().HasIndex(e => new { e.AffiliateId });
         }
 
         private void SetReportEntity(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ReportEntity>().ToTable(ReportTableName);
-            modelBuilder.Entity<ReportEntity>().HasKey(x => new { x.AffiliateId, x.LeadId, x.ReportType });
+            modelBuilder.Entity<ReportEntity>().HasKey(x => new { x.AffiliateId, x.RegistrationId, x.ReportType });
             modelBuilder.Entity<ReportEntity>().HasIndex(x => x.CreatedAt);
             modelBuilder.Entity<ReportEntity>().HasIndex(x => x.TenantId);
             //modelBuilder.Entity<ReportEntity>().HasIndex(x => x.re);

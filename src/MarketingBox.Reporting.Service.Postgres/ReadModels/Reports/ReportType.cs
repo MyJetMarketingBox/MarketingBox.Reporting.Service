@@ -2,7 +2,7 @@
 {
     public enum ReportType
     {
-        Lead,
+        Registration,
         Deposit
     }
 }

@@ -4,13 +4,13 @@ using System.Runtime.Serialization;
 namespace MarketingBox.Reporting.Service.Grpc.Models.Leads
 {
     [DataContract]
-    public class Lead
+    public class Registration
     {
         [DataMember(Order = 1)]
         public string TenantId { get; set; }
 
         [DataMember(Order = 2)]
-        public long LeadId { get; set; }
+        public long RegistrationId { get; set; }
 
         [DataMember(Order = 3)]
         public string UniqueId { get; set; }
@@ -19,13 +19,13 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Leads
         public long Sequence { get; set; }
 
         [DataMember(Order = 5)]
-        public LeadGeneralInfo GeneralInfo { get; set; }
+        public RegistrationGeneralInfo GeneralInfo { get; set; }
 
         [DataMember(Order = 6)]
-        public LeadRouteInfo RouteInfo { get; set; }
+        public RegistrationRouteInfo RouteInfo { get; set; }
 
         [DataMember(Order = 7)]
-        public LeadAdditionalInfo AdditionalInfo { get; set; }
+        public RegistrationAdditionalInfo AdditionalInfo { get; set; }
 
         [DataMember(Order = 8)] 
         public LeadStatus Status  { get; set; }

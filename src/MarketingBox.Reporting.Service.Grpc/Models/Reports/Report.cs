@@ -10,7 +10,7 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Reports
         public long AffiliateId { get; set; }
 
         [DataMember(Order = 2)]
-        public long LeadCount { get; set; }
+        public long RegistrationCount { get; set; }
 
         [DataMember(Order = 3)]
         public long FtdCount { get; set; }
@@ -22,6 +22,6 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Reports
         public decimal Revenue { get; set; }
 
         [DataMember(Order = 6)]
-        public decimal Ctr { get; set; }
+        public decimal Cr { get; set; }
     }
 }

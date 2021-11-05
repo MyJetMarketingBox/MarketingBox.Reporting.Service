@@ -44,7 +44,7 @@ namespace MarketingBox.Reporting.Service.Services
 
                 if (request.LeadId.HasValue)
                 {
-                    query = query.Where(x => x.LeadId == request.LeadId);
+                    query = query.Where(x => x.RegistrationId == request.LeadId);
                 }
 
                 var limit = request.Take <= 0 ? 1000 : request.Take;
@@ -52,19 +52,19 @@ namespace MarketingBox.Reporting.Service.Services
                 {
                     if (request.Cursor != null)
                     {
-                        query = query.Where(x => x.LeadId > request.Cursor);
+                        query = query.Where(x => x.RegistrationId > request.Cursor);
                     }
 
-                    query = query.OrderBy(x => x.LeadId);
+                    query = query.OrderBy(x => x.RegistrationId);
                 }
                 else
                 {
                     if (request.Cursor != null)
                     {
-                        query = query.Where(x => x.LeadId < request.Cursor);
+                        query = query.Where(x => x.RegistrationId < request.Cursor);
                     }
 
-                    query = query.OrderByDescending(x => x.LeadId);
+                    query = query.OrderByDescending(x => x.RegistrationId);
                 }
 
                 query = query.Take(limit);
@@ -100,13 +100,13 @@ namespace MarketingBox.Reporting.Service.Services
         {
             return new MarketingBox.Reporting.Service.Grpc.Models.Deposits.Deposit()
             {
-                LeadId = deposit.LeadId,
+                LeadId = deposit.RegistrationId,
                 Sequence = deposit.Sequence,
                 AffiliateId = deposit.AffiliateId,
-                BoxId = deposit.BoxId,
-                BrandId = deposit.BrandId,
+                BoxId = deposit.CampaignId,
+                BrandId = deposit.IntegrationId,
                 BrandStatus = deposit.BrandStatus,
-                CampaignId = deposit.CampaignId,
+                CampaignId = deposit.BrandId,
                 ConversionDate = deposit.ConversionDate?.UtcDateTime,
                 Country = deposit.Country,
                 CreatedAt = deposit.CreatedAt.UtcDateTime,

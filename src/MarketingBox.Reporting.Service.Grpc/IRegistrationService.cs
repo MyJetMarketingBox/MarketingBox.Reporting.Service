@@ -8,9 +8,9 @@ using MarketingBox.Reporting.Service.Grpc.Models.Reports.Requests;
 namespace MarketingBox.Reporting.Service.Grpc
 {
     [ServiceContract]
-    public interface ILeadService
+    public interface IRegistrationService
     {
         [OperationContract]
-        Task<LeadSearchResponse> SearchAsync(LeadSearchRequest request);
+        Task<RegistrationSearchResponse> SearchAsync(RegistrationSearchRequest request);
     }
 }

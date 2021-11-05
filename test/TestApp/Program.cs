@@ -21,7 +21,7 @@ namespace TestApp
 
             var factory = new ReportingServiceClientFactory("http://localhost:12350");
             var reportService = factory.GetReportService();
-            var leadService = factory.GetLeadService();
+            var leadService = factory.GetRegistrationService();
             var depositService = factory.GetDepositService();
 
             var search = await reportService.SearchAsync(new ReportSearchRequest()
@@ -44,7 +44,7 @@ namespace TestApp
                 Take = 31
             });
 
-            var searchLead = await leadService.SearchAsync(new LeadSearchRequest()
+            var searchLead = await leadService.SearchAsync(new RegistrationSearchRequest()
             {
                 TenantId = "default-tenant-id",
                 Asc = true,
