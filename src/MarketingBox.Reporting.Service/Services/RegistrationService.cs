@@ -117,6 +117,9 @@ namespace MarketingBox.Reporting.Service.Services
                 GeneralInfo = new RegistrationGeneralInfo()
                 {
                     CreatedAt = registration.CreatedAt.UtcDateTime,
+                    DepositedAt = registration.DepositDate.HasValue? registration.DepositDate.Value.UtcDateTime : null,
+                    ConversionDate = registration.ConversionDate.HasValue ? registration.ConversionDate.Value.UtcDateTime : null,
+                    Country = registration.Country,
                     Email = registration.Email,
                     FirstName = registration.FirstName,
                     Ip = registration.Ip,

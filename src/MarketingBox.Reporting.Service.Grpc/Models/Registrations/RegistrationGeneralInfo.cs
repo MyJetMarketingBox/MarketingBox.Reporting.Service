@@ -29,5 +29,14 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Leads
 
         [DataMember(Order = 6)]
         public DateTime CreatedAt { get; set; }
+
+        [DataMember(Order = 7)]
+        public DateTime? DepositedAt { get; set; }
+
+        [DataMember(Order = 9)]
+        public DateTime? ConversionDate { get; set; }
+
+        [DataMember(Order = 10)]
+        public string Country { get; set; }
     }
 }
