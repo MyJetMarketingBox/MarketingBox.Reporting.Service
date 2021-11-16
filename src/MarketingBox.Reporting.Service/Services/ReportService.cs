@@ -28,6 +28,16 @@ namespace MarketingBox.Reporting.Service.Services
         {
             await using var context = new DatabaseContext(_dbContextOptionsBuilder.Options);
 
+            string access = $@" where rep.""AffiliateId"" > @FromId and
+                                     rep.""TenantId"" = @TenantId and
+                                     rep.""CreatedAt"" >= @FromDate and
+                                     rep.""CreatedAt"" <= @ToDate;";
+
+            if (request.MasterAffiliateId.HasValue)
+                access = $@"INNER JOIN ""reporting-service"".affiliate_access as aa
+                                         ON rep.""AffiliateId"" = aa.""AffiliateId"" and aa.""MasterAffiliateId"" = @MasterAffiliateId"
+                         + access;
+
             var searchQuery = $@"
             CREATE TEMP TABLE reports_total (
             ""AffiliateId"" bigint NOT NULL,
@@ -50,11 +60,8 @@ namespace MarketingBox.Reporting.Service.Services
             TABLESPACE pg_default;
 
             INSERT INTO reports_total
-            SELECT* FROM ""reporting-service"".reports as rep
-            where rep.""AffiliateId"" > @FromId and
-            rep.""TenantId"" = @TenantId and
-            rep.""CreatedAt"" >= @FromDate and
-            rep.""CreatedAt"" <= @ToDate;
+            SELECT rep.* FROM ""reporting-service"".reports as rep
+            {access}
 
             select aggregateRep.""AffiliateId"", 
             SUM(aggregateRep.""SumPayout"") as ""SumPayout"", 
@@ -84,6 +91,7 @@ namespace MarketingBox.Reporting.Service.Services
                 var aggregatedReport = await context.Database.GetDbConnection()
                     .QueryAsync<AggregatedReportEntity>(searchQuery, new
                     {
+                        MasterAffiliateId = request.MasterAffiliateId ?? 0, 
                         TenantId = request.TenantId,
                         FromId = request.Cursor ?? 0,
                         FromDate = DateTime.SpecifyKind(request.FromDate, DateTimeKind.Utc),
@@ -123,6 +131,15 @@ namespace MarketingBox.Reporting.Service.Services
         {
             await using var context = new DatabaseContext(_dbContextOptionsBuilder.Options);
 
+            string access = $@" where rep.""TenantId"" = @TenantId and
+                               rep.""CreatedAt"" >= @FromDate and
+                               rep.""CreatedAt"" <= @ToDate;";
+
+            if (request.MasterAffiliateId.HasValue)
+                access = $@"INNER JOIN ""reporting-service"".affiliate_access as aa
+                                         ON rep.""AffiliateId"" = aa.""AffiliateId"" and aa.""MasterAffiliateId"" = @MasterAffiliateId"
+                         + access;
+
             var searchQuery = $@"
             CREATE TEMP TABLE reports_total (
             ""AffiliateId"" bigint NOT NULL,
@@ -145,10 +162,8 @@ namespace MarketingBox.Reporting.Service.Services
             TABLESPACE pg_default;
 
             INSERT INTO reports_total
-            SELECT* FROM ""reporting-service"".reports as rep
-            where rep.""TenantId"" = @TenantId and
-            rep.""CreatedAt"" >= @FromDate and
-            rep.""CreatedAt"" <= @ToDate;;
+            SELECT rep.* FROM ""reporting-service"".reports as rep
+            {access} 
 
             select date_trunc('day', aggregateRep.""CreatedAt"") as ""CreatedAt"", 
             Sum(aggregateRep.""RegistrationCount"") as ""RegistrationCount"", 
@@ -176,6 +191,7 @@ namespace MarketingBox.Reporting.Service.Services
                 var aggregatedReport = await context.Database.GetDbConnection()
                     .QueryAsync<AggregatedReportByDayEntity>(searchQuery, new
                     {
+                        MasterAffiliateId = request.MasterAffiliateId ?? 0,
                         TenantId = request.TenantId,
                         FromId = request.Cursor ?? 0,
                         FromDate = DateTime.SpecifyKind(request.FromDate, DateTimeKind.Utc),

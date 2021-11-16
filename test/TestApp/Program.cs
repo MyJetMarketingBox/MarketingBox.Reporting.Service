@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using MarketingBox.Reporting.Service.Client;
-using MarketingBox.Reporting.Service.Grpc.Models;
 using MarketingBox.Reporting.Service.Grpc.Models.Deposits.Requests;
 using MarketingBox.Reporting.Service.Grpc.Models.Leads.Requests;
 using MarketingBox.Reporting.Service.Grpc.Models.Reports.Requests;
@@ -31,7 +30,8 @@ namespace TestApp
                 Asc = true,
                 Cursor = null,
                 FromDate = DateTime.Parse("2021-10-07 14:03:10"),
-                Take = 1000
+                Take = 1000,
+                MasterAffiliateId = 9
             });
 
             var searchByDay = await reportService.SearchByDayAsync(new ReportByDaySearchRequest()
@@ -41,13 +41,14 @@ namespace TestApp
                 Asc = true,
                 Cursor = null,
                 FromDate = DateTime.Parse("2021-11-01 00:00:00"),
-                Take = 31
+                Take = 31,
+                MasterAffiliateId = 9
             });
 
             var searchLead = await leadService.SearchAsync(new RegistrationSearchRequest()
             {
                 TenantId = "default-tenant-id",
-                Asc = true,
+                 Asc = true,
                 Cursor = null,
                 Take = 50
             });

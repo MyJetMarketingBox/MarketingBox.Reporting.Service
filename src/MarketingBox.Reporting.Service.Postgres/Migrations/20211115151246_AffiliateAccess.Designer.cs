@@ -3,15 +3,17 @@ using System;
 using MarketingBox.Reporting.Service.Postgres;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace MarketingBox.Reporting.Service.Postgres.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20211115151246_AffiliateAccess")]
+    partial class AffiliateAccess
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,7 +95,7 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                     b.Property<string>("UniqueId")
                         .HasColumnType("text");
 
-                    b.HasKey("RegistrationId");
+                    b.HasKey("RegistrationId", "AffiliateId");
 
                     b.HasIndex("AffiliateId");
 

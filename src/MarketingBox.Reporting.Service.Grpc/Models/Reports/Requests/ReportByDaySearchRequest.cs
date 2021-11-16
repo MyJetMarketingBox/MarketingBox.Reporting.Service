@@ -23,5 +23,8 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Reports.Requests
 
         [DataMember(Order = 13)]
         public string TenantId { get; set; }
+
+        [DataMember(Order = 14)]
+        public long? MasterAffiliateId { get; set; }
     }
 }

@@ -1,5 +1,4 @@
-﻿using MarketingBox.Reporting.Service.Domain.Models.Lead;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using MarketingBox.Reporting.Service.Domain.Models.Deposit;
 using System;
 

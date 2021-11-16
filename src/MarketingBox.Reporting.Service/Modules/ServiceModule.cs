@@ -1,7 +1,6 @@
 ﻿using Autofac;
 using MarketingBox.Affiliate.Service.Client;
 using MarketingBox.Affiliate.Service.MyNoSql.Brands;
-using MarketingBox.Affiliate.Service.MyNoSql.Campaigns;
 using MarketingBox.Reporting.Service.Subscribers;
 using MyJetWallet.Sdk.NoSql;
 using MyJetWallet.Sdk.ServiceBus;
@@ -27,15 +26,36 @@ namespace MarketingBox.Reporting.Service.Modules
             #region MarketingBox.Registration.Service.Messages.Registrations.RegistrationUpdateMessage
 
             // subscriber (ISubscriber<MarketingBox.Registration.Service.Messages.Registrations.RegistrationUpdateMessage>)
+            var marketingboxReportingService = "marketingbox-reporting-service";
             builder.RegisterMyServiceBusSubscriberSingle<MarketingBox.Registration.Service.Messages.Registrations.RegistrationUpdateMessage>(
                 serviceBusClient,
                 MarketingBox.Registration.Service.Messages.Topics.RegistrationUpdateTopic,
-                "marketingbox-reporting-service",
+                marketingboxReportingService,
+                TopicQueueType.Permanent);
+
+            builder.RegisterMyServiceBusSubscriberSingle<MarketingBox.Affiliate.Service.Messages.AffiliateAccesses.AffiliateAccessUpdated>(
+                serviceBusClient,
+                MarketingBox.Affiliate.Service.Messages.Topics.AffiliateAccessUpdatedTopic,
+                marketingboxReportingService,
+                TopicQueueType.Permanent);
+
+            builder.RegisterMyServiceBusSubscriberSingle<MarketingBox.Affiliate.Service.Messages.AffiliateAccesses.AffiliateAccessRemoved>(
+                serviceBusClient,
+                MarketingBox.Affiliate.Service.Messages.Topics.AffiliateAccessRemovedTopic,
+                marketingboxReportingService,
                 TopicQueueType.Permanent);
 
             #endregion
 
             builder.RegisterType<RegistrationUpdateMessageSubscriber>()
+                .SingleInstance()
+                .AutoActivate();
+
+            builder.RegisterType<AffiliateAccessUpdateMessageSubscriber>()
+                .SingleInstance()
+                .AutoActivate();
+
+            builder.RegisterType<AffiliateAccessRemovedMessageSubscriber>()
                 .SingleInstance()
                 .AutoActivate();
         }

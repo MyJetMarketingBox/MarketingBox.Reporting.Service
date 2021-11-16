@@ -3,7 +3,6 @@ using MarketingBox.Reporting.Service.Grpc;
 using MarketingBox.Reporting.Service.Grpc.Models.Common;
 using MarketingBox.Reporting.Service.Grpc.Models.Leads;
 using MarketingBox.Reporting.Service.Grpc.Models.Leads.Requests;
-using MarketingBox.Reporting.Service.Grpc.Models.Reports.Requests;
 using MarketingBox.Reporting.Service.Postgres;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;

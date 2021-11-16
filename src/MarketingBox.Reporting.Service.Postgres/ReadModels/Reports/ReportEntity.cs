@@ -1,5 +1,4 @@
 ﻿using System;
-using MarketingBox.Reporting.Service.Domain.Lead;
 
 namespace MarketingBox.Reporting.Service.Postgres.ReadModels.Reports
 {
