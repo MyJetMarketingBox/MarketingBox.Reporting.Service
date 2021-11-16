@@ -23,6 +23,24 @@ namespace TestApp
             var leadService = factory.GetRegistrationService();
             var depositService = factory.GetDepositService();
 
+            var searchLead = await leadService.SearchAsync(new RegistrationSearchRequest()
+            {
+                TenantId = "default-tenant-id",
+                Asc = true,
+                Cursor = null,
+                Take = 50,
+                MasterAffiliateId = 9
+            });
+
+            var searchDeposit = await depositService.SearchAsync(new DepositSearchRequest()
+            {
+                TenantId = "default-tenant-id",
+                Asc = true,
+                Cursor = null,
+                Take = 50,
+                MasterAffiliateId = 9
+            });
+
             var search = await reportService.SearchAsync(new ReportSearchRequest()
             {
                 TenantId = "default-tenant-id",
@@ -43,22 +61,6 @@ namespace TestApp
                 FromDate = DateTime.Parse("2021-11-01 00:00:00"),
                 Take = 31,
                 MasterAffiliateId = 9
-            });
-
-            var searchLead = await leadService.SearchAsync(new RegistrationSearchRequest()
-            {
-                TenantId = "default-tenant-id",
-                 Asc = true,
-                Cursor = null,
-                Take = 50
-            });
-
-            var searchDeposit = await depositService.SearchAsync(new DepositSearchRequest()
-            {
-                TenantId = "default-tenant-id",
-                Asc = true,
-                Cursor = null,
-                Take = 50
             });
 
             //var resp = await  client.SayHelloAsync(new HelloRequest(){Name = "Alex"});

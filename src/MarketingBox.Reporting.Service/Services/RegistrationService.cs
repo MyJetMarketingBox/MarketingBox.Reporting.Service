@@ -9,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
+using MarketingBox.Reporting.Service.Postgres.ReadModels.Deposits;
 
 namespace MarketingBox.Reporting.Service.Services
 {
@@ -26,48 +28,78 @@ namespace MarketingBox.Reporting.Service.Services
 
         public async Task<RegistrationSearchResponse> SearchAsync(RegistrationSearchRequest request)
         {
+            var sorting = request.Asc ? "ASC" : "DESC";
+            var access = "";
+            var where = "";
+
+            if (request.AffiliateId.HasValue)
+            {
+                where += $@" and d.""AffiliateId"" = @AffiliateId ";
+            }
+
+            if (request.MasterAffiliateId.HasValue)
+            {
+                access += $@" INNER JOIN ""reporting-service"".affiliate_access as acc ON 
+                r.""AffiliateId"" = acc.""AffiliateId"" and acc.""MasterAffiliateId"" = @MasterAffiliateId ";
+            }
+
+            var searchQuery = $@"
+            SELECT 
+            r.""RegistrationId"",
+            r.""AffiliateId"", 
+            r.""BrandId"",
+            r.""CampaignId"", 
+            r.""ConversionDate"", 
+            r.""Country"",
+            r.""CreatedAt"",
+            r.""CrmStatus"",
+            r.""DepositDate"", 
+            r.""Email"",
+            r.""FirstName"",
+            r.""IntegrationId"", 
+            r.""Ip"",
+            r.""LastName"",
+            r.""Phone"", 
+            r.""Sequence"", 
+            r.""So"",
+            r.""Status"",
+            r.""Sub"",
+            r.""Sub1"",
+            r.""Sub10"", 
+            r.""Sub2"",
+            r.""Sub3"",
+            r.""Sub4"",
+            r.""Sub5"",
+            r.""Sub6"",
+            r.""Sub7"",
+            r.""Sub8"",
+            r.""Sub9"",
+            r.""TenantId"",
+            r.""UniqueId"",
+            r.""UpdatedAt""
+            FROM ""reporting-service"".registrations AS r
+            {access}
+            WHERE r.""TenantId"" = @TenantId
+            {where}
+            ORDER BY r.""RegistrationId"" {sorting}
+            LIMIT @Limit";
+
             await using var context = new DatabaseContext(_dbContextOptionsBuilder.Options);
+            var limit = request.Take <= 0 ? 1000 : request.Take;
 
             try
             {
-                var query = context.Registrations.AsQueryable();
-
-                if (!string.IsNullOrEmpty(request.TenantId))
-                {
-                    query = query.Where(x => x.TenantId == request.TenantId);
-                }
-
-                if (request.AffiliateId.HasValue)
-                {
-                    query = query.Where(x => x.AffiliateId == request.AffiliateId);
-                }
-
-                var limit = request.Take <= 0 ? 1000 : request.Take;
-                if (request.Asc)
-                {
-                    if (request.Cursor != null)
+                var array = await context.Database.GetDbConnection()
+                    .QueryAsync<Postgres.ReadModels.Leads.Registration>(searchQuery, new
                     {
-                        query = query.Where(x => x.RegistrationId > request.Cursor);
-                    }
+                        MasterAffiliateId = request.MasterAffiliateId ?? 0,
+                        TenantId = request.TenantId,
+                        FromId = request.Cursor ?? 0,
+                        Limit = limit,
+                        AffiliateId = request.AffiliateId ?? 0,
+                    });
 
-                    query = query.OrderBy(x => x.RegistrationId);
-                }
-                else
-                {
-                    if (request.Cursor != null)
-                    {
-                        query = query.Where(x => x.RegistrationId < request.Cursor);
-                    }
-
-                    query = query.OrderByDescending(x => x.RegistrationId);
-                }
-
-                query = query.Take(limit);
-
-                await query.LoadAsync();
-
-                var response = query
-                    .AsEnumerable()
+                var response = array
                     .Select(MapToGrpcInner)
                     .ToArray();
 

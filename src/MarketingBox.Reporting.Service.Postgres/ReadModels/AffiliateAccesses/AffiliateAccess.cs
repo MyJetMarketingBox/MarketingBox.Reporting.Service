@@ -1,4 +1,8 @@
-﻿namespace MarketingBox.Reporting.Service.Postgres.ReadModels.AffiliateAccesses
+﻿using System.Collections.Generic;
+using MarketingBox.Reporting.Service.Postgres.ReadModels.Deposits;
+using MarketingBox.Reporting.Service.Postgres.ReadModels.Leads;
+
+namespace MarketingBox.Reporting.Service.Postgres.ReadModels.AffiliateAccesses
 {
     public class AffiliateAccess
     {

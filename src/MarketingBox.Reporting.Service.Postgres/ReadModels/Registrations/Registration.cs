@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using MarketingBox.Reporting.Service.Domain.Lead;
+using MarketingBox.Reporting.Service.Postgres.ReadModels.AffiliateAccesses;
 
 namespace MarketingBox.Reporting.Service.Postgres.ReadModels.Leads
 {
@@ -37,5 +39,7 @@ namespace MarketingBox.Reporting.Service.Postgres.ReadModels.Leads
         public DateTimeOffset? ConversionDate { get; set; }
         public DateTimeOffset? DepositDate { get; set; }
         public string Country { get; set; }
+
+        //public IList<AffiliateAccess> AffiliateAccesses { get; set; }
     }
 }

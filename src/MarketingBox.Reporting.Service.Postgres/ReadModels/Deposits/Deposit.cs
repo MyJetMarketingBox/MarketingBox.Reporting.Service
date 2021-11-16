@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using MarketingBox.Reporting.Service.Domain.Deposit;
+using MarketingBox.Reporting.Service.Postgres.ReadModels.AffiliateAccesses;
 
 namespace MarketingBox.Reporting.Service.Postgres.ReadModels.Deposits
 {
@@ -21,5 +23,7 @@ namespace MarketingBox.Reporting.Service.Postgres.ReadModels.Deposits
         public DateTimeOffset? ConversionDate { get; set; }
         public long Sequence { get; set; }
         public string BrandStatus { get; set; }
+
+        //public IList<AffiliateAccess> AffiliateAccesses { get; set; }
     }
 }

@@ -70,7 +70,7 @@ namespace MarketingBox.Reporting.Service.Postgres
             //    .(x => x.AffiliateId);
 
             //modelBuilder.Entity<AffiliateAccess>()
-            //    .HasOne(x => x.Registration)
+            //    .HasMany(x => x.Registration)
             //    .WithMany(x => x.AffiliateAccesses)
             //    .HasForeignKey(x => x.AffiliateId);
         }

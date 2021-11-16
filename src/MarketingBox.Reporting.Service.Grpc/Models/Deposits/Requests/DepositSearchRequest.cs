@@ -9,7 +9,7 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Deposits.Requests
         public long? AffiliateId { get; set; }
 
         [DataMember(Order = 2)]
-        public long? LeadId { get; set; }
+        public long? RegistrationId { get; set; }
 
         [DataMember(Order = 10)]
         public long? Cursor { get; set; }
@@ -22,5 +22,8 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Deposits.Requests
 
         [DataMember(Order = 13)]
         public string TenantId { get; set; }
+
+        [DataMember(Order = 14)]
+        public long? MasterAffiliateId { get; set; }
     }
 }
