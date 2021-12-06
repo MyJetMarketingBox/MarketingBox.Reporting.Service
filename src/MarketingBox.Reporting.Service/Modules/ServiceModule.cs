@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using MarketingBox.Affiliate.Service.Client;
 using MarketingBox.Affiliate.Service.MyNoSql.Brands;
+using MarketingBox.Reporting.Service.Postgres;
 using MarketingBox.Reporting.Service.Subscribers;
 using MyJetWallet.Sdk.NoSql;
 using MyJetWallet.Sdk.ServiceBus;
@@ -12,6 +13,11 @@ namespace MarketingBox.Reporting.Service.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder
+                .RegisterType<DatabaseContextFactory>()
+                .AsSelf()
+                .SingleInstance();
+            
             builder.RegisterAffiliateServiceClient(Program.Settings.AffiliateServiceUrl);
 
             var noSqlClient = builder.CreateNoSqlClient(Program.ReloadedSettings(e => e.MyNoSqlReaderHostPort));

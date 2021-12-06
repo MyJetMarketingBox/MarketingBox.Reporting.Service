@@ -14,6 +14,8 @@ namespace MarketingBox.Reporting.Service.Client
             builder.RegisterInstance(factory.GetReportService()).As<IReportService>().SingleInstance();
             builder.RegisterInstance(factory.GetRegistrationService()).As<IRegistrationService>().SingleInstance();
             builder.RegisterInstance(factory.GetDepositService()).As<IDepositService>().SingleInstance();
+            
+            builder.RegisterInstance(factory.GetCustomerReportService()).As<ICustomerReportService>().SingleInstance();
         }
     }
 }

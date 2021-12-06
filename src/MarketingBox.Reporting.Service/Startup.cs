@@ -26,12 +26,10 @@ namespace MarketingBox.Reporting.Service
 
             services.AddHostedService<ApplicationLifetimeManager>();
 
-            DatabaseContext.LoggerFactory = Program.LogFactory;
+            MyDbContext.LoggerFactory = Program.LogFactory;
             services.AddDatabase(DatabaseContext.Schema,
                 Program.Settings.PostgresConnectionString,
                 o => new DatabaseContext(o));
-
-            DatabaseContext.LoggerFactory = null;
 
             services.BindTelemetry("ReportingService", "MB-", Program.Settings.JaegerUrl);
         }
@@ -56,6 +54,8 @@ namespace MarketingBox.Reporting.Service
                 endpoints.MapGrpcSchema<ReportService, IReportService>();
                 endpoints.MapGrpcSchema<RegistrationService, IRegistrationService>();
                 endpoints.MapGrpcSchema<DepositService, IDepositService>();
+                
+                endpoints.MapGrpcSchema<CustomerReportService, ICustomerReportService>();
 
                 endpoints.MapGrpcSchemaRegistry();
 

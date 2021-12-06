@@ -1,25 +1,23 @@
-﻿using MarketingBox.Reporting.Service.Postgres.ReadModels.AffiliateAccesses;
+﻿using MarketingBox.Reporting.Service.Domain.Models;
+using MarketingBox.Reporting.Service.Postgres.ReadModels.AffiliateAccesses;
 using MarketingBox.Reporting.Service.Postgres.ReadModels.Deposits;
 using MarketingBox.Reporting.Service.Postgres.ReadModels.Leads;
 using MarketingBox.Reporting.Service.Postgres.ReadModels.Reports;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using MyJetWallet.Sdk.Postgres;
-using Newtonsoft.Json;
 
 namespace MarketingBox.Reporting.Service.Postgres
 {
     public class DatabaseContext : MyDbContext
     {
-        private static readonly JsonSerializerSettings JsonSerializingSettings =
-            new() { NullValueHandling = NullValueHandling.Ignore };
-
         public const string Schema = "reporting-service";
 
-        public const string RegistrationTableName = "registrations";
-        public const string ReportTableName = "reports";
-        public const string DepositTableName = "deposits";
-        public const string AffiliateAccessTableName = "affiliate_access";
+        private const string RegistrationTableName = "registrations";
+        private const string ReportTableName = "reports";
+        private const string DepositTableName = "deposits";
+        private const string AffiliateAccessTableName = "affiliate_access";
+        
+        private const string CustomerTableName = "customer";
 
         public DbSet<Registration> Registrations { get; set; }
 
@@ -28,6 +26,7 @@ namespace MarketingBox.Reporting.Service.Postgres
         public DbSet<Deposit> Deposits { get; set; }
 
         public DbSet<AffiliateAccess> AffiliateAccesses { get; set; }
+        public DbSet<Customer> Customers { get; set; }
 
         public DatabaseContext(DbContextOptions options) : base(options)
         {
@@ -49,8 +48,32 @@ namespace MarketingBox.Reporting.Service.Postgres
             SetRegistrationReadModel(modelBuilder);
             SetDepositReadModel(modelBuilder);
             SetReportEntity(modelBuilder);
+            SetCustomerEntity(modelBuilder);
 
             base.OnModelCreating(modelBuilder);
+        }
+
+        private void SetCustomerEntity(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Customer>().ToTable(CustomerTableName);
+            
+            modelBuilder.Entity<Customer>().Property(e => e.Id).UseIdentityColumn();
+            modelBuilder.Entity<Customer>().HasKey(e => e.Id);
+            
+            modelBuilder.Entity<Customer>().Property(e => e.UId).HasMaxLength(64);
+            modelBuilder.Entity<Customer>().Property(e => e.TenantId).HasMaxLength(64);
+            modelBuilder.Entity<Customer>().Property(e => e.FirstName).HasMaxLength(64);
+            modelBuilder.Entity<Customer>().Property(e => e.LastName).HasMaxLength(64);
+            modelBuilder.Entity<Customer>().Property(e => e.Email).HasMaxLength(128);
+            modelBuilder.Entity<Customer>().Property(e => e.Phone).HasMaxLength(64);
+            modelBuilder.Entity<Customer>().Property(e => e.Ip).HasMaxLength(64);
+            modelBuilder.Entity<Customer>().Property(e => e.Country).HasMaxLength(64);
+            
+            modelBuilder.Entity<Customer>().HasIndex(e => e.TenantId);
+            modelBuilder.Entity<Customer>().HasIndex(e => e.Email);
+            modelBuilder.Entity<Customer>().HasIndex(e => e.Country);
+            modelBuilder.Entity<Customer>().HasIndex(e => e.CreatedDate);
+            modelBuilder.Entity<Customer>().HasIndex(e => e.IsDeposit);
         }
 
         private void SetAffiliateAccessReadModel(ModelBuilder modelBuilder)
@@ -103,11 +126,6 @@ namespace MarketingBox.Reporting.Service.Postgres
             modelBuilder.Entity<ReportEntity>().HasIndex(x => x.CreatedAt);
             modelBuilder.Entity<ReportEntity>().HasIndex(x => x.TenantId);
             //modelBuilder.Entity<ReportEntity>().HasIndex(x => x.re);
-        }
-
-        public override void Dispose()
-        {
-            base.Dispose();
         }
     }
 }
