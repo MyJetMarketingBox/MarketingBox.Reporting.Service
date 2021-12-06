@@ -10,5 +10,8 @@ namespace MarketingBox.Reporting.Service.Grpc
     {
         [OperationContract]
         Task<GetCustomersReportResponse> GetCustomersReport(GetCustomersReportRequest request);
+        
+        [OperationContract]
+        Task<GetCustomerReportResponse> GetCustomerReport(GetCustomerReportRequest request);
     }
 }

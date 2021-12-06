@@ -63,5 +63,32 @@ namespace MarketingBox.Reporting.Service.Services
                 };
             }
         }
+
+        public async Task<GetCustomerReportResponse> GetCustomerReport(GetCustomerReportRequest request)
+        {
+            try
+            {
+                _logger.LogInformation($"CustomerReportService.GetCustomerReport receive request : {JsonConvert.SerializeObject(request)}");
+                
+                await using var ctx = _databaseContextFactory.Create();
+                var customer = ctx.Customers.FirstOrDefault(e => e.UId == request.UId);
+                if (customer != null)
+                    return new GetCustomerReportResponse()
+                    {
+                        Success = true,
+                        Customer = customer
+                    };
+                throw new Exception("Cannot find customers at selected range");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return new GetCustomerReportResponse()
+                {
+                    Success = false,
+                    ErrorMessage = ex.Message
+                };
+            }
+        }
     }
 }

@@ -69,6 +69,7 @@ namespace MarketingBox.Reporting.Service.Postgres
             modelBuilder.Entity<Customer>().Property(e => e.Ip).HasMaxLength(64);
             modelBuilder.Entity<Customer>().Property(e => e.Country).HasMaxLength(64);
             
+            modelBuilder.Entity<Customer>().HasIndex(e => e.UId).IsUnique();
             modelBuilder.Entity<Customer>().HasIndex(e => e.TenantId);
             modelBuilder.Entity<Customer>().HasIndex(e => e.Email);
             modelBuilder.Entity<Customer>().HasIndex(e => e.Country);
