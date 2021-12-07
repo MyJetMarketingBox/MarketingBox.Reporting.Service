@@ -9,6 +9,7 @@ using MarketingBox.Affiliate.Service.MyNoSql.Brands;
 using MarketingBox.Registration.Service.Messages.Registrations;
 using MarketingBox.Reporting.Service.Domain.Extensions;
 using MarketingBox.Reporting.Service.Domain.Lead;
+using MarketingBox.Reporting.Service.Domain.Models;
 using MarketingBox.Reporting.Service.Postgres;
 using MarketingBox.Reporting.Service.Postgres.ReadModels.Deposits;
 using MarketingBox.Reporting.Service.Postgres.ReadModels.Reports;
@@ -24,7 +25,7 @@ namespace MarketingBox.Reporting.Service.Subscribers
         private readonly IBrandService _brandService;
 
         public RegistrationUpdateMessageSubscriber(
-            ISubscriber<MarketingBox.Registration.Service.Messages.Registrations.RegistrationUpdateMessage> subscriber,
+            ISubscriber<RegistrationUpdateMessage> subscriber,
             ILogger<RegistrationUpdateMessageSubscriber> logger,
             IMyNoSqlServerDataReader<BrandNoSql> campDataReader,
             DbContextOptionsBuilder<DatabaseContext> dbContextOptionsBuilder,
@@ -37,7 +38,7 @@ namespace MarketingBox.Reporting.Service.Subscribers
             subscriber.Subscribe(Consume);
         }
 
-        private async ValueTask Consume(MarketingBox.Registration.Service.Messages.Registrations.RegistrationUpdateMessage message)
+        private async ValueTask Consume(RegistrationUpdateMessage message)
         {
             _logger.LogInformation("Consuming message {@context}", message);
             var brandNoSql = _campDataReader.Get(
@@ -170,6 +171,12 @@ namespace MarketingBox.Reporting.Service.Subscribers
                     };
                 }
 
+                var customer = MapCustomer(message, isDeposit);
+                await context.Customers.Upsert(customer)
+                    .UpdateIf(prev => prev.Sequence < customer.Sequence)
+                    .RunAsync();
+                
+                
                 await context.Reports.Upsert(reportEntity).RunAsync();
 
                 await transaction.CommitAsync();
@@ -183,6 +190,28 @@ namespace MarketingBox.Reporting.Service.Subscribers
             }
 
             _logger.LogInformation("Has been consumed {@context}", message);
+        }
+
+        private static Customer MapCustomer(RegistrationUpdateMessage message, bool isDeposit)
+        {
+            return new()
+            {
+                UId = message.GeneralInfo.UniqueId,
+                CreatedDate = message.GeneralInfo.CreatedAt.ToUtc(),
+                TenantId = message.TenantId, 
+                FirstName = message.GeneralInfo.FirstName,
+                LastName = message.GeneralInfo.LastName,
+                Email = message.GeneralInfo.Email,
+                Phone = message.GeneralInfo.Phone,
+                Ip = message.GeneralInfo.Ip,
+                Country = message.GeneralInfo.Country,
+                AffiliateId = message.RouteInfo.AffiliateId,
+                BrandId = message.RouteInfo.BrandId,
+                CampaignId = message.RouteInfo.CampaignId,
+                IsDeposit = isDeposit,
+                DepositDate = message.RouteInfo.ConversionDate ?? new DateTime(),
+                Sequence = message.Sequence
+            };
         }
 
         private static Deposit MapDeposit(RegistrationUpdateMessage message)
