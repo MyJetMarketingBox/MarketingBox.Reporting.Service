@@ -4,23 +4,15 @@
     {
         New,
         FullyActivated,
-        NoAnswer,
+        NA,
         HighPriority,
         Callback,
-        AutoCall,
         FailedExpectation,
-        NotValidDeletedAccount,
-        NotValidWrongNumber,
-        NotValidNoPhonenumber,
-        NotValidDuplicateUser,
-        NotValidTestLead,
-        NotValidUnderage,
-        NotValidNoLanguageSupport,
-        NotValidNeverRegistered,
-        NotValidNonEligibleCountries,
+        NotValid,
         NotInterested,
         Transfer,
         FollowUp,
         ConversionRenew,
+        Unknown
     }
 }
