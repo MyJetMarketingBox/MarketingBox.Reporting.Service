@@ -270,7 +270,7 @@ namespace MarketingBox.Reporting.Service.Subscribers
                 RegistrationId = message.GeneralInfo.RegistrationId,
                 Phone = message.GeneralInfo.Phone,
                 Sequence = message.Sequence,
-                CrmStatus = message.RouteInfo.CrmStatus.ToCrmStatus(),
+                CrmStatus = string.IsNullOrEmpty(message.RouteInfo.CrmStatus) ? LeadCrmStatus.New : message.RouteInfo.CrmStatus.ToCrmStatus(),
                 TenantId = message.TenantId,
                 Status = message.RouteInfo.Status.MapEnum<MarketingBox.Reporting.Service.Domain.Lead.LeadStatus>(),
                 UniqueId = message.GeneralInfo.UniqueId,
