@@ -172,6 +172,7 @@ namespace MarketingBox.Reporting.Service.Subscribers
                 }
 
                 var customer = MapCustomer(message, isDeposit);
+                
                 await context.Customers.Upsert(customer)
                     .UpdateIf(prev => prev.Sequence < customer.Sequence)
                     .RunAsync();

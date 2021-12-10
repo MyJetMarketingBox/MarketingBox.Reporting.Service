@@ -57,8 +57,7 @@ namespace MarketingBox.Reporting.Service.Postgres
         {
             modelBuilder.Entity<Customer>().ToTable(CustomerTableName);
             
-            modelBuilder.Entity<Customer>().Property(e => e.Id).UseIdentityColumn();
-            modelBuilder.Entity<Customer>().HasKey(e => e.Id);
+            modelBuilder.Entity<Customer>().HasKey(e => e.UId);
             
             modelBuilder.Entity<Customer>().Property(e => e.UId).HasMaxLength(64);
             modelBuilder.Entity<Customer>().Property(e => e.TenantId).HasMaxLength(64);
