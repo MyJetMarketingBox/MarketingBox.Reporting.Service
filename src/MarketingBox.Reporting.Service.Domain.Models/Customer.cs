@@ -26,5 +26,6 @@ namespace MarketingBox.Reporting.Service.Domain.Models
         [DataMember(Order = 14)] public bool IsDeposit { get; set; }
         [DataMember(Order = 15)] public DateTime DepositDate { get; set; }
         [DataMember(Order = 16)] public long Sequence { get; set; }
+        [DataMember(Order = 17)] public string CrmStatus { get; set; }
     }
 }

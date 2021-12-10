@@ -210,7 +210,8 @@ namespace MarketingBox.Reporting.Service.Subscribers
                 CampaignId = message.RouteInfo.CampaignId,
                 IsDeposit = isDeposit,
                 DepositDate = message.RouteInfo.ConversionDate ?? new DateTime(),
-                Sequence = message.Sequence
+                Sequence = message.Sequence,
+                CrmStatus = message.RouteInfo.CrmStatus
             };
         }
 
@@ -233,7 +234,7 @@ namespace MarketingBox.Reporting.Service.Subscribers
                 TenantId = message.TenantId, 
                 Type = message.RouteInfo.ApprovedType.MapEnum<MarketingBox.Reporting.Service.Domain.Deposit.ApprovedType>(),
                 UniqueId = message.GeneralInfo.UniqueId,
-                BrandStatus = message.RouteInfo.CrmCrmStatus,
+                BrandStatus = message.RouteInfo.CrmStatus,
             };
         }
 
@@ -269,7 +270,7 @@ namespace MarketingBox.Reporting.Service.Subscribers
                 RegistrationId = message.GeneralInfo.RegistrationId,
                 Phone = message.GeneralInfo.Phone,
                 Sequence = message.Sequence,
-                //CrmStatus = message.RouteInfo.CrmCrmStatus.MapEnum<MarketingBox.Reporting.Service.Domain.Registration.LeadCrmStatus>(),
+                CrmStatus = message.RouteInfo.CrmStatus.ToCrmStatus(),
                 TenantId = message.TenantId,
                 Status = message.RouteInfo.Status.MapEnum<MarketingBox.Reporting.Service.Domain.Lead.LeadStatus>(),
                 UniqueId = message.GeneralInfo.UniqueId,
