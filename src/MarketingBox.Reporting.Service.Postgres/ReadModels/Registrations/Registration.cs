@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using MarketingBox.Reporting.Service.Domain.Lead;
-using MarketingBox.Reporting.Service.Postgres.ReadModels.AffiliateAccesses;
 
-namespace MarketingBox.Reporting.Service.Postgres.ReadModels.Leads
+namespace MarketingBox.Reporting.Service.Postgres.ReadModels.Registrations
 {
     public class Registration
     {

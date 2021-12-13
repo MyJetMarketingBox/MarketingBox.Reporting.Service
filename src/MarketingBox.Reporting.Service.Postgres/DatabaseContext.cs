@@ -1,7 +1,7 @@
 ﻿using MarketingBox.Reporting.Service.Domain.Models;
 using MarketingBox.Reporting.Service.Postgres.ReadModels.AffiliateAccesses;
 using MarketingBox.Reporting.Service.Postgres.ReadModels.Deposits;
-using MarketingBox.Reporting.Service.Postgres.ReadModels.Leads;
+using MarketingBox.Reporting.Service.Postgres.ReadModels.Registrations;
 using MarketingBox.Reporting.Service.Postgres.ReadModels.Reports;
 using Microsoft.EntityFrameworkCore;
 using MyJetWallet.Sdk.Postgres;

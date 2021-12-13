@@ -239,9 +239,9 @@ namespace MarketingBox.Reporting.Service.Subscribers
             };
         }
 
-        private static Postgres.ReadModels.Leads.Registration MapToReadModel(RegistrationUpdateMessage message)
+        private static Postgres.ReadModels.Registrations.Registration MapToReadModel(RegistrationUpdateMessage message)
         {
-            return new Postgres.ReadModels.Leads.Registration()
+            return new Postgres.ReadModels.Registrations.Registration()
             {
                 So = message.AdditionalInfo.So,
                 Sub = message.AdditionalInfo.Sub,
