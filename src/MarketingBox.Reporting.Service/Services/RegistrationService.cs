@@ -44,6 +44,7 @@ namespace MarketingBox.Reporting.Service.Services
                 }
                 
                 await using var ctx = _databaseContextFactory.Create();
+                
                 var query = ctx.Registrations
                     .Where(e => e.TenantId == request.TenantId);
                 query = request.Asc 
@@ -52,11 +53,12 @@ namespace MarketingBox.Reporting.Service.Services
                 var affiliateAccesses = ctx.AffiliateAccesses
                     .Where(e => e.MasterAffiliateId == request.MasterAffiliateId)
                     .ToList();
-                if (affiliateAccesses.Any())
-                {
+
+                if (affiliateAccesses.Any()) 
+                { 
                     query = query.Where(e => e.AffiliateId == request.MasterAffiliateId
-                                             || affiliateAccesses.Select(x => x.AffiliateId)
-                                                 .Contains(e.AffiliateId));
+                                       || affiliateAccesses.Select(x => x.AffiliateId)
+                                           .Contains(e.AffiliateId));
                 }
                 else
                 {
@@ -66,6 +68,7 @@ namespace MarketingBox.Reporting.Service.Services
                 {
                     query = query.Where(e => e.AffiliateId == request.AffiliateId);
                 }
+
                 query = query.Take(request.Take <= 0 ? 1000 : request.Take);
                 
                 var response = query
