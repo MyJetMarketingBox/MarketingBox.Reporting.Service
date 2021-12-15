@@ -33,6 +33,7 @@ namespace MarketingBox.Reporting.Service.Services
             var sorting = request.Asc ? "ASC" : "DESC";
             var access = "";
             var where = "";
+            var tenantWhere = "";
 
             if (request.AffiliateId.HasValue)
             {
@@ -50,6 +51,11 @@ namespace MarketingBox.Reporting.Service.Services
                 where += $@" and d.""RegistrationId"" = @RegistrationId ";
             }
 
+            if (!string.IsNullOrWhiteSpace(request.TenantId))
+            {
+                tenantWhere = $@" and d.""TenantId"" = @TenantId ";
+            }
+            
             var searchQuery = $@"
             SELECT 
             d.""RegistrationId"", 
@@ -70,7 +76,8 @@ namespace MarketingBox.Reporting.Service.Services
             d.""UniqueId""
             FROM ""reporting-service"".deposits AS d
             {access}
-            WHERE d.""TenantId"" = @TenantId and d.""RegistrationId"" > @FromId
+            WHERE d.""RegistrationId"" > @FromId
+            {tenantWhere}
             {where}
             ORDER BY d.""RegistrationId"" {sorting}
             LIMIT @Limit";
@@ -83,7 +90,7 @@ namespace MarketingBox.Reporting.Service.Services
                     .QueryAsync<Deposit>(searchQuery, new
                     {
                         MasterAffiliateId = request.MasterAffiliateId ?? 0,
-                        TenantId = request.TenantId,
+                        TenantId = request.TenantId ?? string.Empty,
                         FromId = request.Cursor ?? 0,
                         Limit = limit,
                         AffiliateId = request.AffiliateId ?? 0,
