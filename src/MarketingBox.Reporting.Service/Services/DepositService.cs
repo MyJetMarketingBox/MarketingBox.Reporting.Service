@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Dapper;
 using MarketingBox.Reporting.Service.Domain.Extensions;
 using Deposit = MarketingBox.Reporting.Service.Postgres.ReadModels.Deposits.Deposit;
+using MarketingBox.Reporting.Service.Domain.Crm;
 
 namespace MarketingBox.Reporting.Service.Services
 {
@@ -130,7 +131,8 @@ namespace MarketingBox.Reporting.Service.Services
                 AffiliateId = deposit.AffiliateId,
                 BoxId = deposit.CampaignId,
                 BrandId = deposit.IntegrationId,
-                BrandStatus = deposit.BrandStatus,
+                BrandStatus = deposit.CrmStatus.ToCrmStatus(),
+                CrmStatus = deposit.CrmStatus,
                 CampaignId = deposit.BrandId,
                 ConversionDate = deposit.ConversionDate?.UtcDateTime,
                 Country = deposit.Country,

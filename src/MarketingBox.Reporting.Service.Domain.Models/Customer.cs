@@ -1,3 +1,4 @@
+using MarketingBox.Reporting.Service.Domain.Crm;
 using System;
 using System.Runtime.Serialization;
 
@@ -25,6 +26,6 @@ namespace MarketingBox.Reporting.Service.Domain.Models
         [DataMember(Order = 13)] public bool IsDeposit { get; set; }
         [DataMember(Order = 14)] public DateTime DepositDate { get; set; }
         [DataMember(Order = 15)] public long Sequence { get; set; }
-        [DataMember(Order = 16)] public string CrmStatus { get; set; }
+        [DataMember(Order = 16)] public CrmStatus CrmStatus { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using MarketingBox.Reporting.Service.Domain.Models.Deposit;
 using System;
+using MarketingBox.Reporting.Service.Domain.Crm;
 
 namespace MarketingBox.Reporting.Service.Grpc.Models.Deposits
 {
@@ -37,7 +38,12 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Deposits
         public DateTime? ConversionDate { get; set; }
         [DataMember(Order = 15)]
         public long Sequence { get; set; }
+
+        [ObsoleteAttribute("This property is obsolete. Use CrmStatus instead.", false)]
         [DataMember(Order = 16)]
         public string BrandStatus { get; set; }
+
+        [DataMember(Order = 17)]
+        public CrmStatus CrmStatus { get; set; }
     }
 }

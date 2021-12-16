@@ -1,4 +1,5 @@
 ﻿using System;
+using MarketingBox.Reporting.Service.Domain.Crm;
 using MarketingBox.Reporting.Service.Domain.Lead;
 
 namespace MarketingBox.Reporting.Service.Postgres.ReadModels.Registrations
@@ -18,7 +19,7 @@ namespace MarketingBox.Reporting.Service.Postgres.ReadModels.Registrations
         public long CampaignId { get; set; }
         public long IntegrationId { get; set; }
         public LeadStatus Status { get; set; }
-        public LeadCrmStatus CrmStatus{ get; set; }
+        public CrmStatus CrmStatus{ get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public long Sequence { get; set; }
         public string So { get; set; }
