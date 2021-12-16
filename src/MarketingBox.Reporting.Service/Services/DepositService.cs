@@ -122,7 +122,7 @@ namespace MarketingBox.Reporting.Service.Services
             }
         }
 
-        private MarketingBox.Reporting.Service.Grpc.Models.Deposits.Deposit MapToGrpcInner(Postgres.ReadModels.Deposits.Deposit deposit, int arg2)
+        private MarketingBox.Reporting.Service.Grpc.Models.Deposits.Deposit MapToGrpcInner(Deposit deposit, int arg2)
         {
             return new MarketingBox.Reporting.Service.Grpc.Models.Deposits.Deposit()
             {
@@ -143,6 +143,7 @@ namespace MarketingBox.Reporting.Service.Services
                 TenantId = deposit.TenantId,
                 Type = deposit.Type.MapEnum<MarketingBox.Reporting.Service.Domain.Models.Deposit.ApprovedType>(),
                 UniqueId = deposit.UniqueId,
+                RegistrationId = deposit.RegistrationId
             };
         }
     }

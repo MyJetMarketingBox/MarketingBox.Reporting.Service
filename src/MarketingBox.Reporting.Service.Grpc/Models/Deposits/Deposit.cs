@@ -45,5 +45,8 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Deposits
 
         [DataMember(Order = 17)]
         public CrmStatus CrmStatus { get; set; }
+        
+        [DataMember(Order = 18)]
+        public long RegistrationId { get; set; }
     }
 }
