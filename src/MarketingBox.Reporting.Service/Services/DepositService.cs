@@ -56,32 +56,64 @@ namespace MarketingBox.Reporting.Service.Services
             {
                 tenantWhere = $@" and d.""TenantId"" = @TenantId ";
             }
-            
-            var searchQuery = $@"
-            SELECT 
-            d.""RegistrationId"", 
-            d.""AffiliateId"", 
-            d.""BrandId"", 
-            d.""CrmStatus"", 
-            d.""CampaignId"", 
-            d.""ConversionDate"", 
-            d.""Country"", 
-            d.""CreatedAt"", 
-            d.""CustomerId"", 
-            d.""Email"", 
-            d.""IntegrationId"", 
-            d.""RegisterDate"", 
-            d.""Sequence"", 
-            d.""TenantId"", 
-            d.""Type"", 
-            d.""UniqueId""
-            FROM ""reporting-service"".deposits AS d
-            {access}
-            WHERE d.""RegistrationId"" > @FromId
-            {tenantWhere}
-            {where}
-            ORDER BY d.""RegistrationId"" {sorting}
-            LIMIT @Limit";
+
+            var searchQuery = string.Empty;
+            if (request.Asc)
+            {
+                searchQuery = $@"
+                    SELECT 
+                    d.""RegistrationId"", 
+                    d.""AffiliateId"", 
+                    d.""BrandId"", 
+                    d.""CrmStatus"", 
+                    d.""CampaignId"", 
+                    d.""ConversionDate"", 
+                    d.""Country"", 
+                    d.""CreatedAt"", 
+                    d.""CustomerId"", 
+                    d.""Email"", 
+                    d.""IntegrationId"", 
+                    d.""RegisterDate"", 
+                    d.""Sequence"", 
+                    d.""TenantId"", 
+                    d.""Type"", 
+                    d.""UniqueId""
+                    FROM ""reporting-service"".deposits AS d
+                    {access}
+                    WHERE d.""RegistrationId"" > @FromId
+                    {tenantWhere}
+                    {where}
+                    ORDER BY d.""RegistrationId"" {sorting}
+                    LIMIT @Limit";
+            }
+            else
+            {
+                searchQuery = $@"
+                    SELECT 
+                    d.""RegistrationId"", 
+                    d.""AffiliateId"", 
+                    d.""BrandId"", 
+                    d.""CrmStatus"", 
+                    d.""CampaignId"", 
+                    d.""ConversionDate"", 
+                    d.""Country"", 
+                    d.""CreatedAt"", 
+                    d.""CustomerId"", 
+                    d.""Email"", 
+                    d.""IntegrationId"", 
+                    d.""RegisterDate"", 
+                    d.""Sequence"", 
+                    d.""TenantId"", 
+                    d.""Type"", 
+                    d.""UniqueId""
+                    FROM ""reporting-service"".deposits AS d
+                    {access}
+                    WHERE d.""RegistrationId"" < @FromId
+                    {tenantWhere}
+                    {where}
+                    ORDER BY d.""RegistrationId"" {sorting}
+                    LIMIT @Limit";
+            }
 
             var limit = request.Take <= 0 ? 1000 : request.Take;
 
