@@ -39,14 +39,10 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Deposits
         [DataMember(Order = 15)]
         public long Sequence { get; set; }
 
-        [ObsoleteAttribute("This property is obsolete. Use CrmStatus instead.", false)]
         [DataMember(Order = 16)]
-        public string BrandStatus { get; set; }
-
-        [DataMember(Order = 17)]
         public CrmStatus CrmStatus { get; set; }
         
-        [DataMember(Order = 18)]
+        [DataMember(Order = 17)]
         public long RegistrationId { get; set; }
     }
 }

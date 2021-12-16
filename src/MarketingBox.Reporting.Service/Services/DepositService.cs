@@ -62,7 +62,7 @@ namespace MarketingBox.Reporting.Service.Services
             d.""RegistrationId"", 
             d.""AffiliateId"", 
             d.""BrandId"", 
-            d.""BrandStatus"", 
+            d.""CrmStatus"", 
             d.""CampaignId"", 
             d.""ConversionDate"", 
             d.""Country"", 
@@ -122,7 +122,7 @@ namespace MarketingBox.Reporting.Service.Services
             }
         }
 
-        private MarketingBox.Reporting.Service.Grpc.Models.Deposits.Deposit MapToGrpcInner(Deposit deposit, int arg2)
+        private static MarketingBox.Reporting.Service.Grpc.Models.Deposits.Deposit MapToGrpcInner(Deposit deposit, int arg2)
         {
             return new MarketingBox.Reporting.Service.Grpc.Models.Deposits.Deposit()
             {
@@ -131,7 +131,6 @@ namespace MarketingBox.Reporting.Service.Services
                 AffiliateId = deposit.AffiliateId,
                 BoxId = deposit.CampaignId,
                 BrandId = deposit.IntegrationId,
-                BrandStatus = deposit.CrmStatus.ToCrmStatus(),
                 CrmStatus = deposit.CrmStatus,
                 CampaignId = deposit.BrandId,
                 ConversionDate = deposit.ConversionDate?.UtcDateTime,
