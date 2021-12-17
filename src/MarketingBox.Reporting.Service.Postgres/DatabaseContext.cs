@@ -16,17 +16,13 @@ namespace MarketingBox.Reporting.Service.Postgres
         private const string ReportTableName = "reports";
         private const string DepositTableName = "deposits";
         private const string AffiliateAccessTableName = "affiliate_access";
-        
-        private const string CustomerTableName = "customer";
+        private const string RegistrationDetailsTableName = "registrations_details";
 
         public DbSet<Registration> Registrations { get; set; }
-
         public DbSet<ReportEntity> Reports { get; set; }
-
         public DbSet<Deposit> Deposits { get; set; }
-
         public DbSet<AffiliateAccess> AffiliateAccesses { get; set; }
-        public DbSet<Customer> Customers { get; set; }
+        public DbSet<RegistrationDetails> RegistrationDetails { get; set; }
 
         public DatabaseContext(DbContextOptions options) : base(options)
         {
@@ -48,32 +44,33 @@ namespace MarketingBox.Reporting.Service.Postgres
             SetRegistrationReadModel(modelBuilder);
             SetDepositReadModel(modelBuilder);
             SetReportEntity(modelBuilder);
-            SetCustomerEntity(modelBuilder);
+            SetRegistrationDetailsModel(modelBuilder);
 
             base.OnModelCreating(modelBuilder);
         }
 
-        private void SetCustomerEntity(ModelBuilder modelBuilder)
+        private void SetRegistrationDetailsModel(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Customer>().ToTable(CustomerTableName);
+            modelBuilder.Entity<RegistrationDetails>().ToTable(RegistrationDetailsTableName);
             
-            modelBuilder.Entity<Customer>().HasKey(e => e.UId);
+            modelBuilder.Entity<RegistrationDetails>().HasKey(e => e.RegistrationUid);
             
-            modelBuilder.Entity<Customer>().Property(e => e.UId).HasMaxLength(64);
-            modelBuilder.Entity<Customer>().Property(e => e.TenantId).HasMaxLength(64);
-            modelBuilder.Entity<Customer>().Property(e => e.FirstName).HasMaxLength(64);
-            modelBuilder.Entity<Customer>().Property(e => e.LastName).HasMaxLength(64);
-            modelBuilder.Entity<Customer>().Property(e => e.Email).HasMaxLength(128);
-            modelBuilder.Entity<Customer>().Property(e => e.Phone).HasMaxLength(64);
-            modelBuilder.Entity<Customer>().Property(e => e.Ip).HasMaxLength(64);
-            modelBuilder.Entity<Customer>().Property(e => e.Country).HasMaxLength(64);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.RegistrationUid).HasMaxLength(64);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.TenantId).HasMaxLength(64);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.FirstName).HasMaxLength(64);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.LastName).HasMaxLength(64);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.Email).HasMaxLength(128);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.Phone).HasMaxLength(64);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.Ip).HasMaxLength(64);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.Country).HasMaxLength(64);
             
-            modelBuilder.Entity<Customer>().HasIndex(e => e.UId).IsUnique();
-            modelBuilder.Entity<Customer>().HasIndex(e => e.TenantId);
-            modelBuilder.Entity<Customer>().HasIndex(e => e.Email);
-            modelBuilder.Entity<Customer>().HasIndex(e => e.Country);
-            modelBuilder.Entity<Customer>().HasIndex(e => e.CreatedDate);
-            modelBuilder.Entity<Customer>().HasIndex(e => e.IsDeposit);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.RegistrationUid).IsUnique();
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.TenantId);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.AffiliateId);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.Email);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.Country);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.CreatedAt);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.ApprovedType);
         }
 
         private void SetAffiliateAccessReadModel(ModelBuilder modelBuilder)
@@ -125,7 +122,6 @@ namespace MarketingBox.Reporting.Service.Postgres
             modelBuilder.Entity<ReportEntity>().HasKey(x => new { x.AffiliateId, x.RegistrationId, x.ReportType });
             modelBuilder.Entity<ReportEntity>().HasIndex(x => x.CreatedAt);
             modelBuilder.Entity<ReportEntity>().HasIndex(x => x.TenantId);
-            //modelBuilder.Entity<ReportEntity>().HasIndex(x => x.re);
         }
     }
 }

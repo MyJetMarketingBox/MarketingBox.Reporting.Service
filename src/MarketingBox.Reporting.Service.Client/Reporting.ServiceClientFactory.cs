@@ -17,6 +17,6 @@ namespace MarketingBox.Reporting.Service.Client
 
         public IDepositService GetDepositService() => CreateGrpcService<IDepositService>();
         
-        public ICustomerReportService GetCustomerReportService() => CreateGrpcService<ICustomerReportService>();
+        public IAffiliateService GetCustomerReportService() => CreateGrpcService<IAffiliateService>();
     }
 }

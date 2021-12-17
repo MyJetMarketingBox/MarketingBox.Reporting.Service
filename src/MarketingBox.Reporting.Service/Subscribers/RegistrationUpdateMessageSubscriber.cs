@@ -8,12 +8,12 @@ using MarketingBox.Affiliate.Service.Grpc;
 using MarketingBox.Affiliate.Service.MyNoSql.Brands;
 using MarketingBox.Registration.Service.Messages.Registrations;
 using MarketingBox.Reporting.Service.Domain.Extensions;
-using MarketingBox.Reporting.Service.Domain.Lead;
 using MarketingBox.Reporting.Service.Domain.Models;
 using MarketingBox.Reporting.Service.Postgres;
 using MarketingBox.Reporting.Service.Postgres.ReadModels.Deposits;
 using MarketingBox.Reporting.Service.Postgres.ReadModels.Reports;
 using Microsoft.EntityFrameworkCore;
+using MarketingBox.Reporting.Service.Domain.Registrations;
 
 namespace MarketingBox.Reporting.Service.Subscribers
 {
@@ -107,8 +107,8 @@ namespace MarketingBox.Reporting.Service.Subscribers
 
             var registration = MapToReadModel(message);
             await using var transaction = context.Database.BeginTransaction();
-            var isDeposit = registration.Status == LeadStatus.Deposited ||
-                            registration.Status == LeadStatus.Approved;
+            var isDeposit = registration.Status == RegistrationStatus.Deposited ||
+                            registration.Status == RegistrationStatus.Approved;
             ReportEntity reportEntity;
 
             try
@@ -171,9 +171,9 @@ namespace MarketingBox.Reporting.Service.Subscribers
                     };
                 }
 
-                var customer = MapCustomer(message, isDeposit);
+                var customer = MapRegistrationDetails(message);
                 
-                await context.Customers.Upsert(customer)
+                await context.RegistrationDetails.Upsert(customer)
                     .UpdateIf(prev => prev.Sequence < customer.Sequence)
                     .RunAsync();
                 
@@ -193,12 +193,12 @@ namespace MarketingBox.Reporting.Service.Subscribers
             _logger.LogInformation("Has been consumed {@context}", message);
         }
 
-        private static Customer MapCustomer(RegistrationUpdateMessage message, bool isDeposit)
+        private static RegistrationDetails MapRegistrationDetails(RegistrationUpdateMessage message)
         {
             return new()
             {
-                UId = message.GeneralInfo.UniqueId,
-                CreatedDate = message.GeneralInfo.CreatedAt.ToUtc(),
+                RegistrationUid = message.GeneralInfo.RegistrationUId,
+                CreatedAt = message.GeneralInfo.CreatedAt.ToUtc(),
                 TenantId = message.TenantId, 
                 FirstName = message.GeneralInfo.FirstName,
                 LastName = message.GeneralInfo.LastName,
@@ -207,12 +207,34 @@ namespace MarketingBox.Reporting.Service.Subscribers
                 Ip = message.GeneralInfo.Ip,
                 Country = message.GeneralInfo.Country,
                 AffiliateId = message.RouteInfo.AffiliateId,
+                AffiliateName = message.RouteInfo.AffiliateName,
                 BrandId = message.RouteInfo.BrandId,
                 CampaignId = message.RouteInfo.CampaignId,
-                IsDeposit = isDeposit,
-                DepositDate = message.RouteInfo.ConversionDate ?? new DateTime(),
+                ConversionDate = message.RouteInfo.ConversionDate,
                 Sequence = message.Sequence,
-                CrmStatus = message.RouteInfo.CrmStatus.MapEnum<Domain.Crm.CrmStatus>()
+                CrmStatus = message.RouteInfo.CrmStatus.MapEnum<Domain.Crm.CrmStatus>(),
+                AffCode = message.AdditionalInfo.AffCode,
+                Funnel = message.AdditionalInfo.Funnel,
+                Sub1 = message.AdditionalInfo.Sub1,
+                Sub2 = message.AdditionalInfo.Sub2, 
+                Sub3 = message.AdditionalInfo.Sub3,
+                Sub4 = message.AdditionalInfo.Sub4,
+                Sub5 = message.AdditionalInfo.Sub5,
+                Sub6 = message.AdditionalInfo.Sub6,
+                Sub7 = message.AdditionalInfo.Sub7,
+                Sub8 = message.AdditionalInfo.Sub8,
+                Sub9 = message.AdditionalInfo.Sub9,
+                Sub10 = message.AdditionalInfo.Sub10,
+                CustomerBrand = message.RouteInfo.CustomerInfo.Brand,
+                CustomerId = message.RouteInfo.CustomerInfo.CustomerId,
+                CustomerLoginUrl = message.RouteInfo.CustomerInfo.LoginUrl,
+                CustomerToken = message.RouteInfo.CustomerInfo.Token,
+                Integration = message.RouteInfo.Integration,
+                IntegrationId = message.RouteInfo.IntegrationId,
+                RegistrationId = message.GeneralInfo.RegistrationId,
+                Status = message.RouteInfo.Status.MapEnum<RegistrationStatus>(),
+                ApprovedType = message.RouteInfo.ApprovedType.MapEnum<RegistrationApprovedType>(),
+                
             };
         }
 
@@ -234,7 +256,7 @@ namespace MarketingBox.Reporting.Service.Subscribers
                 CreatedAt = message.GeneralInfo.CreatedAt.ToUtc(),
                 TenantId = message.TenantId, 
                 Type = message.RouteInfo.ApprovedType.MapEnum<MarketingBox.Reporting.Service.Domain.Deposit.ApprovedType>(),
-                UniqueId = message.GeneralInfo.UniqueId,
+                UniqueId = message.GeneralInfo.RegistrationUId,
                 CrmStatus = message.RouteInfo.CrmStatus.MapEnum<Domain.Crm.CrmStatus>(),
             };
         }
@@ -243,8 +265,8 @@ namespace MarketingBox.Reporting.Service.Subscribers
         {
             return new Postgres.ReadModels.Registrations.Registration()
             {
-                So = message.AdditionalInfo.So,
-                Sub = message.AdditionalInfo.Sub,
+                So = message.AdditionalInfo.Funnel,
+                Sub = message.AdditionalInfo.AffCode,
                 Sub1 = message.AdditionalInfo.Sub1,
                 Sub10 = message.AdditionalInfo.Sub10,
                 Sub2 = message.AdditionalInfo.Sub2,
@@ -273,8 +295,8 @@ namespace MarketingBox.Reporting.Service.Subscribers
                 Sequence = message.Sequence,
                 CrmStatus = message.RouteInfo.CrmStatus.MapEnum<Domain.Crm.CrmStatus>(),
                 TenantId = message.TenantId,
-                Status = message.RouteInfo.Status.MapEnum<MarketingBox.Reporting.Service.Domain.Lead.LeadStatus>(),
-                UniqueId = message.GeneralInfo.UniqueId,
+                Status = message.RouteInfo.Status.MapEnum<RegistrationStatus>(),
+                UniqueId = message.GeneralInfo.RegistrationUId,
                 Country = message.GeneralInfo.Country,
             };
         }

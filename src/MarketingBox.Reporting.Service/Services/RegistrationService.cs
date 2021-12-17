@@ -9,6 +9,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using MarketingBox.Reporting.Service.Domain.Registrations;
 
 namespace MarketingBox.Reporting.Service.Services
 {
@@ -138,7 +139,7 @@ namespace MarketingBox.Reporting.Service.Services
                     IntegrationId = registration.IntegrationId,
                 },
                 TenantId = registration.TenantId,
-                Status = registration.Status.MapEnum<Domain.Models.Lead.LeadStatus>(),
+                Status = registration.Status.MapEnum<RegistrationStatus>(),
                 UniqueId = registration.UniqueId
             };
         }
