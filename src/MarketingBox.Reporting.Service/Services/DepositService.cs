@@ -76,7 +76,8 @@ namespace MarketingBox.Reporting.Service.Services
                     d.""RegisterDate"", 
                     d.""Sequence"", 
                     d.""TenantId"", 
-                    d.""Type"", 
+                    d.""UpdateMode"", 
+                    d.""Status"", 
                     d.""UniqueId""
                     FROM ""reporting-service"".deposits AS d
                     {access}
@@ -104,7 +105,8 @@ namespace MarketingBox.Reporting.Service.Services
                     d.""RegisterDate"", 
                     d.""Sequence"", 
                     d.""TenantId"", 
-                    d.""Type"", 
+                    d.""UpdateMode"", 
+                    d.""Status"", 
                     d.""UniqueId""
                     FROM ""reporting-service"".deposits AS d
                     {access}
