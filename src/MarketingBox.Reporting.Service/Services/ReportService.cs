@@ -131,15 +131,25 @@ namespace MarketingBox.Reporting.Service.Services
         {
             await using var context = new DatabaseContext(_dbContextOptionsBuilder.Options);
 
-            string access = $@" where rep.""TenantId"" = @TenantId and
+            var baseFilter = $@" where rep.""TenantId"" = @TenantId and
                                rep.""CreatedAt"" >= @FromDate and
-                               rep.""CreatedAt"" <= @ToDate;";
-
+                               rep.""CreatedAt"" <= @ToDate";
+            
+            string baseAndAccessFilter;
             if (request.MasterAffiliateId.HasValue)
-                access = $@"INNER JOIN ""reporting-service"".affiliate_access as aa
+            {
+                baseAndAccessFilter = $@"INNER JOIN ""reporting-service"".affiliate_access as aa
                                          ON rep.""AffiliateId"" = aa.""AffiliateId"" and aa.""MasterAffiliateId"" = @MasterAffiliateId"
-                         + access;
-
+                                          + baseFilter + ";";
+            }
+            else
+            {
+                baseAndAccessFilter = baseFilter + ";";
+            }
+            
+            var masterAffiliateFilter = baseFilter + @" and rep.""AffiliateId"" = @MasterAffiliateId 
+                                            and rep.""AffiliateId"" NOT IN (SELECT ""AffiliateId"" FROM reports_total);";
+            
             var searchQuery = $@"
             CREATE TEMP TABLE reports_total (
             ""AffiliateId"" bigint NOT NULL,
@@ -163,7 +173,11 @@ namespace MarketingBox.Reporting.Service.Services
 
             INSERT INTO reports_total
             SELECT rep.* FROM ""reporting-service"".reports as rep
-            {access} 
+            {baseAndAccessFilter} 
+
+            INSERT INTO reports_total
+            SELECT rep.* FROM ""reporting-service"".reports as rep
+            {masterAffiliateFilter}
 
             select date_trunc('day', aggregateRep.""CreatedAt"") as ""CreatedAt"", 
             Sum(aggregateRep.""RegistrationCount"") as ""RegistrationCount"", 
