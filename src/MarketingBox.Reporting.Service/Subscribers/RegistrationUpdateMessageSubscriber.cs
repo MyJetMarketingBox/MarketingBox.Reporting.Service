@@ -233,7 +233,7 @@ namespace MarketingBox.Reporting.Service.Subscribers
                 IntegrationId = message.RouteInfo.IntegrationId,
                 RegistrationId = message.GeneralInfo.RegistrationId,
                 Status = message.RouteInfo.Status.MapEnum<RegistrationStatus>(),
-                UpdateMode = message.RouteInfo.ApprovedType.MapEnum<MarketingBox.Reporting.Service.Domain.Deposit.DepositUpdateMode>(),
+                UpdateMode = message.RouteInfo.UpdateMode.MapEnum<MarketingBox.Reporting.Service.Domain.Deposit.DepositUpdateMode>(),
             };
         }
 
@@ -254,7 +254,7 @@ namespace MarketingBox.Reporting.Service.Subscribers
                 RegisterDate = message.GeneralInfo.CreatedAt.ToUtc(),
                 CreatedAt = message.GeneralInfo.CreatedAt.ToUtc(),
                 TenantId = message.TenantId, 
-                UpdateMode = message.RouteInfo.ApprovedType.MapEnum<MarketingBox.Reporting.Service.Domain.Deposit.DepositUpdateMode>(),
+                UpdateMode = message.RouteInfo.UpdateMode.MapEnum<MarketingBox.Reporting.Service.Domain.Deposit.DepositUpdateMode>(),
                 UniqueId = message.GeneralInfo.RegistrationUId,
                 CrmStatus = message.RouteInfo.CrmStatus.MapEnum<Domain.Crm.CrmStatus>(),
                 Status = message.RouteInfo.Status.MapEnum<RegistrationStatus>(),
