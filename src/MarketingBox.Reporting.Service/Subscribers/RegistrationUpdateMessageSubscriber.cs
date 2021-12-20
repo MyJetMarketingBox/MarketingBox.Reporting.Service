@@ -195,7 +195,7 @@ namespace MarketingBox.Reporting.Service.Subscribers
 
         private static RegistrationDetails MapRegistrationDetails(RegistrationUpdateMessage message)
         {
-            return new()
+            return new RegistrationDetails()
             {
                 RegistrationUid = message.GeneralInfo.RegistrationUId,
                 CreatedAt = message.GeneralInfo.CreatedAt.ToUtc(),
@@ -233,8 +233,7 @@ namespace MarketingBox.Reporting.Service.Subscribers
                 IntegrationId = message.RouteInfo.IntegrationId,
                 RegistrationId = message.GeneralInfo.RegistrationId,
                 Status = message.RouteInfo.Status.MapEnum<RegistrationStatus>(),
-                ApprovedType = message.RouteInfo.ApprovedType.MapEnum<DepositUpdateMode>(),
-                
+                UpdateMode = message.RouteInfo.ApprovedType.MapEnum<MarketingBox.Reporting.Service.Domain.Deposit.DepositUpdateMode>(),
             };
         }
 
@@ -255,9 +254,10 @@ namespace MarketingBox.Reporting.Service.Subscribers
                 RegisterDate = message.GeneralInfo.CreatedAt.ToUtc(),
                 CreatedAt = message.GeneralInfo.CreatedAt.ToUtc(),
                 TenantId = message.TenantId, 
-                Type = message.RouteInfo.ApprovedType.MapEnum<MarketingBox.Reporting.Service.Domain.Deposit.DepositUpdateMode>(),
+                UpdateMode = message.RouteInfo.ApprovedType.MapEnum<MarketingBox.Reporting.Service.Domain.Deposit.DepositUpdateMode>(),
                 UniqueId = message.GeneralInfo.RegistrationUId,
                 CrmStatus = message.RouteInfo.CrmStatus.MapEnum<Domain.Crm.CrmStatus>(),
+                Status = message.RouteInfo.Status.MapEnum<RegistrationStatus>(),
             };
         }
 

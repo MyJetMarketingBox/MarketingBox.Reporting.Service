@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using MarketingBox.Reporting.Service.Domain.Crm;
 using MarketingBox.Reporting.Service.Domain.Deposit;
-using MarketingBox.Reporting.Service.Postgres.ReadModels.AffiliateAccesses;
+using MarketingBox.Reporting.Service.Domain.Registrations;
 
 namespace MarketingBox.Reporting.Service.Postgres.ReadModels.Deposits
 {
@@ -18,12 +17,13 @@ namespace MarketingBox.Reporting.Service.Postgres.ReadModels.Deposits
         public long BrandId { get; set; }
         public long CampaignId { get; set; }
         public long IntegrationId { get; set; }
-        public DepositUpdateMode Type { get; set; }
+        public DepositUpdateMode UpdateMode { get; set; }
         public DateTimeOffset RegisterDate { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public DateTimeOffset? ConversionDate { get; set; }
         public long Sequence { get; set; }
         public CrmStatus CrmStatus { get; set; }
+        public RegistrationStatus Status { get; set; }
 
         //public IList<AffiliateAccess> AffiliateAccesses { get; set; }
     }

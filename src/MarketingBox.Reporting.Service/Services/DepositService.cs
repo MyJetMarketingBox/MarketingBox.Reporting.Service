@@ -172,9 +172,10 @@ namespace MarketingBox.Reporting.Service.Services
                 Email = deposit.Email,
                 RegisterDate = deposit.RegisterDate.UtcDateTime,
                 TenantId = deposit.TenantId,
-                Type = deposit.Type.MapEnum<MarketingBox.Reporting.Service.Domain.Models.Deposit.ApprovedType>(),
+                UpdateMode = deposit.UpdateMode.MapEnum<MarketingBox.Reporting.Service.Domain.Deposit.DepositUpdateMode>(),
                 UniqueId = deposit.UniqueId,
-                RegistrationId = deposit.RegistrationId
+                RegistrationId = deposit.RegistrationId,
+                Status = deposit.Status
             };
         }
     }

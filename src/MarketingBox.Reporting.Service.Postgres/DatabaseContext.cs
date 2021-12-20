@@ -70,7 +70,7 @@ namespace MarketingBox.Reporting.Service.Postgres
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.Email);
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.Country);
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.CreatedAt);
-            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.ApprovedType);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.UpdateMode);
         }
 
         private void SetAffiliateAccessReadModel(ModelBuilder modelBuilder)

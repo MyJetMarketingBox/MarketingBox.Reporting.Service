@@ -1,4 +1,5 @@
 using MarketingBox.Reporting.Service.Domain.Crm;
+using MarketingBox.Reporting.Service.Domain.Deposit;
 using MarketingBox.Reporting.Service.Domain.Registrations;
 using System;
 using System.Runtime.Serialization;
@@ -30,7 +31,7 @@ namespace MarketingBox.Reporting.Service.Domain.Models
         [DataMember(Order = 18)] public string Integration { get; set; }
         [DataMember(Order = 19)] public long IntegrationId { get; set; }
         [DataMember(Order = 20)] public RegistrationStatus Status { get; set; }
-        [DataMember(Order = 21)] public DepositUpdateMode ApprovedType { get; set; }
+        [DataMember(Order = 21)] public DepositUpdateMode UpdateMode { get; set; }
         [DataMember(Order = 22)] public string Funnel { get; set; }
         [DataMember(Order = 23)] public string AffCode { get; set; }
         [DataMember(Order = 24)] public string Sub1 { get; set; }
