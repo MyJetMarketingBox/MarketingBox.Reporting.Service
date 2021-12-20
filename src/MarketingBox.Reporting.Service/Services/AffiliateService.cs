@@ -39,10 +39,10 @@ namespace MarketingBox.Reporting.Service.Services
                 switch (request.Type)
                 {
                     case RegistrationsReportType.Registrations:
-                        query = query.Where(e => e.Status == RegistrationStatus.Registered);
+                        query = query.Where(e => e.Status != RegistrationStatus.Approved);
                         break;
                     case RegistrationsReportType.QFTDepositors:
-                        query = query.Where(e => e.Status == RegistrationStatus.Deposited);
+                        query = query.Where(e => e.Status == RegistrationStatus.Approved);
                         break;
                     case RegistrationsReportType.All:
                         break;
