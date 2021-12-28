@@ -51,7 +51,7 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                 name: "CrmStatus",
                 schema: "reporting-service",
                 table: "customer",
-                type: "text",
+                type: "integer",
                 nullable: true,
                 oldClrType: typeof(int),
                 oldType: "integer");
