@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using MarketingBox.Reporting.Service.Domain.Lead;
-using MarketingBox.Reporting.Service.Postgres.ReadModels.AffiliateAccesses;
+using MarketingBox.Reporting.Service.Domain.Crm;
+using MarketingBox.Reporting.Service.Domain.Registrations;
 
-namespace MarketingBox.Reporting.Service.Postgres.ReadModels.Leads
+namespace MarketingBox.Reporting.Service.Postgres.ReadModels.Registrations
 {
     public class Registration
     {
@@ -19,8 +18,8 @@ namespace MarketingBox.Reporting.Service.Postgres.ReadModels.Leads
         public long BrandId { get; set; }
         public long CampaignId { get; set; }
         public long IntegrationId { get; set; }
-        public LeadStatus Status { get; set; }
-        public LeadCrmStatus CrmStatus{ get; set; }
+        public RegistrationStatus Status { get; set; }
+        public CrmStatus CrmStatus{ get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public long Sequence { get; set; }
         public string So { get; set; }

@@ -8,11 +8,12 @@ using MarketingBox.Affiliate.Service.Grpc;
 using MarketingBox.Affiliate.Service.MyNoSql.Brands;
 using MarketingBox.Registration.Service.Messages.Registrations;
 using MarketingBox.Reporting.Service.Domain.Extensions;
-using MarketingBox.Reporting.Service.Domain.Lead;
+using MarketingBox.Reporting.Service.Domain.Models;
 using MarketingBox.Reporting.Service.Postgres;
 using MarketingBox.Reporting.Service.Postgres.ReadModels.Deposits;
 using MarketingBox.Reporting.Service.Postgres.ReadModels.Reports;
 using Microsoft.EntityFrameworkCore;
+using MarketingBox.Reporting.Service.Domain.Registrations;
 
 namespace MarketingBox.Reporting.Service.Subscribers
 {
@@ -24,7 +25,7 @@ namespace MarketingBox.Reporting.Service.Subscribers
         private readonly IBrandService _brandService;
 
         public RegistrationUpdateMessageSubscriber(
-            ISubscriber<MarketingBox.Registration.Service.Messages.Registrations.RegistrationUpdateMessage> subscriber,
+            ISubscriber<RegistrationUpdateMessage> subscriber,
             ILogger<RegistrationUpdateMessageSubscriber> logger,
             IMyNoSqlServerDataReader<BrandNoSql> campDataReader,
             DbContextOptionsBuilder<DatabaseContext> dbContextOptionsBuilder,
@@ -37,7 +38,7 @@ namespace MarketingBox.Reporting.Service.Subscribers
             subscriber.Subscribe(Consume);
         }
 
-        private async ValueTask Consume(MarketingBox.Registration.Service.Messages.Registrations.RegistrationUpdateMessage message)
+        private async ValueTask Consume(RegistrationUpdateMessage message)
         {
             _logger.LogInformation("Consuming message {@context}", message);
             var brandNoSql = _campDataReader.Get(
@@ -106,8 +107,8 @@ namespace MarketingBox.Reporting.Service.Subscribers
 
             var registration = MapToReadModel(message);
             await using var transaction = context.Database.BeginTransaction();
-            var isDeposit = registration.Status == LeadStatus.Deposited ||
-                            registration.Status == LeadStatus.Approved;
+            var isDeposit = registration.Status == RegistrationStatus.Deposited ||
+                            registration.Status == RegistrationStatus.Approved;
             ReportEntity reportEntity;
 
             try
@@ -170,6 +171,13 @@ namespace MarketingBox.Reporting.Service.Subscribers
                     };
                 }
 
+                var customer = MapRegistrationDetails(message);
+                
+                await context.RegistrationDetails.Upsert(customer)
+                    .UpdateIf(prev => prev.Sequence < customer.Sequence)
+                    .RunAsync();
+                
+                
                 await context.Reports.Upsert(reportEntity).RunAsync();
 
                 await transaction.CommitAsync();
@@ -183,6 +191,50 @@ namespace MarketingBox.Reporting.Service.Subscribers
             }
 
             _logger.LogInformation("Has been consumed {@context}", message);
+        }
+
+        private static RegistrationDetails MapRegistrationDetails(RegistrationUpdateMessage message)
+        {
+            return new RegistrationDetails()
+            {
+                RegistrationUid = message.GeneralInfo.RegistrationUId,
+                CreatedAt = message.GeneralInfo.CreatedAt.ToUtc(),
+                TenantId = message.TenantId, 
+                FirstName = message.GeneralInfo.FirstName,
+                LastName = message.GeneralInfo.LastName,
+                Email = message.GeneralInfo.Email,
+                Phone = message.GeneralInfo.Phone,
+                Ip = message.GeneralInfo.Ip,
+                Country = message.GeneralInfo.Country,
+                AffiliateId = message.RouteInfo.AffiliateId,
+                AffiliateName = message.RouteInfo.AffiliateName,
+                BrandId = message.RouteInfo.BrandId,
+                CampaignId = message.RouteInfo.CampaignId,
+                ConversionDate = message.RouteInfo.ConversionDate,
+                Sequence = message.Sequence,
+                CrmStatus = message.RouteInfo.CrmStatus.MapEnum<Domain.Crm.CrmStatus>(),
+                AffCode = message.AdditionalInfo.AffCode,
+                Funnel = message.AdditionalInfo.Funnel,
+                Sub1 = message.AdditionalInfo.Sub1,
+                Sub2 = message.AdditionalInfo.Sub2, 
+                Sub3 = message.AdditionalInfo.Sub3,
+                Sub4 = message.AdditionalInfo.Sub4,
+                Sub5 = message.AdditionalInfo.Sub5,
+                Sub6 = message.AdditionalInfo.Sub6,
+                Sub7 = message.AdditionalInfo.Sub7,
+                Sub8 = message.AdditionalInfo.Sub8,
+                Sub9 = message.AdditionalInfo.Sub9,
+                Sub10 = message.AdditionalInfo.Sub10,
+                CustomerBrand = message.RouteInfo.CustomerInfo.Brand,
+                CustomerId = message.RouteInfo.CustomerInfo.CustomerId,
+                CustomerLoginUrl = message.RouteInfo.CustomerInfo.LoginUrl,
+                CustomerToken = message.RouteInfo.CustomerInfo.Token,
+                Integration = message.RouteInfo.Integration,
+                IntegrationId = message.RouteInfo.IntegrationId,
+                RegistrationId = message.GeneralInfo.RegistrationId,
+                Status = message.RouteInfo.Status.MapEnum<RegistrationStatus>(),
+                UpdateMode = message.RouteInfo.UpdateMode.MapEnum<MarketingBox.Reporting.Service.Domain.Deposit.DepositUpdateMode>(),
+            };
         }
 
         private static Deposit MapDeposit(RegistrationUpdateMessage message)
@@ -202,18 +254,19 @@ namespace MarketingBox.Reporting.Service.Subscribers
                 RegisterDate = message.GeneralInfo.CreatedAt.ToUtc(),
                 CreatedAt = message.GeneralInfo.CreatedAt.ToUtc(),
                 TenantId = message.TenantId, 
-                Type = message.RouteInfo.ApprovedType.MapEnum<MarketingBox.Reporting.Service.Domain.Deposit.ApprovedType>(),
-                UniqueId = message.GeneralInfo.UniqueId,
-                BrandStatus = message.RouteInfo.CrmCrmStatus,
+                UpdateMode = message.RouteInfo.UpdateMode.MapEnum<MarketingBox.Reporting.Service.Domain.Deposit.DepositUpdateMode>(),
+                UniqueId = message.GeneralInfo.RegistrationUId,
+                CrmStatus = message.RouteInfo.CrmStatus.MapEnum<Domain.Crm.CrmStatus>(),
+                Status = message.RouteInfo.Status.MapEnum<RegistrationStatus>(),
             };
         }
 
-        private static Postgres.ReadModels.Leads.Registration MapToReadModel(RegistrationUpdateMessage message)
+        private static Postgres.ReadModels.Registrations.Registration MapToReadModel(RegistrationUpdateMessage message)
         {
-            return new Postgres.ReadModels.Leads.Registration()
+            return new Postgres.ReadModels.Registrations.Registration()
             {
-                So = message.AdditionalInfo.So,
-                Sub = message.AdditionalInfo.Sub,
+                So = message.AdditionalInfo.Funnel,
+                Sub = message.AdditionalInfo.AffCode,
                 Sub1 = message.AdditionalInfo.Sub1,
                 Sub10 = message.AdditionalInfo.Sub10,
                 Sub2 = message.AdditionalInfo.Sub2,
@@ -240,10 +293,10 @@ namespace MarketingBox.Reporting.Service.Subscribers
                 RegistrationId = message.GeneralInfo.RegistrationId,
                 Phone = message.GeneralInfo.Phone,
                 Sequence = message.Sequence,
-                //CrmStatus = message.RouteInfo.CrmCrmStatus.MapEnum<MarketingBox.Reporting.Service.Domain.Registration.LeadCrmStatus>(),
+                CrmStatus = message.RouteInfo.CrmStatus.MapEnum<Domain.Crm.CrmStatus>(),
                 TenantId = message.TenantId,
-                Status = message.RouteInfo.Status.MapEnum<MarketingBox.Reporting.Service.Domain.Lead.LeadStatus>(),
-                UniqueId = message.GeneralInfo.UniqueId,
+                Status = message.RouteInfo.Status.MapEnum<RegistrationStatus>(),
+                UniqueId = message.GeneralInfo.RegistrationUId,
                 Country = message.GeneralInfo.Country,
             };
         }

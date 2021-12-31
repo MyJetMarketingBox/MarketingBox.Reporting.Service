@@ -3,6 +3,7 @@ using System;
 using MarketingBox.Reporting.Service.Postgres;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MarketingBox.Reporting.Service.Postgres.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20211217091229_SearchAffiliateRegistrations")]
+    partial class SearchAffiliateRegistrations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,6 +39,9 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
 
                     b.Property<string>("AffiliateName")
                         .HasColumnType("text");
+
+                    b.Property<int>("ApprovedType")
+                        .HasColumnType("integer");
 
                     b.Property<long>("BrandId")
                         .HasColumnType("bigint");
@@ -141,12 +146,11 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
-                    b.Property<int>("UpdateMode")
-                        .HasColumnType("integer");
-
                     b.HasKey("RegistrationUid");
 
                     b.HasIndex("AffiliateId");
+
+                    b.HasIndex("ApprovedType");
 
                     b.HasIndex("Country");
 
@@ -158,8 +162,6 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                         .IsUnique();
 
                     b.HasIndex("TenantId");
-
-                    b.HasIndex("UpdateMode");
 
                     b.ToTable("registrations_details", "reporting-service");
                 });
@@ -226,17 +228,14 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                     b.Property<long>("Sequence")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
                     b.Property<string>("TenantId")
                         .HasColumnType("text");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
                     b.Property<string>("UniqueId")
                         .HasColumnType("text");
-
-                    b.Property<int>("UpdateMode")
-                        .HasColumnType("integer");
 
                     b.HasKey("RegistrationId");
 

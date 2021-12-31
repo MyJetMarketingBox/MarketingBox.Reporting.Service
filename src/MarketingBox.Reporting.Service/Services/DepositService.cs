@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Dapper;
 using MarketingBox.Reporting.Service.Domain.Extensions;
 using Deposit = MarketingBox.Reporting.Service.Postgres.ReadModels.Deposits.Deposit;
+using MarketingBox.Reporting.Service.Domain.Crm;
 
 namespace MarketingBox.Reporting.Service.Services
 {
@@ -33,6 +34,7 @@ namespace MarketingBox.Reporting.Service.Services
             var sorting = request.Asc ? "ASC" : "DESC";
             var access = "";
             var where = "";
+            var tenantWhere = "";
 
             if (request.AffiliateId.HasValue)
             {
@@ -50,30 +52,70 @@ namespace MarketingBox.Reporting.Service.Services
                 where += $@" and d.""RegistrationId"" = @RegistrationId ";
             }
 
-            var searchQuery = $@"
-            SELECT 
-            d.""RegistrationId"", 
-            d.""AffiliateId"", 
-            d.""BrandId"", 
-            d.""BrandStatus"", 
-            d.""CampaignId"", 
-            d.""ConversionDate"", 
-            d.""Country"", 
-            d.""CreatedAt"", 
-            d.""CustomerId"", 
-            d.""Email"", 
-            d.""IntegrationId"", 
-            d.""RegisterDate"", 
-            d.""Sequence"", 
-            d.""TenantId"", 
-            d.""Type"", 
-            d.""UniqueId""
-            FROM ""reporting-service"".deposits AS d
-            {access}
-            WHERE d.""TenantId"" = @TenantId and d.""RegistrationId"" > @FromId
-            {where}
-            ORDER BY d.""RegistrationId"" {sorting}
-            LIMIT @Limit";
+            if (!string.IsNullOrWhiteSpace(request.TenantId))
+            {
+                tenantWhere = $@" and d.""TenantId"" = @TenantId ";
+            }
+
+            var searchQuery = string.Empty;
+            if (request.Asc)
+            {
+                searchQuery = $@"
+                    SELECT 
+                    d.""RegistrationId"", 
+                    d.""AffiliateId"", 
+                    d.""BrandId"", 
+                    d.""CrmStatus"", 
+                    d.""CampaignId"", 
+                    d.""ConversionDate"", 
+                    d.""Country"", 
+                    d.""CreatedAt"", 
+                    d.""CustomerId"", 
+                    d.""Email"", 
+                    d.""IntegrationId"", 
+                    d.""RegisterDate"", 
+                    d.""Sequence"", 
+                    d.""TenantId"", 
+                    d.""UpdateMode"", 
+                    d.""Status"", 
+                    d.""UniqueId""
+                    FROM ""reporting-service"".deposits AS d
+                    {access}
+                    WHERE d.""RegistrationId"" > @FromId
+                    {tenantWhere}
+                    {where}
+                    ORDER BY d.""RegistrationId"" {sorting}
+                    LIMIT @Limit";
+            }
+            else
+            {
+                searchQuery = $@"
+                    SELECT 
+                    d.""RegistrationId"", 
+                    d.""AffiliateId"", 
+                    d.""BrandId"", 
+                    d.""CrmStatus"", 
+                    d.""CampaignId"", 
+                    d.""ConversionDate"", 
+                    d.""Country"", 
+                    d.""CreatedAt"", 
+                    d.""CustomerId"", 
+                    d.""Email"", 
+                    d.""IntegrationId"", 
+                    d.""RegisterDate"", 
+                    d.""Sequence"", 
+                    d.""TenantId"", 
+                    d.""UpdateMode"", 
+                    d.""Status"", 
+                    d.""UniqueId""
+                    FROM ""reporting-service"".deposits AS d
+                    {access}
+                    WHERE d.""RegistrationId"" < @FromId
+                    {tenantWhere}
+                    {where}
+                    ORDER BY d.""RegistrationId"" {sorting}
+                    LIMIT @Limit";
+            }
 
             var limit = request.Take <= 0 ? 1000 : request.Take;
 
@@ -83,7 +125,7 @@ namespace MarketingBox.Reporting.Service.Services
                     .QueryAsync<Deposit>(searchQuery, new
                     {
                         MasterAffiliateId = request.MasterAffiliateId ?? 0,
-                        TenantId = request.TenantId,
+                        TenantId = request.TenantId ?? string.Empty,
                         FromId = request.Cursor ?? 0,
                         Limit = limit,
                         AffiliateId = request.AffiliateId ?? 0,
@@ -114,7 +156,7 @@ namespace MarketingBox.Reporting.Service.Services
             }
         }
 
-        private MarketingBox.Reporting.Service.Grpc.Models.Deposits.Deposit MapToGrpcInner(Postgres.ReadModels.Deposits.Deposit deposit, int arg2)
+        private static MarketingBox.Reporting.Service.Grpc.Models.Deposits.Deposit MapToGrpcInner(Deposit deposit, int arg2)
         {
             return new MarketingBox.Reporting.Service.Grpc.Models.Deposits.Deposit()
             {
@@ -123,7 +165,7 @@ namespace MarketingBox.Reporting.Service.Services
                 AffiliateId = deposit.AffiliateId,
                 BoxId = deposit.CampaignId,
                 BrandId = deposit.IntegrationId,
-                BrandStatus = deposit.BrandStatus,
+                CrmStatus = deposit.CrmStatus,
                 CampaignId = deposit.BrandId,
                 ConversionDate = deposit.ConversionDate?.UtcDateTime,
                 Country = deposit.Country,
@@ -132,8 +174,10 @@ namespace MarketingBox.Reporting.Service.Services
                 Email = deposit.Email,
                 RegisterDate = deposit.RegisterDate.UtcDateTime,
                 TenantId = deposit.TenantId,
-                Type = deposit.Type.MapEnum<MarketingBox.Reporting.Service.Domain.Models.Deposit.ApprovedType>(),
+                UpdateMode = deposit.UpdateMode.MapEnum<MarketingBox.Reporting.Service.Domain.Deposit.DepositUpdateMode>(),
                 UniqueId = deposit.UniqueId,
+                RegistrationId = deposit.RegistrationId,
+                Status = deposit.Status
             };
         }
     }

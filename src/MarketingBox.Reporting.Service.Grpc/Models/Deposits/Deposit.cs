@@ -1,6 +1,8 @@
 ﻿using System.Runtime.Serialization;
-using MarketingBox.Reporting.Service.Domain.Models.Deposit;
 using System;
+using MarketingBox.Reporting.Service.Domain.Crm;
+using MarketingBox.Reporting.Service.Domain.Deposit;
+using MarketingBox.Reporting.Service.Domain.Registrations;
 
 namespace MarketingBox.Reporting.Service.Grpc.Models.Deposits
 {
@@ -28,7 +30,7 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Deposits
         [DataMember(Order = 10)]
         public long BrandId { get; set; }
         [DataMember(Order = 11)]
-        public ApprovedType Type { get; set; }
+        public DepositUpdateMode UpdateMode { get; set; }
         [DataMember(Order = 12)]
         public DateTime RegisterDate { get; set; }
         [DataMember(Order = 13)]
@@ -38,6 +40,10 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Deposits
         [DataMember(Order = 15)]
         public long Sequence { get; set; }
         [DataMember(Order = 16)]
-        public string BrandStatus { get; set; }
+        public CrmStatus CrmStatus { get; set; }
+        [DataMember(Order = 17)]
+        public long RegistrationId { get; set; }
+        [DataMember(Order = 18)]
+        public RegistrationStatus Status { get; set; }
     }
 }
