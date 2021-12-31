@@ -138,6 +138,7 @@ namespace MarketingBox.Reporting.Service.Services
                     CampaignId = registration.CampaignId,
                     IntegrationId = registration.IntegrationId,
                 },
+                CrmStatus = registration.CrmStatus,
                 TenantId = registration.TenantId,
                 Status = registration.Status.MapEnum<RegistrationStatus>(),
                 UniqueId = registration.UniqueId
