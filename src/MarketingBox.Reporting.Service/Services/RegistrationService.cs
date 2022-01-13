@@ -2,7 +2,6 @@
 using MarketingBox.Reporting.Service.Grpc;
 using MarketingBox.Reporting.Service.Grpc.Models.Common;
 using MarketingBox.Reporting.Service.Grpc.Models.Leads;
-using MarketingBox.Reporting.Service.Grpc.Models.Leads.Requests;
 using MarketingBox.Reporting.Service.Postgres;
 using Microsoft.Extensions.Logging;
 using System;
@@ -10,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using MarketingBox.Reporting.Service.Domain.Registrations;
+using MarketingBox.Reporting.Service.Grpc.Models.Registrations.Requests;
 
 namespace MarketingBox.Reporting.Service.Services
 {
@@ -32,45 +32,52 @@ namespace MarketingBox.Reporting.Service.Services
                 _logger.LogInformation(
                     $"CustomerReportService.GetCustomersReport receive request : {JsonConvert.SerializeObject(request)}");
 
-                if (!request.MasterAffiliateId.HasValue)
-                {
-                    return new RegistrationSearchResponse()
-                    {
-                        Error = new Error()
-                        {
-                            Message = "Cannot get registrations without master affiliate id.",
-                            Type = ErrorType.Unknown
-                        }
-                    };
-                }
+                //if (!request.MasterAffiliateId.HasValue)
+                //{
+                //    return new RegistrationSearchResponse()
+                //    {
+                //        Error = new Error()
+                //        {
+                //            Message = "Cannot get registrations without master affiliate id.",
+                //            Type = ErrorType.Unknown
+                //        }
+                //    };
+                //}
                 
                 await using var ctx = _databaseContextFactory.Create();
+
+                IQueryable<Postgres.ReadModels.Registrations.Registration> query = ctx.Registrations;
+
+                if (!string.IsNullOrWhiteSpace(request.TenantId))
+                    query = query.Where(e => e.TenantId == request.TenantId);
+
+                if (request.AffiliateId.HasValue)
+                    query = query.Where(e => e.AffiliateId == request.AffiliateId);
                 
-                var query = ctx.Registrations
-                    .Where(e => e.TenantId == request.TenantId);
+                if (request.MasterAffiliateId.HasValue)
+                {
+                    var affiliateAccesses = ctx.AffiliateAccesses
+                        .Where(e => e.MasterAffiliateId == request.MasterAffiliateId)
+                        .ToList();
+
+                    if (affiliateAccesses.Any()) 
+                    { 
+                        query = query.Where(e => e.AffiliateId == request.MasterAffiliateId
+                                                 || affiliateAccesses.Select(x => x.AffiliateId)
+                                                     .Contains(e.AffiliateId));
+                    }
+                    else
+                    {
+                        query = query.Where(e => e.AffiliateId == request.MasterAffiliateId);
+                    }
+                }
+                
                 query = request.Asc 
                     ? query.OrderBy(e => e.RegistrationId) 
                     : query.OrderByDescending(e => e.RegistrationId);
-                var affiliateAccesses = ctx.AffiliateAccesses
-                    .Where(e => e.MasterAffiliateId == request.MasterAffiliateId)
-                    .ToList();
-
-                if (affiliateAccesses.Any()) 
-                { 
-                    query = query.Where(e => e.AffiliateId == request.MasterAffiliateId
-                                       || affiliateAccesses.Select(x => x.AffiliateId)
-                                           .Contains(e.AffiliateId));
-                }
-                else
-                {
-                    query = query.Where(e => e.AffiliateId == request.MasterAffiliateId);
-                }
-                if (request.AffiliateId.HasValue)
-                {
-                    query = query.Where(e => e.AffiliateId == request.AffiliateId);
-                }
 
                 query = query.Take(request.Take <= 0 ? 1000 : request.Take);
+                query = query.Where(e => e.RegistrationId < request.Cursor);
                 
                 var response = query
                     .ToList()
@@ -85,7 +92,6 @@ namespace MarketingBox.Reporting.Service.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error happened {@context}", request);
-
                 return new RegistrationSearchResponse()
                 {
                     Error = new Error()
