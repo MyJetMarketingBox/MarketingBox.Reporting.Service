@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace MarketingBox.Reporting.Service.Grpc.Models.Leads.Requests
+namespace MarketingBox.Reporting.Service.Grpc.Models.Registrations.Requests
 {
     [DataContract]
     public class RegistrationSearchRequest

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using MarketingBox.Reporting.Service.Client;
 using MarketingBox.Reporting.Service.Grpc.Models.Deposits.Requests;
-using MarketingBox.Reporting.Service.Grpc.Models.Leads.Requests;
+using MarketingBox.Reporting.Service.Grpc.Models.Registrations.Requests;
 using MarketingBox.Reporting.Service.Grpc.Models.Reports.Requests;
 using ProtoBuf.Grpc.Client;
 
