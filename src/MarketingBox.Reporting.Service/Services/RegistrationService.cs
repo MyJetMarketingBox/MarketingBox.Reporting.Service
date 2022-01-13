@@ -72,12 +72,13 @@ namespace MarketingBox.Reporting.Service.Services
                     }
                 }
                 
+                query = query.Where(e => e.RegistrationId < request.Cursor);
+                
                 query = request.Asc 
                     ? query.OrderBy(e => e.RegistrationId) 
                     : query.OrderByDescending(e => e.RegistrationId);
 
                 query = query.Take(request.Take <= 0 ? 1000 : request.Take);
-                query = query.Where(e => e.RegistrationId < request.Cursor);
                 
                 var response = query
                     .ToList()
