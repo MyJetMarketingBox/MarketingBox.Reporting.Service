@@ -24,11 +24,11 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Deposits
         [DataMember(Order = 7)]
         public long AffiliateId { get; set; }
         [DataMember(Order = 8)]
-        public long CampaignId { get; set; }
-        [DataMember(Order = 9)]
-        public long BoxId { get; set; }
-        [DataMember(Order = 10)]
         public long BrandId { get; set; }
+        [DataMember(Order = 9)]
+        public long CampaignId { get; set; }
+        [DataMember(Order = 10)]
+        public long IntegrationId { get; set; }
         [DataMember(Order = 11)]
         public DepositUpdateMode UpdateMode { get; set; }
         [DataMember(Order = 12)]

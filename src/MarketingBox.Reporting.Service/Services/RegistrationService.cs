@@ -50,7 +50,7 @@ namespace MarketingBox.Reporting.Service.Services
 
                 if (!string.IsNullOrWhiteSpace(request.TenantId))
                     query = query.Where(e => e.TenantId == request.TenantId);
-
+    
                 if (request.AffiliateId.HasValue)
                     query = query.Where(e => e.AffiliateId == request.AffiliateId);
                 
@@ -59,7 +59,7 @@ namespace MarketingBox.Reporting.Service.Services
                     var affiliateAccesses = ctx.AffiliateAccesses
                         .Where(e => e.MasterAffiliateId == request.MasterAffiliateId)
                         .ToList();
-
+    
                     if (affiliateAccesses.Any()) 
                     { 
                         query = query.Where(e => e.AffiliateId == request.MasterAffiliateId
@@ -71,13 +71,14 @@ namespace MarketingBox.Reporting.Service.Services
                         query = query.Where(e => e.AffiliateId == request.MasterAffiliateId);
                     }
                 }
+                if (request.Cursor.HasValue)
+                    query = query.Where(e => e.RegistrationId < request.Cursor);
                 
                 query = request.Asc 
                     ? query.OrderBy(e => e.RegistrationId) 
                     : query.OrderByDescending(e => e.RegistrationId);
-
+    
                 query = query.Take(request.Take <= 0 ? 1000 : request.Take);
-                query = query.Where(e => e.RegistrationId < request.Cursor);
                 
                 var response = query
                     .ToList()
