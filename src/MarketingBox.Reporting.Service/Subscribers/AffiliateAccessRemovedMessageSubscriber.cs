@@ -35,7 +35,7 @@ namespace MarketingBox.Reporting.Service.Subscribers
                 var affectedRowsCount = await context.AffiliateAccesses
                     .Where(x => x.MasterAffiliateId == message.MasterAffiliateId &&
                                 x.AffiliateId == message.AffiliateId)
-                    .DeleteAsync();
+                    .DeleteFromQueryAsync();
 
                 if (affectedRowsCount != 1)
                 {
