@@ -5,6 +5,7 @@ using MarketingBox.Affiliate.Service.Grpc;
 using MarketingBox.Affiliate.Service.MyNoSql.Brands;
 using MarketingBox.Registration.Service.Messages.Registrations;
 using MarketingBox.Reporting.Service.Domain.Extensions;
+using MarketingBox.Reporting.Service.Repositories;
 using Microsoft.Extensions.Logging;
 using MyNoSqlServer.Abstractions;
 using RegistrationDetails = MarketingBox.Reporting.Service.Domain.Models.RegistrationDetails;
@@ -15,22 +16,26 @@ namespace MarketingBox.Reporting.Service.Engines
     {
         private readonly IMyNoSqlServerDataReader<BrandNoSql> _campDataReader;
         private readonly IBrandService _brandService;
+        private readonly IRegistrationDetailsRepository _repository;
         private ILogger<ReportingEngine> _logger;
 
         public ReportingEngine(
             IMyNoSqlServerDataReader<BrandNoSql> campDataReader,
             IBrandService brandService,
+            IRegistrationDetailsRepository repository,
             ILogger<ReportingEngine> logger)
         {
             _campDataReader = campDataReader;
             _brandService = brandService;
+            _repository = repository;
             _logger = logger;
         }
 
 
         public async Task ProcessMessageAsync(RegistrationUpdateMessage message)
         {
-            await Task.Delay(0);
+            var customer = MapRegistrationDetails(message);
+            await _repository.SaveAsync(MapRegistrationDetails(message));
         }
 
         private async Task CalculateAmounts(RegistrationUpdateMessage message)
