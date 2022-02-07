@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using MarketingBox.Affiliate.Service.Client;
 using MarketingBox.Affiliate.Service.MyNoSql.Brands;
+using MarketingBox.Reporting.Service.Engines;
 using MarketingBox.Reporting.Service.Postgres;
 using MarketingBox.Reporting.Service.Subscribers;
 using MyJetWallet.Sdk.NoSql;
@@ -54,16 +55,23 @@ namespace MarketingBox.Reporting.Service.Modules
             #endregion
 
             builder.RegisterType<RegistrationUpdateMessageSubscriber>()
+                .As<IStartable>()
                 .SingleInstance()
                 .AutoActivate();
 
             builder.RegisterType<AffiliateAccessUpdateMessageSubscriber>()
+                .As<IStartable>()
                 .SingleInstance()
                 .AutoActivate();
 
             builder.RegisterType<AffiliateAccessRemovedMessageSubscriber>()
+                .As<IStartable>()
                 .SingleInstance()
                 .AutoActivate();
+
+            builder.RegisterType<ReportingEngine>()
+                .As<IReportingEngine>()
+                .SingleInstance();
         }
     }
 }

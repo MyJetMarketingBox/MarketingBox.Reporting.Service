@@ -2,12 +2,13 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
+using Autofac;
 using MarketingBox.Reporting.Service.Postgres;
 using Microsoft.EntityFrameworkCore;
 
 namespace MarketingBox.Reporting.Service.Subscribers
 {
-    public class AffiliateAccessUpdateMessageSubscriber
+    public class AffiliateAccessUpdateMessageSubscriber : IStartable
     {
         private readonly ILogger<AffiliateAccessUpdateMessageSubscriber> _logger;
         private readonly DbContextOptionsBuilder<DatabaseContext> _dbContextOptionsBuilder;
@@ -60,6 +61,10 @@ namespace MarketingBox.Reporting.Service.Subscribers
                 MasterAffiliateId = message.MasterAffiliateId,
                 Id = message.Id
             };
+        }
+
+        public void Start()
+        {
         }
     }
 }
