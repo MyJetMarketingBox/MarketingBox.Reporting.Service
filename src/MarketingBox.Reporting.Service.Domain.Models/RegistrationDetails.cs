@@ -7,7 +7,6 @@ namespace MarketingBox.Reporting.Service.Domain.Models
     public class RegistrationDetails
     {
         [DataMember(Order = 1)] public string RegistrationUid { get; set; }
-        //[DataMember(Order = 2)] public DateTimeOffset CreatedAt { get; set; }
         [DataMember(Order = 2)] public DateTime CreatedAt { get; set; }
         [DataMember(Order = 3)] public string TenantId { get; set; }
         [DataMember(Order = 4)] public string FirstName { get; set; }
@@ -20,8 +19,8 @@ namespace MarketingBox.Reporting.Service.Domain.Models
         [DataMember(Order = 11)] public long BrandId { get; set; }
         [DataMember(Order = 12)] public long CampaignId { get; set; }
         [DataMember(Order = 13)] public string AffiliateName { get; set; }
-        //[DataMember(Order = 14)] public DateTimeOffset? ConversionDate { get; set; }
         [DataMember(Order = 14)] public DateTime? ConversionDate { get; set; }
+        [DataMember(Order = 14)] public DateTime? DepositDate { get; set; }
         [DataMember(Order = 16)] public CrmStatus CrmStatus { get; set; }
         [DataMember(Order = 17)] public long RegistrationId { get; set; }
         [DataMember(Order = 18)] public string Integration { get; set; }

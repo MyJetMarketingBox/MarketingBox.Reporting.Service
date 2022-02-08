@@ -127,6 +127,7 @@ namespace MarketingBox.Reporting.Service.Engines
                 BrandId = message.RouteInfo.BrandId,
                 CampaignId = message.RouteInfo.CampaignId,
                 ConversionDate = message.RouteInfo.ConversionDate,
+                DepositDate = message.RouteInfo.DepositDate,
                 CrmStatus = message.RouteInfo.CrmStatus.MapEnum<CrmStatus>(),
                 AffCode = message.AdditionalInfo.AffCode,
                 Funnel = message.AdditionalInfo.Funnel,
