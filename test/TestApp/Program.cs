@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using MarketingBox.Reporting.Service.Client;
-using MarketingBox.Reporting.Service.Grpc.Models.Deposits.Requests;
 using MarketingBox.Reporting.Service.Grpc.Models.Registrations.Requests;
 using MarketingBox.Reporting.Service.Grpc.Models.Reports.Requests;
 using ProtoBuf.Grpc.Client;
@@ -21,18 +20,8 @@ namespace TestApp
             var factory = new ReportingServiceClientFactory("http://localhost:12350");
             var reportService = factory.GetReportService();
             var leadService = factory.GetRegistrationService();
-            var depositService = factory.GetDepositService();
 
             var searchLead = await leadService.SearchAsync(new RegistrationSearchRequest()
-            {
-                TenantId = "default-tenant-id",
-                Asc = true,
-                Cursor = null,
-                Take = 50,
-                MasterAffiliateId = 9
-            });
-
-            var searchDeposit = await depositService.SearchAsync(new DepositSearchRequest()
             {
                 TenantId = "default-tenant-id",
                 Asc = true,
