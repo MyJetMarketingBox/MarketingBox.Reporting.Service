@@ -26,7 +26,7 @@ namespace MarketingBox.Reporting.Service.Services
             {
                 Error = new Error()
                 {
-                    Message = message,
+                    Message = "IDepositService is deprecated. Use IRegistrationService.",
                     Type = ErrorType.Unknown
                 }
             };
