@@ -6,7 +6,7 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Reports
     public class Report
     {
         [DataMember(Order = 1)]
-        public long AffiliateId { get; set; }
+        public string Name { get; set; }
 
         [DataMember(Order = 2)]
         public long RegistrationCount { get; set; }

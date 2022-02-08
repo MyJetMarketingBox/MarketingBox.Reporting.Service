@@ -43,13 +43,13 @@ namespace TestApp
 
             var search = await reportService.SearchAsync(new ReportSearchRequest()
             {
-                TenantId = "default-tenant-id",
+                //TenantId = "default-tenant-id",
                 ToDate = DateTime.UtcNow,
                 Asc = true,
                 Cursor = null,
                 FromDate = DateTime.Parse("2021-10-07 14:03:10"),
                 Take = 1000,
-                MasterAffiliateId = 9
+                //MasterAffiliateId = 9
             });
 
             var searchByDay = await reportService.SearchByDayAsync(new ReportByDaySearchRequest()

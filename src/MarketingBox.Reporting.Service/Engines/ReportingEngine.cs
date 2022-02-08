@@ -35,13 +35,12 @@ namespace MarketingBox.Reporting.Service.Engines
 
         public async Task ProcessMessageAsync(RegistrationUpdateMessage message)
         {
-            var customer = MapRegistrationDetails(message);
             await _repository.SaveAsync(MapRegistrationDetails(message));
         }
 
         private async Task CalculateAmounts(RegistrationUpdateMessage message)
         {
-                        var brandNoSql = _campDataReader.Get(
+            var brandNoSql = _campDataReader.Get(
                 BrandNoSql.GeneratePartitionKey(message.TenantId),
                 BrandNoSql.GenerateRowKey(message.RouteInfo.BrandId));
 
@@ -49,7 +48,7 @@ namespace MarketingBox.Reporting.Service.Engines
             decimal leadRevenueAmount;
             if (brandNoSql == null)
             {
-                var brandResponse = await _brandService.GetAsync(new () { BrandId = message.RouteInfo.BrandId });
+                var brandResponse = await _brandService.GetAsync(new() {BrandId = message.RouteInfo.BrandId});
 
                 if (brandResponse?.Brand == null)
                 {
@@ -58,7 +57,9 @@ namespace MarketingBox.Reporting.Service.Engines
                 }
 
                 leadPayoutAmount = brandResponse.Brand.Payout.Plan == Plan.CPL ? brandResponse.Brand.Payout.Amount : 0;
-                leadRevenueAmount = brandResponse.Brand.Revenue.Plan == Plan.CPL ? brandResponse.Brand.Revenue.Amount : 0;
+                leadRevenueAmount = brandResponse.Brand.Revenue.Plan == Plan.CPL
+                    ? brandResponse.Brand.Revenue.Amount
+                    : 0;
             }
             else
             {
@@ -76,7 +77,7 @@ namespace MarketingBox.Reporting.Service.Engines
             }
             else
             {
-                var brandResponse = await _brandService.GetAsync(new () { BrandId = message.RouteInfo.CampaignId });
+                var brandResponse = await _brandService.GetAsync(new() {BrandId = message.RouteInfo.CampaignId});
 
                 //Error
                 if (brandResponse?.Brand == null)
@@ -99,11 +100,14 @@ namespace MarketingBox.Reporting.Service.Engines
                     return;
                 }
 
-                depositPayoutAmount = brandResponse.Brand.Payout.Plan == Plan.CPA ? brandResponse.Brand.Payout.Amount : 0;
-                depositRevenueAmount = brandResponse.Brand.Revenue.Plan == Plan.CPA ? brandResponse.Brand.Revenue.Amount : 0;
+                depositPayoutAmount =
+                    brandResponse.Brand.Payout.Plan == Plan.CPA ? brandResponse.Brand.Payout.Amount : 0;
+                depositRevenueAmount = brandResponse.Brand.Revenue.Plan == Plan.CPA
+                    ? brandResponse.Brand.Revenue.Amount
+                    : 0;
             }
         }
-        
+
 
         private static RegistrationDetails MapRegistrationDetails(RegistrationUpdateMessage message)
         {

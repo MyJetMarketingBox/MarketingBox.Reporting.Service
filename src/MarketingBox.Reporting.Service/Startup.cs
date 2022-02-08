@@ -32,6 +32,8 @@ namespace MarketingBox.Reporting.Service
                 o => new DatabaseContext(o));
 
             services.BindTelemetry("ReportingService", "MB-", Program.Settings.JaegerUrl);
+
+            services.AddAutoMapper(typeof(Startup));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
