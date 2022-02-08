@@ -1,6 +1,3 @@
-using MarketingBox.Reporting.Service.Domain.Crm;
-using MarketingBox.Reporting.Service.Domain.Deposit;
-using MarketingBox.Reporting.Service.Domain.Registrations;
 using System;
 using System.Runtime.Serialization;
 
@@ -25,7 +22,6 @@ namespace MarketingBox.Reporting.Service.Domain.Models
         [DataMember(Order = 13)] public string AffiliateName { get; set; }
         //[DataMember(Order = 14)] public DateTimeOffset? ConversionDate { get; set; }
         [DataMember(Order = 14)] public DateTime? ConversionDate { get; set; }
-        [DataMember(Order = 15)] public long Sequence { get; set; }
         [DataMember(Order = 16)] public CrmStatus CrmStatus { get; set; }
         [DataMember(Order = 17)] public long RegistrationId { get; set; }
         [DataMember(Order = 18)] public string Integration { get; set; }

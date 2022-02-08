@@ -4,7 +4,8 @@ using MarketingBox.Affiliate.Service.Domain.Models.Brands;
 using MarketingBox.Affiliate.Service.Grpc;
 using MarketingBox.Affiliate.Service.MyNoSql.Brands;
 using MarketingBox.Registration.Service.Messages.Registrations;
-using MarketingBox.Reporting.Service.Domain.Extensions;
+using MarketingBox.Reporting.Service.Domain;
+using MarketingBox.Reporting.Service.Domain.Models;
 using MarketingBox.Reporting.Service.Repositories;
 using Microsoft.Extensions.Logging;
 using MyNoSqlServer.Abstractions;
@@ -122,8 +123,7 @@ namespace MarketingBox.Reporting.Service.Engines
                 BrandId = message.RouteInfo.BrandId,
                 CampaignId = message.RouteInfo.CampaignId,
                 ConversionDate = message.RouteInfo.ConversionDate,
-                Sequence = message.Sequence,
-                CrmStatus = message.RouteInfo.CrmStatus.MapEnum<Domain.Crm.CrmStatus>(),
+                CrmStatus = message.RouteInfo.CrmStatus.MapEnum<CrmStatus>(),
                 AffCode = message.AdditionalInfo.AffCode,
                 Funnel = message.AdditionalInfo.Funnel,
                 Sub1 = message.AdditionalInfo.Sub1,
@@ -143,9 +143,9 @@ namespace MarketingBox.Reporting.Service.Engines
                 Integration = message.RouteInfo.Integration,
                 IntegrationId = message.RouteInfo.IntegrationId,
                 RegistrationId = message.GeneralInfo.RegistrationId,
-                Status = message.RouteInfo.Status.MapEnum<Domain.Registrations.RegistrationStatus>(),
+                Status = message.RouteInfo.Status.MapEnum<RegistrationStatus>(),
                 UpdateMode = message.RouteInfo.UpdateMode
-                    .MapEnum<Domain.Deposit.DepositUpdateMode>(),
+                    .MapEnum<DepositUpdateMode>(),
             };
         }
     }

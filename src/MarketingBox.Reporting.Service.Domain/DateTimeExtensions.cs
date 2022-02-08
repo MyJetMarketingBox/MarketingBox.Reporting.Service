@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MarketingBox.Reporting.Service.Domain.Extensions
+namespace MarketingBox.Reporting.Service.Domain
 {
     public static class DateTimeExtensions
     {

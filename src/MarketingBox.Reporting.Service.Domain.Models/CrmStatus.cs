@@ -1,4 +1,4 @@
-﻿namespace MarketingBox.Reporting.Service.Domain.Crm
+﻿namespace MarketingBox.Reporting.Service.Domain.Models
 {
     public enum CrmStatus
     {

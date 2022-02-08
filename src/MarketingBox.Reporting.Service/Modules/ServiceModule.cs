@@ -19,41 +19,6 @@ namespace MarketingBox.Reporting.Service.Modules
                 .RegisterType<DatabaseContextFactory>()
                 .AsSelf()
                 .SingleInstance();
-            
-            builder.RegisterAffiliateServiceClient(Program.Settings.AffiliateServiceUrl);
-
-            var noSqlClient = builder.CreateNoSqlClient(Program.ReloadedSettings(e => e.MyNoSqlReaderHostPort));
-
-            var serviceBusClient = builder
-                .RegisterMyServiceBusTcpClient(
-                    Program.ReloadedSettings(e => e.MarketingBoxServiceBusHostPort), 
-                    Program.LogFactory);
-
-            builder.RegisterMyNoSqlReader<BrandNoSql>(noSqlClient, BrandNoSql.TableName);
-
-            #region MarketingBox.Registration.Service.Messages.Registrations.RegistrationUpdateMessage
-
-            // subscriber (ISubscriber<MarketingBox.Registration.Service.Messages.Registrations.RegistrationUpdateMessage>)
-            var marketingboxReportingService = "marketingbox-reporting-service";
-            builder.RegisterMyServiceBusSubscriberSingle<MarketingBox.Registration.Service.Messages.Registrations.RegistrationUpdateMessage>(
-                serviceBusClient,
-                MarketingBox.Registration.Service.Messages.Topics.RegistrationUpdateTopic,
-                marketingboxReportingService,
-                TopicQueueType.Permanent);
-
-            builder.RegisterMyServiceBusSubscriberSingle<MarketingBox.Affiliate.Service.Messages.AffiliateAccesses.AffiliateAccessUpdated>(
-                serviceBusClient,
-                MarketingBox.Affiliate.Service.Messages.Topics.AffiliateAccessUpdatedTopic,
-                marketingboxReportingService,
-                TopicQueueType.Permanent);
-
-            builder.RegisterMyServiceBusSubscriberSingle<MarketingBox.Affiliate.Service.Messages.AffiliateAccesses.AffiliateAccessRemoved>(
-                serviceBusClient,
-                MarketingBox.Affiliate.Service.Messages.Topics.AffiliateAccessRemovedTopic,
-                marketingboxReportingService,
-                TopicQueueType.Permanent);
-
-            #endregion
 
             builder.RegisterType<RegistrationUpdateMessageSubscriber>()
                 .As<IStartable>()

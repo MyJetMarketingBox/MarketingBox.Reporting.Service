@@ -70,6 +70,7 @@ namespace MarketingBox.Reporting.Service
         {
             builder.RegisterModule<SettingsModule>();
             builder.RegisterModule<ServiceModule>();
+            builder.RegisterModule<ClientModule>();
         }
     }
 }

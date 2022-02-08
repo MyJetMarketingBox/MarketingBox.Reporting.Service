@@ -1,8 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using System;
-using MarketingBox.Reporting.Service.Domain.Crm;
-using MarketingBox.Reporting.Service.Domain.Deposit;
-using MarketingBox.Reporting.Service.Domain.Registrations;
+using MarketingBox.Reporting.Service.Domain.Models;
 
 namespace MarketingBox.Reporting.Service.Grpc.Models.Deposits
 {

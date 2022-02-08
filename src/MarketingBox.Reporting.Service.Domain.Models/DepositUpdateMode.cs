@@ -1,4 +1,4 @@
-﻿namespace MarketingBox.Reporting.Service.Domain.Deposit
+﻿namespace MarketingBox.Reporting.Service.Domain.Models
 {
     public enum DepositUpdateMode
     {

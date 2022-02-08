@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MarketingBox.Reporting.Service.Domain.Exceptions
+namespace MarketingBox.Reporting.Service.Domain
 {
     public class RetryException : Exception
     {

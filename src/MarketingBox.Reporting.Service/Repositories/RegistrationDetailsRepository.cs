@@ -30,8 +30,8 @@ namespace MarketingBox.Reporting.Service.Repositories
         {
             await using var context = new DatabaseContext(_dbContextOptionsBuilder.Options);
 
-            await context.RegistrationDetails.Upsert(entity)
-                .UpdateIf(prev => prev.Sequence < entity.Sequence)
+            await context.RegistrationDetails
+                .Upsert(entity)
                 .RunAsync();
             await context.SaveChangesAsync();
         }

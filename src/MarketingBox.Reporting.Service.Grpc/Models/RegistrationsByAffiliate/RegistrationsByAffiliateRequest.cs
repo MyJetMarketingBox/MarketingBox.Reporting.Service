@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.Serialization;
+using MarketingBox.Reporting.Service.Domain.Models;
 
 namespace MarketingBox.Reporting.Service.Grpc.Models.RegistrationsByAffiliate
 {

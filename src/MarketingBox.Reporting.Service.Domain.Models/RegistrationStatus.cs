@@ -1,4 +1,4 @@
-﻿namespace MarketingBox.Reporting.Service.Domain.Registrations
+﻿namespace MarketingBox.Reporting.Service.Domain.Models
 {
     public enum RegistrationStatus
     {
