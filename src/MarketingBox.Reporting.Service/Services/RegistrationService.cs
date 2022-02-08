@@ -3,6 +3,7 @@ using MarketingBox.Reporting.Service.Grpc.Models.Common;
 using MarketingBox.Reporting.Service.Postgres;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MarketingBox.Affiliate.Service.Domain.Models.Affiliates;
@@ -37,69 +38,57 @@ namespace MarketingBox.Reporting.Service.Services
                 _logger.LogInformation(
                     $"CustomerReportService.GetCustomersReport receive request : {JsonConvert.SerializeObject(request)}");
 
-                if (!request.MasterAffiliateId.HasValue)
-                {
-                    var message = "Cannot get registrations without masterAffiliateId";
-                    _logger.LogError(message);
-                    return new RegistrationSearchResponse()
-                    {
-                        Error = new Error()
-                        {
-                            Message = message,
-                            Type = ErrorType.InvalidParameter
-                        }
-                    };
-                }
-
-                var master = await _affiliateService.GetAsync(new AffiliateGetRequest()
-                {
-                    AffiliateId = (long)request.MasterAffiliateId
-                });
-
-                if (master.Affiliate == null || master.Error != null)
-                {
-                    var message = $"Cannot find masterAffiliate by id {request.MasterAffiliateId}";
-                    _logger.LogError(message);
-                    return new RegistrationSearchResponse()
-                    {
-                        Error = new Error()
-                        {
-                            Message = message,
-                            Type = ErrorType.InvalidParameter
-                        }
-                    };
-                }
-
                 await using var ctx = _databaseContextFactory.Create();
                 IQueryable<RegistrationDetails> query = ctx.RegistrationDetails;
-
-
-                // TODO: branch for ADMIN !!!!!
-                if (master.Affiliate.GeneralInfo.Role == AffiliateRole.IntegrationManager)
+                
+                if (request.MasterAffiliateId.HasValue)
                 {
+                    var master = await _affiliateService.GetAsync(new AffiliateGetRequest()
+                    {
+                        AffiliateId = (long)request.MasterAffiliateId
+                    });
+
+                    if (master.Affiliate == null || master.Error != null)
+                    {
+                        var message = $"Cannot find masterAffiliate by id {request.MasterAffiliateId}";
+                        _logger.LogError(message);
+                        return new RegistrationSearchResponse()
+                        {
+                            Error = new Error()
+                            {
+                                Message = message,
+                                Type = ErrorType.InvalidParameter
+                            }
+                        };
+                    }
                     
+                    var assignAffiliates = GetAffiliateIdListByAccessTable(ctx, master.Affiliate.AffiliateId);
+                    
+                    switch (master.Affiliate.GeneralInfo.Role)
+                    {
+                        case AffiliateRole.Affiliate:
+                            query = query.Where(e => e.AffiliateId == master.Affiliate.AffiliateId);
+                            break;
+                        case AffiliateRole.AffiliateManager:
+                            query = query.Where(e => assignAffiliates.Contains(e.AffiliateId));
+                            break;
+                        case AffiliateRole.IntegrationManager:
+                            break;
+                        case AffiliateRole.MasterAffiliate:
+                            query = query.Where(e => assignAffiliates.Contains(e.AffiliateId));
+                            break;
+                        case AffiliateRole.MasterAffiliateReferral:
+                            query = query.Where(e => assignAffiliates.Contains(e.AffiliateId));
+                            break;
+                        default:
+                            break;
+                    }
                 }
-                else
-                {
-                    //var affiliateAccesses = ctx.AffiliateAccesses
-                    //    .Where(e => e.MasterAffiliateId == request.MasterAffiliateId)
-                    //    .ToList();
-                    //if (affiliateAccesses.Any()) 
-                    //{ 
-                    //    query = query.Where(e => e.AffiliateId == request.MasterAffiliateId
-                    //                             || affiliateAccesses.Select(x => x.AffiliateId)
-                    //                                 .Contains(e.AffiliateId));
-                    //}
-                    //else
-                    //{
-                    //    query = query.Where(e => e.AffiliateId == request.MasterAffiliateId);
-                    //}
-                    //
-                    //if (!string.IsNullOrWhiteSpace(request.TenantId))
-                    //    query = query.Where(e => e.TenantId == request.TenantId);
-                    //if (request.AffiliateId.HasValue)
-                    //    query = query.Where(e => e.AffiliateId == request.AffiliateId);
-                }
+                
+                if (!string.IsNullOrWhiteSpace(request.TenantId))
+                    query = query.Where(e => e.TenantId == request.TenantId);
+                if (request.AffiliateId.HasValue)
+                    query = query.Where(e => e.AffiliateId == request.AffiliateId);
                 
                 switch (request.Type)
                 {
@@ -112,7 +101,7 @@ namespace MarketingBox.Reporting.Service.Services
                     case RegistrationsReportType.All:
                         break;
                     default:
-                        throw new Exception("Something wrong with GetRegistrations at switch construction.");
+                        break;
                 }
                 
                 if (request.Cursor.HasValue)
@@ -122,12 +111,9 @@ namespace MarketingBox.Reporting.Service.Services
                     : query.OrderByDescending(e => e.RegistrationId);
                 query = query.Take(request.Take <= 0 ? 1000 : request.Take);
 
-                var response = query
-                    .ToList();
-
                 return new RegistrationSearchResponse()
                 {
-                    Registrations = response
+                    Registrations = query.ToList()
                 };
             }
             catch (Exception ex)
@@ -142,6 +128,19 @@ namespace MarketingBox.Reporting.Service.Services
                     }
                 };
             }
+        }
+
+        private static IEnumerable<long> GetAffiliateIdListByAccessTable(DatabaseContext ctx, long masterId)
+        {
+            var arr = new List<long>
+            {
+                masterId
+            };
+            var affiliateAccesses = ctx.AffiliateAccesses
+                .Where(e => e.MasterAffiliateId == masterId)
+                .ToList();
+            affiliateAccesses.ForEach(e => arr.Add(e.AffiliateId));
+            return arr;
         }
     }
 }

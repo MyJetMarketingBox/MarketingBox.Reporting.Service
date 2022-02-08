@@ -25,6 +25,6 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Registrations.Requests
         public long? MasterAffiliateId { get; set; }
         
         [DataMember(Order = 7)] 
-        public RegistrationsReportType Type { get; set; }
+        public RegistrationsReportType? Type { get; set; }
     }
 }
