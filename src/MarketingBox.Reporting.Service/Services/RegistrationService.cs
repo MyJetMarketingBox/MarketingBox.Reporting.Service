@@ -75,7 +75,7 @@ namespace MarketingBox.Reporting.Service.Services
 
 
                 // TODO: branch for ADMIN !!!!!
-                if (master.Affiliate.GeneralInfo.Role == AffiliateRole.MasterAffiliate)
+                if (master.Affiliate.GeneralInfo.Role == AffiliateRole.IntegrationManager)
                 {
                     
                 }
