@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using MarketingBox.Reporting.Service.Domain.Models.Reports;
 
-namespace MarketingBox.Reporting.Service.Grpc.Models.Reports.Requests
+namespace MarketingBox.Reporting.Service.Domain.Models.Reports.Requests
 {
     [DataContract]
     public class ReportSearchRequest
