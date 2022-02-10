@@ -43,24 +43,24 @@ select date_trunc('month',rd."CreatedAt") as GroupedBy,
        rd."BrandId",
        count(*) filter ( where rd."Status" = 3 ),
        count(*) filter ( where rd."Status" = 1 ),
-       case br."Payout_Plan"
-           when 0 then br."Payout_Amount" --CPA Plan for deposit payout
+       case br."PayoutPlan"
+           when 0 then br."PayoutAmount" --CPA Plan for deposit payout
            else 0
            end as DepPayout,
-       case br."Revenue_Plan"
-           when 0 then br."Revenue_Amount" --CPA Plan for deposit revenue
+       case br."RevenuePlan"
+           when 0 then br."RevenueAmount" --CPA Plan for deposit revenue
            else 0
            end as DepRevenue,
-       case br."Payout_Plan"
-           when 1 then br."Payout_Amount" --CPL Plan for lead payout
+       case br."PayoutPlan"
+           when 1 then br."PayoutAmount" --CPL Plan for lead payout
            else 0
            end as LeadPayout,
-       case br."Revenue_Plan"
-           when 1 then br."Revenue_Amount" --CPL Plan for lead revenue
+       case br."RevenuePlan"
+           when 1 then br."RevenueAmount" --CPL Plan for lead revenue
            else 0
            end as LeadRevenue
 from "reporting-service".registrations_details rd
-         join "affiliate-service".brands br
+         join "reporting-service".brands br
               on br."Id" = rd."BrandId" and
                  br."TenantId" = rd."TenantId"
 where case

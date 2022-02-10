@@ -28,6 +28,7 @@ public class BrandRepository : IBrandRepository
         {
             await using var context = new DatabaseContext(_dbContextOptionsBuilder.Options);
             await context.Brands.UpsertRange(brandEntities).RunAsync();
+            await context.SaveChangesAsync();
         }
         catch (Exception e)
         {
@@ -42,6 +43,7 @@ public class BrandRepository : IBrandRepository
         {
             await using var context = new DatabaseContext(_dbContextOptionsBuilder.Options);
             await context.Brands.DeleteRangeByKeyAsync(brandEntities);
+            await context.SaveChangesAsync();
         }
         catch (Exception e)
         {

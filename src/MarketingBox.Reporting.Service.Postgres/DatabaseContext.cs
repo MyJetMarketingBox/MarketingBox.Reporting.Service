@@ -2,6 +2,7 @@
 using MarketingBox.Reporting.Service.Domain.Models.Reports;
 using Microsoft.EntityFrameworkCore;
 using MyJetWallet.Sdk.Postgres;
+using MyJetWallet.Sdk.Service;
 
 namespace MarketingBox.Reporting.Service.Postgres
 {
@@ -43,8 +44,6 @@ namespace MarketingBox.Reporting.Service.Postgres
         {
             modelBuilder.Entity<BrandEntity>().ToTable(BrandsTableName);
             modelBuilder.Entity<BrandEntity>().HasKey(x => new {x.Id, x.TenantId});
-            modelBuilder.Entity<BrandEntity>().OwnsOne(x => x.Payout);
-            modelBuilder.Entity<BrandEntity>().OwnsOne(x => x.Revenue);
         }
 
         private void SetRegistrationDetailsModel(ModelBuilder modelBuilder)
