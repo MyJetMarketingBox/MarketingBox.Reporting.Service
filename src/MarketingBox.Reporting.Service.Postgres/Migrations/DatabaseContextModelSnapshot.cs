@@ -184,6 +184,79 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
 
                     b.ToTable("registrations_details", "reporting-service");
                 });
+
+            modelBuilder.Entity("MarketingBox.Reporting.Service.Domain.Models.Reports.BrandEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("TenantId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id", "TenantId");
+
+                    b.ToTable("brands", "reporting-service");
+                });
+
+            modelBuilder.Entity("MarketingBox.Reporting.Service.Domain.Models.Reports.BrandEntity", b =>
+                {
+                    b.OwnsOne("MarketingBox.Reporting.Service.Domain.Models.Reports.Payout", "Payout", b1 =>
+                        {
+                            b1.Property<long>("BrandEntityId")
+                                .HasColumnType("bigint");
+
+                            b1.Property<string>("BrandEntityTenantId")
+                                .HasColumnType("text");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("numeric");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("integer");
+
+                            b1.Property<int>("Plan")
+                                .HasColumnType("integer");
+
+                            b1.HasKey("BrandEntityId", "BrandEntityTenantId");
+
+                            b1.ToTable("brands", "reporting-service");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BrandEntityId", "BrandEntityTenantId");
+                        });
+
+                    b.OwnsOne("MarketingBox.Reporting.Service.Domain.Models.Reports.Revenue", "Revenue", b1 =>
+                        {
+                            b1.Property<long>("BrandEntityId")
+                                .HasColumnType("bigint");
+
+                            b1.Property<string>("BrandEntityTenantId")
+                                .HasColumnType("text");
+
+                            b1.Property<decimal>("Amount")
+                                .HasColumnType("numeric");
+
+                            b1.Property<int>("Currency")
+                                .HasColumnType("integer");
+
+                            b1.Property<int>("Plan")
+                                .HasColumnType("integer");
+
+                            b1.HasKey("BrandEntityId", "BrandEntityTenantId");
+
+                            b1.ToTable("brands", "reporting-service");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BrandEntityId", "BrandEntityTenantId");
+                        });
+
+                    b.Navigation("Payout");
+
+                    b.Navigation("Revenue");
+                });
 #pragma warning restore 612, 618
         }
     }
