@@ -16,5 +16,6 @@ namespace MarketingBox.Reporting.Service.Domain.Models.Reports.Requests
         [DataMember(Order = 8)] public long? Cursor { get; set; }
         [DataMember(Order = 9)] public int Take { get; set; }
         [DataMember(Order = 10)] public bool Asc { get; set; }
+        [DataMember(Order = 11)] public string TenantId { get; set; }
     }
 }

@@ -105,6 +105,12 @@ public class RegistrationDetailsRepository : IRegistrationDetailsRepository
         affiliateId.DbType = DbType.Int64;
         affiliateId.Value = (object) requestFilter.AffiliateId ?? DBNull.Value;
         command.Parameters.Add(affiliateId);
+        
+        var tenantId = command.CreateParameter();
+        tenantId.ParameterName = "@TenantId";
+        tenantId.DbType = DbType.String;
+        tenantId.Value = !string.IsNullOrEmpty(requestFilter.TenantId) ? requestFilter.TenantId : DBNull.Value;
+        command.Parameters.Add(tenantId);
 
         var country = command.CreateParameter();
         country.ParameterName = "@Country";

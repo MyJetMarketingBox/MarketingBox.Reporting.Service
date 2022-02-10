@@ -53,6 +53,11 @@ with aggregate_by_affiliate as (
               when @Country is not null then
                   rd."Country" = @Country
               else true
+        end      
+      and case
+              when @TenantId is not null then
+                  rd."TenantId" = @TenantId
+              else true
         end
       and case
               when @BrandId is not null then

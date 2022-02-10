@@ -50,6 +50,11 @@ with aggregate_by_month as (
               else true
         end
       and case
+              when @TenantId is not null then
+                      rd."TenantId" = @TenantId
+              else true
+        end
+      and case
               when @Country is not null then
                   rd."Country" = @Country
               else true
