@@ -1,13 +1,8 @@
 ﻿using Autofac;
-using MarketingBox.Affiliate.Service.Client;
-using MarketingBox.Affiliate.Service.MyNoSql.Brands;
 using MarketingBox.Reporting.Service.Engines;
 using MarketingBox.Reporting.Service.Postgres;
 using MarketingBox.Reporting.Service.Repositories;
 using MarketingBox.Reporting.Service.Subscribers;
-using MyJetWallet.Sdk.NoSql;
-using MyJetWallet.Sdk.ServiceBus;
-using MyServiceBus.Abstractions;
 
 namespace MarketingBox.Reporting.Service.Modules
 {
@@ -41,6 +36,10 @@ namespace MarketingBox.Reporting.Service.Modules
             
             builder.RegisterType<RegistrationDetailsRepository>()
                 .As<IRegistrationDetailsRepository>()
+                .SingleInstance();
+            
+            builder.RegisterType<BrandRepository>()
+                .As<IBrandRepository>()
                 .SingleInstance();
         }
     }

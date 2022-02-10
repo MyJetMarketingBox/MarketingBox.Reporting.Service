@@ -1,6 +1,7 @@
 using Autofac;
 using MarketingBox.Affiliate.Service.Client;
 using MarketingBox.Affiliate.Service.MyNoSql.Brands;
+using MarketingBox.Reporting.Service.Subscribers;
 using MyJetWallet.Sdk.NoSql;
 using MyJetWallet.Sdk.ServiceBus;
 using MyServiceBus.Abstractions;
@@ -15,6 +16,7 @@ namespace MarketingBox.Reporting.Service.Modules
             
             var noSqlClient = builder.CreateNoSqlClient(Program.ReloadedSettings(e => e.MyNoSqlReaderHostPort));
             builder.RegisterMyNoSqlReader<BrandNoSql>(noSqlClient, BrandNoSql.TableName);
+            
             var serviceBusClient = builder
                 .RegisterMyServiceBusTcpClient(
                     Program.ReloadedSettings(e => e.MarketingBoxServiceBusHostPort), 
@@ -36,6 +38,11 @@ namespace MarketingBox.Reporting.Service.Modules
                 Affiliate.Service.Messages.Topics.AffiliateAccessRemovedTopic,
                 queueName,
                 TopicQueueType.Permanent);
+            
+            builder.RegisterType<BrandNoSqlSubscriber>()
+                .As<IStartable>()
+                .SingleInstance()
+                .AutoActivate();
         }
     }
 }
