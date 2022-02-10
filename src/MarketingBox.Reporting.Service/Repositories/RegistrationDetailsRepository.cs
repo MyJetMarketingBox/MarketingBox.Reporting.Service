@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Data;
+using System.Data.Common;
+using System.IO;
 using System.Threading.Tasks;
 using MarketingBox.Reporting.Service.Domain.Models;
 using MarketingBox.Reporting.Service.Domain.Models.Reports;
+using MarketingBox.Reporting.Service.Domain.Models.Reports.Requests;
 using MarketingBox.Reporting.Service.Postgres;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -14,16 +17,6 @@ public class RegistrationDetailsRepository : IRegistrationDetailsRepository
 {
     private readonly DbContextOptionsBuilder<DatabaseContext> _dbContextOptionsBuilder;
     private readonly ILogger<RegistrationDetailsRepository> _logger;
-
-    // private static string SearchQuery(ReportSearchRequest request) => 
-    //     $@"select @Type as Name,
-    //               count(*) filter (where rd.""Status"" = {(int) RegistrationStatus.Registered}) as RegistrationCount,
-    //               count(*) filter (where rd.""Status"" = {(int) RegistrationStatus.Approved}) as FtdCount
-    //        from ""reporting-service"".registrations_details rd
-    //        where {GenerateFilter(request)}
-    //        group by @Type
-    //        order by @Type
-    //        limit @Limit";
 
     public RegistrationDetailsRepository(
         DbContextOptionsBuilder<DatabaseContext> dbContextOptionsBuilder,
@@ -43,185 +36,125 @@ public class RegistrationDetailsRepository : IRegistrationDetailsRepository
         await context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<AggregatedReportEntity>> SearchAsync(ReportSearchRequest request)
+    public async Task<IEnumerable<Report>> SearchAsync(ReportSearchRequest request)
     {
-        await using var context = new DatabaseContext(_dbContextOptionsBuilder.Options);
-
-
-        var query = context.RegistrationDetails.AsQueryable();
-
-        var filtered = GenerateFilter(query, request);
-
-        var group = request.ReportType switch
+        try
         {
-            ReportType.Affiliate => filtered.GroupBy(x => new KeyType{ Key = x.AffiliateId.ToString(), Brand = x.BrandId}),
-            ReportType.Brand => filtered.GroupBy(x => new KeyType{ Key = x.BrandId.ToString() }),
-            ReportType.Country => filtered.GroupBy(x => new KeyType{ Key = x.Country, Brand = x.BrandId}),
-            ReportType.Day => filtered.GroupBy(x => new KeyType{ Key = x.CreatedAt.Day.ToString(), Brand = x.BrandId}),
-            ReportType.Month => filtered.GroupBy(x => new KeyType{ Key = x.CreatedAt.Month.ToString(), Brand = x.BrandId}),
-            ReportType.Offer => throw new NotImplementedException(),
-            _ => throw new ArgumentOutOfRangeException()
-        };
-        var grouped =  group
-            .Select(x =>
-                new AggregatedReportEntity
+            await using var context = new DatabaseContext(_dbContextOptionsBuilder.Options);
+
+            _logger.LogInformation("Getting script {ScriptName}", $"ReportBy{request.ReportType}.sql");
+
+            var scriptName = $"ReportBy{request.ReportType}.sql";
+            var path = Path.Combine(Environment.CurrentDirectory, @"Scripts/", scriptName);
+            using var script = new StreamReader(path);
+            var scriptBody = await script.ReadToEndAsync();
+
+            _logger.LogInformation("Executing script {Script}", scriptBody);
+
+            await using var command = context.Database.GetDbConnection().CreateCommand();
+            command.CommandText = scriptBody;
+            command.CommandType = CommandType.Text;
+            GenerateParametersForFilter(request, command);
+            
+            await context.Database.OpenConnectionAsync();
+            await using var result = await command.ExecuteReaderAsync();
+            
+            _logger.LogInformation("Script was executed");
+            
+            var entities = new List<Report>();
+            while (await result.ReadAsync())
+            {
+                entities.Add(new Report
                 {
-                    Name = x.Key.Key,
-                    Brand = x.Key.Brand,
-                    FtdCount = x.Count(z => z.Status == RegistrationStatus.Approved),
-                    RegistrationCount = x.Count(z => z.Status == RegistrationStatus.Registered)
+                    Id = result.GetInt32(0),
+                    Name = SafeGetString(result, 2),
+                    RegistrationCount = result.GetInt32(3),
+                    FtdCount = result.GetInt32(4),
+                    Revenue = result.GetDecimal(5),
+                    Payout = result.GetDecimal(6)
                 });
+            }
+            await context.Database.CloseConnectionAsync();
+            
+            _logger.LogInformation("{Count} rows were read", entities.Count);
 
-        var ordered = request.Asc
-            ? grouped.OrderBy(x => x.Name)
-            : grouped.OrderByDescending(x => x.Name);
-        var trimmed = ordered.Take(request.Take);
-        await trimmed.LoadAsync();
+            entities.ForEach(x =>
+            {
+                x.Epc = null;
+                x.Clicks = null;
+                x.Pl = x.Revenue - x.Payout;
+                x.Cr = x.RegistrationCount > 0 ? (decimal) x.FtdCount / x.RegistrationCount * 100 : null;
+                x.Epl = x.RegistrationCount > 0 ? (decimal) x.Revenue / x.RegistrationCount : null;
+                x.Roi = x.Payout > 0 ? x.Revenue / x.Payout * 100 : null;
+            });
 
-        var reportEntities = trimmed.ToList();
-
-        // var type = request.ReportType switch
-        // {
-        //     ReportType.Affiliate => @"rd.""AffiliateId""",
-        //     ReportType.Brand => @"rd.""IntegrationId""",
-        //     ReportType.Country => @"rd.""Country""",
-        //     ReportType.Day => @"rd.""CreatedAt""",
-        //     ReportType.Month => @"rd.""CreatedAt""",
-        //     ReportType.Offer => throw new NotImplementedException(),
-        //     _ => throw new ArgumentOutOfRangeException()
-        // };
-
-        // var aggregatedReport =
-        //     await context.Database
-        //         .GetDbConnection()
-        //         .QueryAsync<AggregatedReportEntity>(
-        //             SearchQuery(request),
-        //             new
-        //             {
-        //                 Type = type,
-        //                 AffiliateId = request.AffiliateId,
-        //                 Country = request.Country,
-        //                 BrandId = request.BrandId,
-        //                 Limit = request.Take,
-        //                 FromDate = request.FromDate.HasValue
-        //                     ? DateTime.SpecifyKind(request.FromDate.Value, DateTimeKind.Utc)
-        //                     : default,
-        //                 ToDate = request.ToDate.HasValue
-        //                     ? DateTime.SpecifyKind(request.ToDate.Value.Add(new TimeSpan(23, 59, 59)), DateTimeKind.Utc)
-        //                     : default,
-        //                 //Order = request.Asc ? "asc" : "desc"
-        //             });
-        return reportEntities;
+            _logger.LogInformation("Report was configured");
+            return entities;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            throw;
+        }
     }
 
-    public async Task SearchByDateAsync()
+    private static string SafeGetString(IDataRecord reader, int colIndex)
     {
-        await using var context = new DatabaseContext(_dbContextOptionsBuilder.Options);
-        await Task.CompletedTask;
+        return !reader.IsDBNull(colIndex) ? reader.GetString(colIndex) : string.Empty;
     }
 
-    private static IQueryable<RegistrationDetails> GenerateFilter(
-        IQueryable<RegistrationDetails> filter,
-        ReportSearchRequest requestFilter)
+    private static void GenerateParametersForFilter(ReportSearchRequest requestFilter, DbCommand command)
     {
-        if (!string.IsNullOrEmpty(requestFilter.Country))
-        {
-            filter = filter.Where(x => x.Country == requestFilter.Country);
-        }
+        var affiliateId = command.CreateParameter();
+        affiliateId.ParameterName = "@AffiliateId";
+        affiliateId.DbType = DbType.Int64;
+        affiliateId.Value = (object) requestFilter.AffiliateId ?? DBNull.Value;
+        command.Parameters.Add(affiliateId);
 
-        if (requestFilter.BrandId is not null)
-        {
-            filter = filter.Where(x => x.BrandId == requestFilter.BrandId);
-        }
+        var country = command.CreateParameter();
+        country.ParameterName = "@Country";
+        country.DbType = DbType.String;
+        country.Value = !string.IsNullOrEmpty(requestFilter.Country) ? requestFilter.Country : DBNull.Value;
+        command.Parameters.Add(country);
 
-        if (requestFilter.Offer is not null)
-        {
-            throw new NotImplementedException();
-        }
+        var brandId = command.CreateParameter();
+        brandId.ParameterName = "@BrandId";
+        brandId.DbType = DbType.Int64;
+        brandId.Value = (object) requestFilter.BrandId ?? DBNull.Value;
+        command.Parameters.Add(brandId);
 
-        if (requestFilter.AffiliateId is not null)
-        {
-            filter = filter.Where(x => x.AffiliateId == requestFilter.AffiliateId);
-        }
+        var fromDate = command.CreateParameter();
+        fromDate.ParameterName = "@FromDate";
+        fromDate.DbType = DbType.Date;
+        fromDate.Value =
+            requestFilter.FromDate.HasValue
+                ? DateTime.SpecifyKind(requestFilter.FromDate.Value, DateTimeKind.Utc)
+                : DBNull.Value;
+        command.Parameters.Add(fromDate);
 
-        if (requestFilter.FromDate is not null)
-        {
-            filter = filter.Where(x =>
-                x.CreatedAt.Date >= DateTime.SpecifyKind(requestFilter.FromDate.Value, DateTimeKind.Utc));
-        }
+        var toDate = command.CreateParameter();
+        toDate.ParameterName = "@ToDate";
+        toDate.DbType = DbType.Date;
+        toDate.Value =
+            requestFilter.ToDate.HasValue
+                ? DateTime.SpecifyKind(requestFilter.ToDate.Value.Add(new TimeSpan(23, 59, 59)),
+                    DateTimeKind.Utc)
+                : DBNull.Value;
+        command.Parameters.Add(toDate);
 
-        if (requestFilter.ToDate is not null)
-        {
-            filter = filter.Where(x =>
-                x.CreatedAt.Date <= DateTime.SpecifyKind(requestFilter.ToDate.Value.Add(new TimeSpan(23, 59, 59)),
-                    DateTimeKind.Utc));
-        }
+        var cursor = command.CreateParameter();
+        cursor.ParameterName = "@cursor";
+        cursor.Value = requestFilter.Cursor ?? 0;
+        command.Parameters.Add(cursor);
 
-        return filter;
+        var asc = command.CreateParameter();
+        asc.ParameterName = "@asc";
+        asc.Value = requestFilter.Asc;
+        command.Parameters.Add(asc);
+
+        var limit = command.CreateParameter();
+        limit.ParameterName = "@limit";
+        limit.Value = requestFilter.Take;
+        command.Parameters.Add(limit);
     }
 }
-
-public class AggregatedReportEntity
-{
-    public string Name { get; set; }
-    public long RegistrationCount { get; set; }
-    public long FtdCount { get; set; }
-
-    public decimal Payout { get; set; }
-
-    public decimal Revenue { get; set; }
-
-    public decimal Cr { get; set; }
-    public long? Brand { get; set; }
-}
-
-public class  KeyType
-{
-    public string Key { get; set; }
-    public long? Brand { get; set; }
-}
-
-public class AggregatedReportByDayEntity
-{
-    public DateTimeOffset CreatedAt { get; set; }
-    public long RegistrationCount { get; set; }
-    public long DepositCount { get; set; }
-}
-
-// private static string GenerateFilter(ReportSearchRequest requestFilter)
-// {
-//     var filter = new StringBuilder();
-//     if (!string.IsNullOrEmpty(requestFilter.Country))
-//     {
-//         filter.Append(@"rd.""Country"" = @Country AND ");
-//     }
-//
-//     if (requestFilter.BrandId is not null)
-//     {
-//         filter.Append(@"rd.""BrandId"" = @BrandId AND ");
-//     }
-//
-//     if (requestFilter.Offer is not null)
-//     {
-//         filter.Append("1=1 AND ");
-//     }
-//
-//     if (requestFilter.AffiliateId is not null)
-//     {
-//         filter.Append(@"rd.""AffiliateId"" = @AffiliateId AND ");
-//     }
-//
-//     if (requestFilter.FromDate is not null)
-//     {
-//         filter.Append(@"rd.""FromDate"" >= @FromDate AND ");
-//     }
-//
-//     if (requestFilter.ToDate is not null)
-//     {
-//         filter.Append(@"rd.""ToDate"" <= @ToDate AND ");
-//     }
-//
-//     filter.Append("1=1");
-//
-//     return filter.ToString();
-// }
