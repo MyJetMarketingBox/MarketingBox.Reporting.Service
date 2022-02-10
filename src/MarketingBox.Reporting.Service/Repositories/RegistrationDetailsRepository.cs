@@ -55,40 +55,35 @@ public class RegistrationDetailsRepository : IRegistrationDetailsRepository
             command.CommandText = scriptBody;
             command.CommandType = CommandType.Text;
             GenerateParametersForFilter(request, command);
-            
+
             await context.Database.OpenConnectionAsync();
             await using var result = await command.ExecuteReaderAsync();
-            
+
             _logger.LogInformation("Script was executed");
-            
+
             var entities = new List<Report>();
             while (await result.ReadAsync())
             {
                 entities.Add(new Report
                 {
-                    Id = result.GetInt32(0),
-                    Name = SafeGetString(result, 2),
+                    Id = result.GetInt64(0),
+                    Name = SafeGet<string>(result, 2),
                     RegistrationCount = result.GetInt32(3),
                     FtdCount = result.GetInt32(4),
                     Revenue = result.GetDecimal(5),
-                    Payout = result.GetDecimal(6)
+                    Payout = result.GetDecimal(6),
+                    Epc = SafeGet<decimal?>(result, 7),
+                    Clicks = SafeGet<decimal?>(result, 8),
+                    Pl = SafeGet<decimal>(result, 9),
+                    Cr = SafeGet<decimal?>(result, 10),
+                    Epl = SafeGet<decimal?>(result, 11),
+                    Roi = SafeGet<decimal?>(result, 12)
                 });
             }
+
             await context.Database.CloseConnectionAsync();
-            
+
             _logger.LogInformation("{Count} rows were read", entities.Count);
-
-            entities.ForEach(x =>
-            {
-                x.Epc = null;
-                x.Clicks = null;
-                x.Pl = x.Revenue - x.Payout;
-                x.Cr = x.RegistrationCount > 0 ? (decimal) x.FtdCount / x.RegistrationCount * 100 : null;
-                x.Epl = x.RegistrationCount > 0 ? (decimal) x.Revenue / x.RegistrationCount : null;
-                x.Roi = x.Payout > 0 ? x.Revenue / x.Payout * 100 : null;
-            });
-
-            _logger.LogInformation("Report was configured");
             return entities;
         }
         catch (Exception e)
@@ -98,9 +93,9 @@ public class RegistrationDetailsRepository : IRegistrationDetailsRepository
         }
     }
 
-    private static string SafeGetString(IDataRecord reader, int colIndex)
+    private static T SafeGet<T>(IDataRecord reader, int colIndex)
     {
-        return !reader.IsDBNull(colIndex) ? reader.GetString(colIndex) : string.Empty;
+        return reader.IsDBNull(colIndex) ? default : (T) reader.GetValue(colIndex);
     }
 
     private static void GenerateParametersForFilter(ReportSearchRequest requestFilter, DbCommand command)
