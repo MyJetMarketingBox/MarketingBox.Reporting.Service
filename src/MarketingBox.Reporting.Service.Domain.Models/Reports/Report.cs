@@ -40,5 +40,11 @@ namespace MarketingBox.Reporting.Service.Domain.Models.Reports
         
         [DataMember(Order = 12)]
         public decimal? Clicks { get; set; }
+        
+        [DataMember(Order = 13)]
+        public int FailedCount { get; set; }
+        
+        [DataMember(Order = 14)]
+        public int UnassignedCount { get; set; }
     }
 }

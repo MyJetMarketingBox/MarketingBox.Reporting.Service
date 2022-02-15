@@ -70,14 +70,16 @@ public class RegistrationDetailsRepository : IRegistrationDetailsRepository
                     Name = SafeGet<string>(result, 2),
                     RegistrationCount = result.GetInt32(3),
                     FtdCount = result.GetInt32(4),
-                    Revenue = result.GetDecimal(5),
-                    Payout = result.GetDecimal(6),
-                    Epc = SafeGet<decimal?>(result, 7),
-                    Clicks = SafeGet<decimal?>(result, 8),
-                    Pl = SafeGet<decimal>(result, 9),
-                    Cr = SafeGet<decimal?>(result, 10),
-                    Epl = SafeGet<decimal?>(result, 11),
-                    Roi = SafeGet<decimal?>(result, 12)
+                    FailedCount = result.GetInt32(5),
+                    UnassignedCount = result.GetInt32(6),
+                    Revenue = result.GetDecimal(7),
+                    Payout = result.GetDecimal(8),
+                    Epc = SafeGet<decimal?>(result, 9),
+                    Clicks = SafeGet<decimal?>(result, 10),
+                    Pl = SafeGet<decimal>(result, 11),
+                    Cr = SafeGet<decimal?>(result, 12),
+                    Epl = SafeGet<decimal?>(result, 13),
+                    Roi = SafeGet<decimal?>(result, 14)
                 });
             }
 

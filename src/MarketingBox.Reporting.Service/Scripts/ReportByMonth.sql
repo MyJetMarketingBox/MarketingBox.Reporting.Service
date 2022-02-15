@@ -7,6 +7,8 @@ CREATE TEMPORARY TABLE report_by_month
     Name              text,
     RegistrationCount int,
     FtdCount          int,
+    FailedCount       int,
+    UnassignedCount   int,
     Revenue           int,
     Payout            int,
     Epc               decimal,
@@ -19,27 +21,29 @@ CREATE TEMPORARY TABLE report_by_month
 ) on commit drop;
 
 with aggregate_by_month as (
-    select date_trunc('month', rd."CreatedAt")       as GroupedBy,
-           to_char(rd."CreatedAt", 'YYYY-MM')        as Name,
-           rd."BrandId"                              as Brand,
-           count(*) filter ( where rd."Status" = 3 ) as FtdCount,
-           count(*) filter ( where rd."Status" = 1 ) as RegistrationCount,
+    select date_trunc('month', rd."CreatedAt")                as GroupedBy,
+           to_char(rd."CreatedAt", 'YYYY-MM')                 as Name,
+           rd."BrandId"                                       as Brand,
+           count(*) filter ( where rd."Status" = 3 )          as FtdCount,
+           count(*) filter ( where rd."Status" in (1, 2, 3) ) as RegistrationCount,
+           count(*) filter ( where rd."Status" = 0 )          as FailedCount,
+           count(*) filter ( where rd."Status" = 4 )          as UnassignedCount,
            case br."PayoutPlan"
                when 0 then br."PayoutAmount" --CPA Plan for deposit payout
                else 0
-               end                                   as DepPayout,
+               end                                            as DepPayout,
            case br."RevenuePlan"
                when 0 then br."RevenueAmount" --CPA Plan for deposit revenue
                else 0
-               end                                   as DepRevenue,
+               end                                            as DepRevenue,
            case br."PayoutPlan"
                when 1 then br."PayoutAmount" --CPL Plan for lead payout
                else 0
-               end                                   as LeadPayout,
+               end                                            as LeadPayout,
            case br."RevenuePlan"
                when 1 then br."RevenueAmount" --CPL Plan for lead revenue
                else 0
-               end                                   as LeadRevenue
+               end                                            as LeadRevenue
     from "reporting-service".registrations_details rd
              join "reporting-service".brands br
                   on br."Id" = rd."BrandId" and
@@ -51,7 +55,7 @@ with aggregate_by_month as (
         end
       and case
               when @TenantId is not null then
-                      rd."TenantId" = @TenantId
+                  rd."TenantId" = @TenantId
               else true
         end
       and case
@@ -83,24 +87,32 @@ with aggregate_by_month as (
              LeadRevenue)
 
 INSERT
-INTO report_by_month
-    (GroupedBy, Name, FtdCount, RegistrationCount, Revenue, Payout)
-select rd.GroupedBy,
-       rd.Name,
-       sum(rd.FtdCount),
-       sum(rd.RegistrationCount),
-       sum(rd.FtdCount * rd.DepRevenue + rd.RegistrationCount * rd.LeadRevenue),
-       sum(rd.FtdCount * rd.DepPayout + rd.RegistrationCount * rd.LeadPayout)
-from aggregate_by_month rd
-group by rd.GroupedBy, rd.Name
-order by rd.GroupedBy;
+INTO report_by_month(GroupedBy,
+                     Name,
+                     FtdCount,
+                     RegistrationCount,
+                     FailedCount,
+                     UnassignedCount,
+                     Revenue,
+                     Payout)
+select rd.GroupedBy                                                             as GroupedBy,
+       rd.Name                                                                  as Name,
+       sum(rd.FtdCount)                                                         as FtdCount,
+       sum(rd.RegistrationCount)                                                as RegistrationCount,
+       sum(rd.FailedCount)                                                      as FailedCount,
+       sum(rd.UnassignedCount)                                                  as UnassignedCount,
+       sum(rd.FtdCount * rd.DepRevenue + rd.RegistrationCount * rd.LeadRevenue) as Revenue,
+       sum(rd.FtdCount * rd.DepPayout + rd.RegistrationCount * rd.LeadPayout)   as Payout
 
+from aggregate_by_month rd
+group by GroupedBy, Name
+order by GroupedBy;
 
 update report_by_month
 set Pl  = Revenue - Payout,
-    Cr  = case when RegistrationCount <> 0 then FtdCount / RegistrationCount * 100 end,
-    Epl = case when RegistrationCount <> 0 then Revenue / RegistrationCount end,
-    Roi = case when Payout <> 0 then Revenue / Payout * 100 end;
+    Cr  = case when RegistrationCount != 0 then cast(FtdCount as float) / RegistrationCount * 100 end,
+    Epl = case when RegistrationCount != 0 then Revenue / RegistrationCount end,
+    Roi = case when Payout != 0 then Revenue / Payout * 100 end;
 
 select *
 from report_by_month
