@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using MarketingBox.Reporting.Service.Domain.Registrations;
+using MarketingBox.Reporting.Service.Domain.Models;
 using MarketingBox.Reporting.Service.Grpc;
 using MarketingBox.Reporting.Service.Grpc.Models.Common;
 using MarketingBox.Reporting.Service.Grpc.Models.RegistrationsByAffiliate;
@@ -39,9 +39,9 @@ namespace MarketingBox.Reporting.Service.Services
                 switch (request.Type)
                 {
                     case RegistrationsReportType.Registrations:
-                        query = query.Where(e => e.Status != RegistrationStatus.Approved);
+                        query = query.Where(e => e.Status == RegistrationStatus.Registered);
                         break;
-                    case RegistrationsReportType.QFTDepositors:
+                    case RegistrationsReportType.Ftd:
                         query = query.Where(e => e.Status == RegistrationStatus.Approved);
                         break;
                     case RegistrationsReportType.All:

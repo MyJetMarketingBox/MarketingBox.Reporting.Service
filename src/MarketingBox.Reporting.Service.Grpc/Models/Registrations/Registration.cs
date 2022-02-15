@@ -1,8 +1,7 @@
-﻿using MarketingBox.Reporting.Service.Domain.Crm;
-using MarketingBox.Reporting.Service.Domain.Registrations;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
+using MarketingBox.Reporting.Service.Domain.Models;
 
-namespace MarketingBox.Reporting.Service.Grpc.Models.Leads
+namespace MarketingBox.Reporting.Service.Grpc.Models.Registrations
 {
     [DataContract]
     public class Registration

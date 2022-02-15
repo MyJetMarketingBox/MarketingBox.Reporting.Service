@@ -2,12 +2,14 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
+using Autofac;
+using MarketingBox.Reporting.Service.Domain.Models;
 using MarketingBox.Reporting.Service.Postgres;
 using Microsoft.EntityFrameworkCore;
 
 namespace MarketingBox.Reporting.Service.Subscribers
 {
-    public class AffiliateAccessUpdateMessageSubscriber
+    public class AffiliateAccessUpdateMessageSubscriber : IStartable
     {
         private readonly ILogger<AffiliateAccessUpdateMessageSubscriber> _logger;
         private readonly DbContextOptionsBuilder<DatabaseContext> _dbContextOptionsBuilder;
@@ -52,14 +54,18 @@ namespace MarketingBox.Reporting.Service.Subscribers
             _logger.LogInformation("Has been consumed {@context}", message);
         }
 
-        private static Postgres.ReadModels.AffiliateAccesses.AffiliateAccess MapToReadModel(MarketingBox.Affiliate.Service.Messages.AffiliateAccesses.AffiliateAccessUpdated message)
+        private static AffiliateAccess MapToReadModel(MarketingBox.Affiliate.Service.Messages.AffiliateAccesses.AffiliateAccessUpdated message)
         {
-            return new Postgres.ReadModels.AffiliateAccesses.AffiliateAccess()
+            return new AffiliateAccess()
             {
                 AffiliateId = message.AffiliateId,
                 MasterAffiliateId = message.MasterAffiliateId,
                 Id = message.Id
             };
+        }
+
+        public void Start()
+        {
         }
     }
 }

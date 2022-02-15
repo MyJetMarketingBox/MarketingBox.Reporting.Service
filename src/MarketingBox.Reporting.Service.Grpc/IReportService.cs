@@ -1,7 +1,7 @@
 ﻿using System.ServiceModel;
 using System.Threading.Tasks;
+using MarketingBox.Reporting.Service.Domain.Models.Reports.Requests;
 using MarketingBox.Reporting.Service.Grpc.Models.Reports;
-using MarketingBox.Reporting.Service.Grpc.Models.Reports.Requests;
 
 namespace MarketingBox.Reporting.Service.Grpc
 {
@@ -10,8 +10,5 @@ namespace MarketingBox.Reporting.Service.Grpc
     {
         [OperationContract]
         Task<ReportSearchResponse> SearchAsync(ReportSearchRequest request);
-
-        [OperationContract]
-        Task<ReportByDaySearchResponse> SearchByDayAsync(ReportByDaySearchRequest request);
     }
 }

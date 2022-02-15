@@ -32,6 +32,8 @@ namespace MarketingBox.Reporting.Service
                 o => new DatabaseContext(o));
 
             services.BindTelemetry("ReportingService", "MB-", Program.Settings.JaegerUrl);
+
+            services.AddAutoMapper(typeof(Startup));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -53,7 +55,6 @@ namespace MarketingBox.Reporting.Service
             {
                 endpoints.MapGrpcSchema<ReportService, IReportService>();
                 endpoints.MapGrpcSchema<RegistrationService, IRegistrationService>();
-                endpoints.MapGrpcSchema<DepositService, IDepositService>();
                 
                 endpoints.MapGrpcSchema<AffiliateService, IAffiliateService>();
 
@@ -70,6 +71,7 @@ namespace MarketingBox.Reporting.Service
         {
             builder.RegisterModule<SettingsModule>();
             builder.RegisterModule<ServiceModule>();
+            builder.RegisterModule<ClientModule>();
         }
     }
 }

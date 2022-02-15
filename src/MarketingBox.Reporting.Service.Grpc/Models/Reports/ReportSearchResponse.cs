@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
+using MarketingBox.Reporting.Service.Domain.Models.Reports;
 using MarketingBox.Reporting.Service.Grpc.Models.Common;
 
 namespace MarketingBox.Reporting.Service.Grpc.Models.Reports

@@ -3,13 +3,13 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac;
 using MarketingBox.Reporting.Service.Postgres;
 using Microsoft.EntityFrameworkCore;
-using Z.EntityFramework.Plus;
 
 namespace MarketingBox.Reporting.Service.Subscribers
 {
-    public class AffiliateAccessRemovedMessageSubscriber
+    public class AffiliateAccessRemovedMessageSubscriber : IStartable
     {
         private readonly ILogger<AffiliateAccessRemovedMessageSubscriber> _logger;
         private readonly DbContextOptionsBuilder<DatabaseContext> _dbContextOptionsBuilder;
@@ -51,6 +51,10 @@ namespace MarketingBox.Reporting.Service.Subscribers
             }
 
             _logger.LogInformation("Has been consumed {@context}", message);
+        }
+
+        public void Start()
+        {
         }
     }
 }
