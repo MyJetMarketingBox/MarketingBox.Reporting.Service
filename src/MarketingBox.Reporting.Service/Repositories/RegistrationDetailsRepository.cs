@@ -107,7 +107,7 @@ public class RegistrationDetailsRepository : IRegistrationDetailsRepository
         affiliateId.DbType = DbType.Int64;
         affiliateId.Value = (object) requestFilter.AffiliateId ?? DBNull.Value;
         command.Parameters.Add(affiliateId);
-        
+
         var tenantId = command.CreateParameter();
         tenantId.ParameterName = "@TenantId";
         tenantId.DbType = DbType.String;
@@ -128,7 +128,7 @@ public class RegistrationDetailsRepository : IRegistrationDetailsRepository
 
         var fromDate = command.CreateParameter();
         fromDate.ParameterName = "@FromDate";
-        fromDate.DbType = DbType.Date;
+        fromDate.DbType = DbType.DateTimeOffset;
         fromDate.Value =
             requestFilter.FromDate.HasValue
                 ? DateTime.SpecifyKind(requestFilter.FromDate.Value, DateTimeKind.Utc)
@@ -137,7 +137,7 @@ public class RegistrationDetailsRepository : IRegistrationDetailsRepository
 
         var toDate = command.CreateParameter();
         toDate.ParameterName = "@ToDate";
-        toDate.DbType = DbType.Date;
+        toDate.DbType = DbType.DateTimeOffset;
         toDate.Value =
             requestFilter.ToDate.HasValue
                 ? DateTime.SpecifyKind(requestFilter.ToDate.Value.Add(new TimeSpan(23, 59, 59)),
