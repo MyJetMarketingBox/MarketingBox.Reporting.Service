@@ -1,6 +1,7 @@
 using Autofac;
 using MarketingBox.Affiliate.Service.Client;
 using MarketingBox.Affiliate.Service.MyNoSql.Brands;
+using MarketingBox.Registration.Service.Messages.Registrations;
 using MarketingBox.Reporting.Service.Subscribers;
 using MyJetWallet.Sdk.NoSql;
 using MyJetWallet.Sdk.ServiceBus;
@@ -23,9 +24,9 @@ namespace MarketingBox.Reporting.Service.Modules
                     Program.LogFactory);
             
             const string queueName = "marketingbox-reporting-service";
-            builder.RegisterMyServiceBusSubscriberSingle<MarketingBox.Registration.Service.Messages.Registrations.RegistrationUpdateMessage>(
+            builder.RegisterMyServiceBusSubscriberSingle<RegistrationUpdateMessage>(
                 serviceBusClient,
-                Registration.Service.Messages.Topics.RegistrationUpdateTopic,
+                RegistrationUpdateMessage.Topic,
                 queueName,
                 TopicQueueType.Permanent);
             builder.RegisterMyServiceBusSubscriberSingle<MarketingBox.Affiliate.Service.Messages.AffiliateAccesses.AffiliateAccessUpdated>(
