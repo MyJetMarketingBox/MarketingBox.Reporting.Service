@@ -1,5 +1,4 @@
 ﻿using MarketingBox.Reporting.Service.Grpc;
-using MarketingBox.Reporting.Service.Grpc.Models.Common;
 using MarketingBox.Reporting.Service.Postgres;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,9 +8,11 @@ using System.Threading.Tasks;
 using MarketingBox.Affiliate.Service.Domain.Models.Affiliates;
 using MarketingBox.Affiliate.Service.Grpc.Models.Affiliates.Requests;
 using MarketingBox.Reporting.Service.Domain.Models;
-using MarketingBox.Reporting.Service.Grpc.Models.Registrations;
 using Newtonsoft.Json;
 using MarketingBox.Reporting.Service.Grpc.Models.Registrations.Requests;
+using MarketingBox.Sdk.Common.Exceptions;
+using MarketingBox.Sdk.Common.Extensions;
+using MarketingBox.Sdk.Common.Models.Grpc;
 using IAffiliateService = MarketingBox.Affiliate.Service.Grpc.IAffiliateService;
 
 namespace MarketingBox.Reporting.Service.Services
@@ -31,7 +32,7 @@ namespace MarketingBox.Reporting.Service.Services
             _affiliateService = affiliateService;
         }
 
-        public async Task<RegistrationSearchResponse> SearchAsync(RegistrationSearchRequest request)
+        public async Task<Response<IReadOnlyCollection<RegistrationDetails>>> SearchAsync(RegistrationSearchRequest request)
         {
             try
             {
@@ -47,27 +48,21 @@ namespace MarketingBox.Reporting.Service.Services
                     {
                         AffiliateId = (long)request.MasterAffiliateId
                     });
-
-                    if (master.Affiliate == null || master.Error != null)
+                    if (master.Status!=ResponseStatus.Ok)
                     {
-                        var message = $"Cannot find masterAffiliate by id {request.MasterAffiliateId}";
-                        _logger.LogError(message);
-                        return new RegistrationSearchResponse()
+                        return new Response<IReadOnlyCollection<RegistrationDetails>>
                         {
-                            Error = new Error()
-                            {
-                                Message = message,
-                                Type = ErrorType.InvalidParameter
-                            }
+                            Error = master.Error,
+                            Status = master.Status
                         };
                     }
+
+                    var assignAffiliates = GetAffiliateIdListByAccessTable(ctx, master.Data.AffiliateId);
                     
-                    var assignAffiliates = GetAffiliateIdListByAccessTable(ctx, master.Affiliate.AffiliateId);
-                    
-                    switch (master.Affiliate.GeneralInfo.Role)
+                    switch (master.Data.GeneralInfo.Role)
                     {
                         case AffiliateRole.Affiliate:
-                            query = query.Where(e => e.AffiliateId == master.Affiliate.AffiliateId);
+                            query = query.Where(e => e.AffiliateId == master.Data.AffiliateId);
                             break;
                         case AffiliateRole.AffiliateManager:
                             query = query.Where(e => assignAffiliates.Contains(e.AffiliateId));
@@ -112,22 +107,22 @@ namespace MarketingBox.Reporting.Service.Services
                     : query.OrderByDescending(e => e.RegistrationId);
                 query = query.Take(request.Take <= 0 ? 1000 : request.Take);
 
-                return new RegistrationSearchResponse()
+                var result = query.ToList();
+                if (!result.Any())
                 {
-                    Registrations = query.ToList()
+                    throw new NotFoundException("There is no entity for such request.");
+                }
+                
+                return new Response<IReadOnlyCollection<RegistrationDetails>>()
+                {
+                    Status = ResponseStatus.Ok,
+                    Data = result
                 };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error happened {@context}", request);
-                return new RegistrationSearchResponse()
-                {
-                    Error = new Error()
-                    {
-                        Message = "Internal error happened",
-                        Type = ErrorType.Unknown
-                    }
-                };
+                return ex.FailedResponse<IReadOnlyCollection<RegistrationDetails>>();
             }
         }
 

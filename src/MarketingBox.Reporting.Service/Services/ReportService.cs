@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using MarketingBox.Reporting.Service.Grpc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using MarketingBox.Reporting.Service.Grpc.Models.Reports;
-using MarketingBox.Reporting.Service.Grpc.Models.Common;
+using MarketingBox.Reporting.Service.Domain.Models.Reports;
 using MarketingBox.Reporting.Service.Repositories;
+using MarketingBox.Sdk.Common.Extensions;
+using MarketingBox.Sdk.Common.Models.Grpc;
 using ReportSearchRequest = MarketingBox.Reporting.Service.Domain.Models.Reports.Requests.ReportSearchRequest;
 
 namespace MarketingBox.Reporting.Service.Services
@@ -21,28 +23,23 @@ namespace MarketingBox.Reporting.Service.Services
             _repository = repository;
         }
 
-        public async Task<ReportSearchResponse> SearchAsync(ReportSearchRequest request)
+        public async Task<Response<IReadOnlyCollection<Report>>> SearchAsync(ReportSearchRequest request)
         {
             try
             {
                 var result = await _repository.SearchAsync(request);
-                return new ReportSearchResponse
+                
+                return new Response<IReadOnlyCollection<Report>>()
                 {
-                    Reports =  result.ToList()
+                    Status = ResponseStatus.Ok,
+                    Data =  result.ToList()
                 };
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "Error happened {@context}", request);
 
-                return new ReportSearchResponse()
-                {
-                    Error = new Error()
-                    {
-                        Message = "Internal error happened",
-                        Type = ErrorType.Unknown
-                    }
-                };
+                return e.FailedResponse<IReadOnlyCollection<Report>>();
             }
         }
     }

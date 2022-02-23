@@ -1,6 +1,9 @@
+using System.Collections.Generic;
 using System.ServiceModel;
 using System.Threading.Tasks;
+using MarketingBox.Reporting.Service.Domain.Models;
 using MarketingBox.Reporting.Service.Grpc.Models.RegistrationsByAffiliate;
+using MarketingBox.Sdk.Common.Models.Grpc;
 
 namespace MarketingBox.Reporting.Service.Grpc;
 
@@ -8,8 +11,8 @@ namespace MarketingBox.Reporting.Service.Grpc;
 public interface IAffiliateService
 {
     [OperationContract]
-    Task<RegistrationsByAffiliateResponse> GetRegistrations(RegistrationsByAffiliateRequest request);
+    Task<Response<IReadOnlyCollection<RegistrationDetails>>> GetRegistrations(RegistrationsByAffiliateRequest request);
 
     [OperationContract]
-    Task<RegistrationByAffiliateResponse> GetRegistration(RegistrationByAffiliateRequest request);
+    Task<Response<RegistrationDetails>> GetRegistration(RegistrationByAffiliateRequest request);
 }

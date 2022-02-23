@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using MarketingBox.Reporting.Service.Domain.Models;
 using MarketingBox.Reporting.Service.Domain.Models.Reports;
 using MarketingBox.Reporting.Service.Domain.Models.Reports.Requests;
 using MarketingBox.Reporting.Service.Postgres;
+using MarketingBox.Sdk.Common.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -86,6 +88,12 @@ public class RegistrationDetailsRepository : IRegistrationDetailsRepository
             await context.Database.CloseConnectionAsync();
 
             _logger.LogInformation("{Count} rows were read", entities.Count);
+
+            if (!entities.Any())
+            {
+                throw new NotFoundException("There is no entity for such request.");
+            }
+            
             return entities;
         }
         catch (Exception e)
