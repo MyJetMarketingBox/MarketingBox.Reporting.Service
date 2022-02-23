@@ -14,7 +14,7 @@
     <PackageReference Include="Grpc.AspNetCore" Version="2.42.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
     <PackageReference Include="MarketingBox.Integration.Service.Client" Version="2.1.5" />
-    <PackageReference Include="MarketingBox.Affiliate.Service.Client" Version="2.1.9" />
+    <PackageReference Include="MarketingBox.Affiliate.Service.Client" Version="2.1.10" />
     <PackageReference Include="MarketingBox.Registration.Service.Client" Version="3.3.2" />
     <PackageReference Include="MarketingBox.TrafficEngine.Service.Client" Version="1.0.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
