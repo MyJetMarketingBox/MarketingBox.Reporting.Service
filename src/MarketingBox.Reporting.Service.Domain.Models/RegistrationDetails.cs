@@ -43,5 +43,6 @@ namespace MarketingBox.Reporting.Service.Domain.Models
         [DataMember(Order = 35)] public string CustomerToken { get; set; }
         [DataMember(Order = 36)] public string CustomerLoginUrl { get; set; }
         [DataMember(Order = 37)] public string CustomerBrand { get; set; }
+        [DataMember(Order = 38)] public bool AutologinUsed { get; set; }
     }
 }

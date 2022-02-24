@@ -64,6 +64,7 @@ public class ReportingEngine : IReportingEngine
             Status = message.RouteInfo.Status.MapEnum<RegistrationStatus>(),
             UpdateMode = message.RouteInfo.UpdateMode
                 .MapEnum<DepositUpdateMode>(),
+            AutologinUsed = message.RouteInfo.AutologinUsed
         };
     }
 }
