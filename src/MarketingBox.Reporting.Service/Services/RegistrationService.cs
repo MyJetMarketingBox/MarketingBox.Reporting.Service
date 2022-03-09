@@ -100,11 +100,24 @@ namespace MarketingBox.Reporting.Service.Services
                         break;
                 }
                 
-                if (request.Cursor.HasValue)
-                    query = query.Where(e => e.RegistrationId < request.Cursor);
-                query = request.Asc 
-                    ? query.OrderBy(e => e.RegistrationId) 
-                    : query.OrderByDescending(e => e.RegistrationId);
+                if (request.Asc)
+                {
+                    if (request.Cursor.HasValue)
+                    {
+                        query = query.Where(x => x.RegistrationId > request.Cursor);
+                    }
+
+                    query = query.OrderBy(x => x.RegistrationId);
+                }
+                else
+                {
+                    if (request.Cursor.HasValue)
+                    {
+                        query = query.Where(x => x.RegistrationId < request.Cursor);
+                    }
+
+                    query = query.OrderByDescending(x => x.RegistrationId);
+                }
                 query = query.Take(request.Take <= 0 ? 1000 : request.Take);
 
                 var result = query.ToList();

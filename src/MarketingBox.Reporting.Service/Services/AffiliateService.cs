@@ -9,6 +9,7 @@ using MarketingBox.Reporting.Service.Postgres;
 using MarketingBox.Sdk.Common.Exceptions;
 using MarketingBox.Sdk.Common.Extensions;
 using MarketingBox.Sdk.Common.Models.Grpc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -53,7 +54,31 @@ namespace MarketingBox.Reporting.Service.Services
                     default:
                         throw new Exception("Something wrong with GetRegistrations at switch construction.");
                 }
+                
+                var limit = request.Take <= 0 ? 1000 : request.Take;
+                if (request.Asc)
+                {
+                    if (request.Cursor.HasValue)
+                    {
+                        query = query.Where(x => x.RegistrationId > request.Cursor);
+                    }
 
+                    query = query.OrderBy(x => x.RegistrationId);
+                }
+                else
+                {
+                    if (request.Cursor.HasValue)
+                    {
+                        query = query.Where(x => x.RegistrationId < request.Cursor);
+                    }
+
+                    query = query.OrderByDescending(x => x.RegistrationId);
+                }
+
+                query = query.Take(limit);
+
+                await query.LoadAsync();
+                
                 var registrations = query.ToList();
                 if (!registrations.Any())
                 {
