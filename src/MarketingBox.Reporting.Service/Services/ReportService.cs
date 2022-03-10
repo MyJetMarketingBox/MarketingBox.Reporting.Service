@@ -44,7 +44,7 @@ namespace MarketingBox.Reporting.Service.Services
                 
                 if (!string.IsNullOrEmpty(request.CountryCode) && request.CountryCodeType.HasValue)
                 {
-                    var country = await GetCountry(request.CountryCodeType.Value,request.CountryCode);
+                    var country = await GetCountry(request.CountryCodeType.Value,request.CountryCode.ToUpper());
                     request.CountryCode = country.Alfa2Code;
                 }
 
