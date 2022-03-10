@@ -125,7 +125,7 @@ public class RegistrationDetailsRepository : IRegistrationDetailsRepository
         var country = command.CreateParameter();
         country.ParameterName = "@Country";
         country.DbType = DbType.String;
-        country.Value = !string.IsNullOrEmpty(requestFilter.Country) ? requestFilter.Country : DBNull.Value;
+        country.Value = !string.IsNullOrEmpty(requestFilter.CountryCode) ? requestFilter.CountryCode : DBNull.Value;
         command.Parameters.Add(country);
 
         var brandId = command.CreateParameter();

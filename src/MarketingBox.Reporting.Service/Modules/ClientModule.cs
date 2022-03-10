@@ -22,6 +22,7 @@ namespace MarketingBox.Reporting.Service.Modules
                 .RegisterMyServiceBusTcpClient(
                     Program.ReloadedSettings(e => e.MarketingBoxServiceBusHostPort), 
                     Program.LogFactory);
+            builder.RegisterCountryClient(Program.Settings.AffiliateServiceUrl, noSqlClient);
             
             const string queueName = "marketingbox-reporting-service";
             builder.RegisterMyServiceBusSubscriberSingle<RegistrationUpdateMessage>(
