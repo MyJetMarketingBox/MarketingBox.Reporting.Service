@@ -2,7 +2,6 @@
 using MarketingBox.Reporting.Service.Domain.Models.Reports;
 using Microsoft.EntityFrameworkCore;
 using MyJetWallet.Sdk.Postgres;
-using MyJetWallet.Sdk.Service;
 
 namespace MarketingBox.Reporting.Service.Postgres
 {
@@ -10,10 +9,8 @@ namespace MarketingBox.Reporting.Service.Postgres
     {
         public const string Schema = "reporting-service";
 
-        private const string AffiliateAccessTableName = "affiliate_access";
         private const string RegistrationDetailsTableName = "registrations_details";
         private const string BrandsTableName = "brands";
-        public DbSet<AffiliateAccess> AffiliateAccesses { get; set; }
         public DbSet<RegistrationDetails> RegistrationDetails { get; set; }
         public DbSet<BrandEntity> Brands { get; set; }
 
@@ -33,7 +30,6 @@ namespace MarketingBox.Reporting.Service.Postgres
         {
             modelBuilder.HasDefaultSchema(Schema);
 
-            SetAffiliateAccessReadModel(modelBuilder);
             SetRegistrationDetailsModel(modelBuilder);
             SetBrandModel(modelBuilder);
 
@@ -68,17 +64,6 @@ namespace MarketingBox.Reporting.Service.Postgres
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.Country);
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.CreatedAt);
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.UpdateMode);
-        }
-
-        private void SetAffiliateAccessReadModel(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<AffiliateAccess>().ToTable(AffiliateAccessTableName);
-            modelBuilder.Entity<AffiliateAccess>().HasKey(x => x.Id);
-            modelBuilder.Entity<AffiliateAccess>().HasIndex(e => new {e.MasterAffiliateId, e.AffiliateId}).IsUnique();
-            modelBuilder.Entity<AffiliateAccess>().HasIndex(e => e.AffiliateId);
-
-            modelBuilder.Entity<AffiliateAccess>().Property(m => m.Id)
-                .ValueGeneratedNever();
         }
     }
 }

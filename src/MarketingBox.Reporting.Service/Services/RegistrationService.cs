@@ -56,28 +56,6 @@ namespace MarketingBox.Reporting.Service.Services
                             Status = master.Status
                         };
                     }
-
-                    var assignAffiliates = GetAffiliateIdListByAccessTable(ctx, master.Data.AffiliateId);
-                    
-                    switch (master.Data.GeneralInfo.Role)
-                    {
-                        case AffiliateRole.Affiliate:
-                            query = query.Where(e => e.AffiliateId == master.Data.AffiliateId);
-                            break;
-                        case AffiliateRole.AffiliateManager:
-                            query = query.Where(e => assignAffiliates.Contains(e.AffiliateId));
-                            break;
-                        case AffiliateRole.IntegrationManager:
-                            break;
-                        case AffiliateRole.MasterAffiliate:
-                            query = query.Where(e => assignAffiliates.Contains(e.AffiliateId));
-                            break;
-                        case AffiliateRole.MasterAffiliateReferral:
-                            query = query.Where(e => assignAffiliates.Contains(e.AffiliateId));
-                            break;
-                        default:
-                            break;
-                    }
                 }
                 
                 if (!string.IsNullOrWhiteSpace(request.TenantId))
@@ -137,19 +115,6 @@ namespace MarketingBox.Reporting.Service.Services
                 _logger.LogError(ex, "Error happened {@context}", request);
                 return ex.FailedResponse<IReadOnlyCollection<RegistrationDetails>>();
             }
-        }
-
-        private static IEnumerable<long> GetAffiliateIdListByAccessTable(DatabaseContext ctx, long masterId)
-        {
-            var arr = new List<long>
-            {
-                masterId
-            };
-            var affiliateAccesses = ctx.AffiliateAccesses
-                .Where(e => e.MasterAffiliateId == masterId)
-                .ToList();
-            affiliateAccesses.ForEach(e => arr.Add(e.AffiliateId));
-            return arr;
         }
     }
 }
