@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace MarketingBox.Reporting.Service.Grpc.Models.Leads
+namespace MarketingBox.Reporting.Service.Grpc.Models.Registrations
 {
     [DataContract]
     public class RegistrationAdditionalInfo

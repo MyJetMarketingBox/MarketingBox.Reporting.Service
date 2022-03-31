@@ -18,21 +18,28 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("reporting-service")
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "6.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("MarketingBox.Reporting.Service.Domain.Models.Customer", b =>
+            modelBuilder.Entity("MarketingBox.Reporting.Service.Domain.Models.RegistrationDetails", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                    b.Property<string>("RegistrationUid")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    b.Property<string>("AffCode")
+                        .HasColumnType("text");
 
                     b.Property<long>("AffiliateId")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("AffiliateName")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("AutologinUsed")
+                        .HasColumnType("boolean");
 
                     b.Property<long>("BrandId")
                         .HasColumnType("bigint");
@@ -40,14 +47,32 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                     b.Property<long>("CampaignId")
                         .HasColumnType("bigint");
 
+                    b.Property<DateTime?>("ConversionDate")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Country")
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
-                    b.Property<DateTime>("CreatedDate")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime>("DepositDate")
+                    b.Property<int>("CrmStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CustomerBrand")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CustomerId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CustomerLoginUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CustomerToken")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("DepositDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
@@ -58,12 +83,18 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
+                    b.Property<string>("Funnel")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Integration")
+                        .HasColumnType("text");
+
+                    b.Property<long>("IntegrationId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Ip")
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
-
-                    b.Property<bool>("IsDeposit")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("LastName")
                         .HasMaxLength(64)
@@ -73,170 +104,11 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
-                    b.Property<string>("TenantId")
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
-
-                    b.Property<string>("UId")
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Country");
-
-                    b.HasIndex("CreatedDate");
-
-                    b.HasIndex("Email");
-
-                    b.HasIndex("IsDeposit");
-
-                    b.HasIndex("TenantId");
-
-                    b.HasIndex("UId")
-                        .IsUnique();
-
-                    b.ToTable("customer", "reporting-service");
-                });
-
-            modelBuilder.Entity("MarketingBox.Reporting.Service.Postgres.ReadModels.AffiliateAccesses.AffiliateAccess", b =>
-                {
-                    b.Property<long>("Id")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("AffiliateId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("MasterAffiliateId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AffiliateId");
-
-                    b.HasIndex("MasterAffiliateId", "AffiliateId")
-                        .IsUnique();
-
-                    b.ToTable("affiliate_access", "reporting-service");
-                });
-
-            modelBuilder.Entity("MarketingBox.Reporting.Service.Postgres.ReadModels.Deposits.Deposit", b =>
-                {
                     b.Property<long>("RegistrationId")
                         .HasColumnType("bigint");
-
-                    b.Property<long>("AffiliateId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("BrandId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("BrandStatus")
-                        .HasColumnType("text");
-
-                    b.Property<long>("CampaignId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset?>("ConversionDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Country")
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("CustomerId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("text");
-
-                    b.Property<long>("IntegrationId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset>("RegisterDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("Sequence")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("TenantId")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("UniqueId")
-                        .HasColumnType("text");
-
-                    b.HasKey("RegistrationId");
-
-                    b.HasIndex("AffiliateId");
-
-                    b.HasIndex("TenantId", "RegistrationId");
-
-                    b.ToTable("deposits", "reporting-service");
-                });
-
-            modelBuilder.Entity("MarketingBox.Reporting.Service.Postgres.ReadModels.Leads.Registration", b =>
-                {
-                    b.Property<long>("RegistrationId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("AffiliateId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("BrandId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("CampaignId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset?>("ConversionDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Country")
-                        .HasColumnType("text");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("CrmStatus")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTimeOffset?>("DepositDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("text");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("text");
-
-                    b.Property<long>("IntegrationId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Ip")
-                        .HasColumnType("text");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("text");
-
-                    b.Property<long>("Sequence")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("So")
-                        .HasColumnType("text");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
-
-                    b.Property<string>("Sub")
-                        .HasColumnType("text");
 
                     b.Property<string>("Sub1")
                         .HasColumnType("text");
@@ -269,65 +141,64 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("TenantId")
-                        .HasColumnType("text");
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
-                    b.Property<string>("UniqueId")
-                        .HasColumnType("text");
+                    b.Property<int>("UpdateMode")
+                        .HasColumnType("integer");
 
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("RegistrationId");
+                    b.HasKey("RegistrationUid");
 
                     b.HasIndex("AffiliateId");
 
-                    b.HasIndex("TenantId", "RegistrationId");
+                    b.HasIndex("Country");
 
-                    b.ToTable("registrations", "reporting-service");
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("Email");
+
+                    b.HasIndex("RegistrationUid")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId");
+
+                    b.HasIndex("UpdateMode");
+
+                    b.ToTable("registrations_details", "reporting-service");
                 });
 
-            modelBuilder.Entity("MarketingBox.Reporting.Service.Postgres.ReadModels.Reports.ReportEntity", b =>
+            modelBuilder.Entity("MarketingBox.Reporting.Service.Domain.Models.Reports.BrandEntity", b =>
                 {
-                    b.Property<long>("AffiliateId")
+                    b.Property<long>("Id")
                         .HasColumnType("bigint");
-
-                    b.Property<long>("RegistrationId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("ReportType")
-                        .HasColumnType("integer");
-
-                    b.Property<long>("BrandId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("CampaignId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("IntegrationId")
-                        .HasColumnType("bigint");
-
-                    b.Property<decimal>("Payout")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("Revenue")
-                        .HasColumnType("numeric");
 
                     b.Property<string>("TenantId")
                         .HasColumnType("text");
 
-                    b.Property<string>("UniqueId")
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
-                    b.HasKey("AffiliateId", "RegistrationId", "ReportType");
+                    b.Property<decimal>("PayoutAmount")
+                        .HasColumnType("numeric");
 
-                    b.HasIndex("CreatedAt");
+                    b.Property<int>("PayoutCurrency")
+                        .HasColumnType("integer");
 
-                    b.HasIndex("TenantId");
+                    b.Property<int>("PayoutPlan")
+                        .HasColumnType("integer");
 
-                    b.ToTable("reports", "reporting-service");
+                    b.Property<decimal>("RevenueAmount")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("RevenueCurrency")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("RevenuePlan")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id", "TenantId");
+
+                    b.ToTable("brands", "reporting-service");
                 });
 #pragma warning restore 612, 618
         }

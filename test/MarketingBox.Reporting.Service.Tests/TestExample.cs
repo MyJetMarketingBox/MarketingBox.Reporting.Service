@@ -1,5 +1,4 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace MarketingBox.Reporting.Service.Tests
 {
@@ -8,13 +7,6 @@ namespace MarketingBox.Reporting.Service.Tests
         [SetUp]
         public void Setup()
         {
-        }
-
-        [Test]
-        public void Test1()
-        {
-            Console.WriteLine("Debug output");
-            Assert.Pass();
         }
     }
 }

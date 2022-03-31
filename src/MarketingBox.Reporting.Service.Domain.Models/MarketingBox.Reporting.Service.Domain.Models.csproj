@@ -2,7 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>10</LangVersion>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MarketingBox.Reporting.Service.Domain\MarketingBox.Reporting.Service.Domain.csproj" />
+  </ItemGroup>
 
 </Project>

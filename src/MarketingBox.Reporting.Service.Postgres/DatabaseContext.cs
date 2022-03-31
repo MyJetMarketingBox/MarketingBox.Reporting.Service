@@ -1,8 +1,5 @@
 ﻿using MarketingBox.Reporting.Service.Domain.Models;
-using MarketingBox.Reporting.Service.Postgres.ReadModels.AffiliateAccesses;
-using MarketingBox.Reporting.Service.Postgres.ReadModels.Deposits;
-using MarketingBox.Reporting.Service.Postgres.ReadModels.Leads;
-using MarketingBox.Reporting.Service.Postgres.ReadModels.Reports;
+using MarketingBox.Reporting.Service.Domain.Models.Reports;
 using Microsoft.EntityFrameworkCore;
 using MyJetWallet.Sdk.Postgres;
 
@@ -12,21 +9,10 @@ namespace MarketingBox.Reporting.Service.Postgres
     {
         public const string Schema = "reporting-service";
 
-        private const string RegistrationTableName = "registrations";
-        private const string ReportTableName = "reports";
-        private const string DepositTableName = "deposits";
-        private const string AffiliateAccessTableName = "affiliate_access";
-        
-        private const string CustomerTableName = "customer";
-
-        public DbSet<Registration> Registrations { get; set; }
-
-        public DbSet<ReportEntity> Reports { get; set; }
-
-        public DbSet<Deposit> Deposits { get; set; }
-
-        public DbSet<AffiliateAccess> AffiliateAccesses { get; set; }
-        public DbSet<Customer> Customers { get; set; }
+        private const string RegistrationDetailsTableName = "registrations_details";
+        private const string BrandsTableName = "brands";
+        public DbSet<RegistrationDetails> RegistrationDetails { get; set; }
+        public DbSet<BrandEntity> Brands { get; set; }
 
         public DatabaseContext(DbContextOptions options) : base(options)
         {
@@ -44,89 +30,40 @@ namespace MarketingBox.Reporting.Service.Postgres
         {
             modelBuilder.HasDefaultSchema(Schema);
 
-            SetAffiliateAccessReadModel(modelBuilder);
-            SetRegistrationReadModel(modelBuilder);
-            SetDepositReadModel(modelBuilder);
-            SetReportEntity(modelBuilder);
-            SetCustomerEntity(modelBuilder);
+            SetRegistrationDetailsModel(modelBuilder);
+            SetBrandModel(modelBuilder);
 
             base.OnModelCreating(modelBuilder);
         }
 
-        private void SetCustomerEntity(ModelBuilder modelBuilder)
+        private void SetBrandModel(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Customer>().ToTable(CustomerTableName);
-            
-            modelBuilder.Entity<Customer>().Property(e => e.Id).UseIdentityColumn();
-            modelBuilder.Entity<Customer>().HasKey(e => e.Id);
-            
-            modelBuilder.Entity<Customer>().Property(e => e.UId).HasMaxLength(64);
-            modelBuilder.Entity<Customer>().Property(e => e.TenantId).HasMaxLength(64);
-            modelBuilder.Entity<Customer>().Property(e => e.FirstName).HasMaxLength(64);
-            modelBuilder.Entity<Customer>().Property(e => e.LastName).HasMaxLength(64);
-            modelBuilder.Entity<Customer>().Property(e => e.Email).HasMaxLength(128);
-            modelBuilder.Entity<Customer>().Property(e => e.Phone).HasMaxLength(64);
-            modelBuilder.Entity<Customer>().Property(e => e.Ip).HasMaxLength(64);
-            modelBuilder.Entity<Customer>().Property(e => e.Country).HasMaxLength(64);
-            
-            modelBuilder.Entity<Customer>().HasIndex(e => e.UId).IsUnique();
-            modelBuilder.Entity<Customer>().HasIndex(e => e.TenantId);
-            modelBuilder.Entity<Customer>().HasIndex(e => e.Email);
-            modelBuilder.Entity<Customer>().HasIndex(e => e.Country);
-            modelBuilder.Entity<Customer>().HasIndex(e => e.CreatedDate);
-            modelBuilder.Entity<Customer>().HasIndex(e => e.IsDeposit);
+            modelBuilder.Entity<BrandEntity>().ToTable(BrandsTableName);
+            modelBuilder.Entity<BrandEntity>().HasKey(x => new {x.Id, x.TenantId});
         }
 
-        private void SetAffiliateAccessReadModel(ModelBuilder modelBuilder)
+        private void SetRegistrationDetailsModel(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<AffiliateAccess>().ToTable(AffiliateAccessTableName);
-            modelBuilder.Entity<AffiliateAccess>().HasKey(x => x.Id);
-            modelBuilder.Entity<AffiliateAccess>().HasIndex(e => new { e.MasterAffiliateId, e.AffiliateId }).IsUnique();
-            modelBuilder.Entity<AffiliateAccess>().HasIndex(e => e.AffiliateId);
+            modelBuilder.Entity<RegistrationDetails>().ToTable(RegistrationDetailsTableName);
 
-            modelBuilder.Entity<AffiliateAccess>().Property(m => m.Id)
-                .ValueGeneratedNever();
+            modelBuilder.Entity<RegistrationDetails>().HasKey(e => e.RegistrationUid);
 
-            //modelBuilder.Entity<AffiliateAccess>()
-            //    .HasMany(x => x.Deposits)
-            //    .WithMany(x => x.AffiliateAccesses)
-            //    .(x => x.AffiliateId);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.RegistrationUid).HasMaxLength(64);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.TenantId).HasMaxLength(64);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.FirstName).HasMaxLength(64);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.LastName).HasMaxLength(64);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.Email).HasMaxLength(128);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.Phone).HasMaxLength(64);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.Ip).HasMaxLength(64);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.Country).HasMaxLength(64);
 
-            //modelBuilder.Entity<AffiliateAccess>()
-            //    .HasMany(x => x.Registration)
-            //    .WithMany(x => x.AffiliateAccesses)
-            //    .HasForeignKey(x => x.AffiliateId);
-        }
-
-        private void SetRegistrationReadModel(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Registration>().ToTable(RegistrationTableName);
-            modelBuilder.Entity<Registration>().HasKey(e => e.RegistrationId);
-            modelBuilder.Entity<Registration>().HasIndex(e => new { e.TenantId, e.RegistrationId });
-            modelBuilder.Entity<Registration>().HasIndex(e => new { e.AffiliateId });
-            modelBuilder.Entity<Registration>().Property(m => m.RegistrationId)
-                .ValueGeneratedNever();
-        }
-
-        private void SetDepositReadModel(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Deposit>().ToTable(DepositTableName);
-            modelBuilder.Entity<Deposit>().HasKey(e => e.RegistrationId);
-            modelBuilder.Entity<Deposit>().HasIndex(e => new { e.TenantId, e.RegistrationId });
-            modelBuilder.Entity<Deposit>().HasIndex(e => new { e.AffiliateId });
-            modelBuilder.Entity<Deposit>().Property(m => m.RegistrationId)
-                .ValueGeneratedNever();
-
-            //modelBuilder.Entity<Deposit>().HasMany(x => x.AffiliateAccesses).
-        }
-
-        private void SetReportEntity(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<ReportEntity>().ToTable(ReportTableName);
-            modelBuilder.Entity<ReportEntity>().HasKey(x => new { x.AffiliateId, x.RegistrationId, x.ReportType });
-            modelBuilder.Entity<ReportEntity>().HasIndex(x => x.CreatedAt);
-            modelBuilder.Entity<ReportEntity>().HasIndex(x => x.TenantId);
-            //modelBuilder.Entity<ReportEntity>().HasIndex(x => x.re);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.RegistrationUid).IsUnique();
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.TenantId);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.AffiliateId);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.Email);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.Country);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.CreatedAt);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.UpdateMode);
         }
     }
 }

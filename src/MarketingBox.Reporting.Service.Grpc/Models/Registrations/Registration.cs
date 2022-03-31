@@ -1,7 +1,7 @@
-﻿using MarketingBox.Reporting.Service.Domain.Models.Lead;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
+using MarketingBox.Reporting.Service.Domain.Models;
 
-namespace MarketingBox.Reporting.Service.Grpc.Models.Leads
+namespace MarketingBox.Reporting.Service.Grpc.Models.Registrations
 {
     [DataContract]
     public class Registration
@@ -28,10 +28,10 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Leads
         public RegistrationAdditionalInfo AdditionalInfo { get; set; }
 
         [DataMember(Order = 8)] 
-        public LeadStatus Status  { get; set; }
+        public RegistrationStatus Status  { get; set; }
 
         [DataMember(Order = 9)]
-        public LeadCrmStatus CrmStatus{ get; set; }
+        public CrmStatus CrmStatus{ get; set; }
 
 
     }

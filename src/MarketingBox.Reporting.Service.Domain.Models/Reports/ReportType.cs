@@ -1,8 +1,11 @@
-﻿namespace MarketingBox.Reporting.Service.Domain.Models.Reports
+namespace MarketingBox.Reporting.Service.Domain.Models.Reports;
+
+public enum ReportType
 {
-    public enum ReportType
-    {
-        Lead,
-        Deposit
-    }
+    Affiliate,
+    Country,
+    Brand,
+    Offer,
+    Day,
+    Month
 }
