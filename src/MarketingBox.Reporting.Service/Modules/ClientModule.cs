@@ -30,16 +30,6 @@ namespace MarketingBox.Reporting.Service.Modules
                 RegistrationUpdateMessage.Topic,
                 queueName,
                 TopicQueueType.Permanent);
-            builder.RegisterMyServiceBusSubscriberSingle<MarketingBox.Affiliate.Service.Messages.AffiliateAccesses.AffiliateAccessUpdated>(
-                serviceBusClient,
-                Affiliate.Service.Messages.Topics.AffiliateAccessUpdatedTopic,
-                queueName,
-                TopicQueueType.Permanent);
-            builder.RegisterMyServiceBusSubscriberSingle<MarketingBox.Affiliate.Service.Messages.AffiliateAccesses.AffiliateAccessRemoved>(
-                serviceBusClient,
-                Affiliate.Service.Messages.Topics.AffiliateAccessRemovedTopic,
-                queueName,
-                TopicQueueType.Permanent);
             
             builder.RegisterType<BrandNoSqlSubscriber>()
                 .As<IStartable>()

@@ -5,8 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MarketingBox.Affiliate.Service.Domain.Models.Affiliates;
-using MarketingBox.Affiliate.Service.Grpc.Models.Affiliates.Requests;
 using MarketingBox.Reporting.Service.Domain.Models;
 using Newtonsoft.Json;
 using MarketingBox.Reporting.Service.Grpc.Models.Registrations.Requests;
@@ -44,7 +42,7 @@ namespace MarketingBox.Reporting.Service.Services
                 
                 if (request.MasterAffiliateId.HasValue)
                 {
-                    var master = await _affiliateService.GetAsync(new AffiliateGetRequest()
+                    var master = await _affiliateService.GetAsync(new ()
                     {
                         AffiliateId = (long)request.MasterAffiliateId
                     });
