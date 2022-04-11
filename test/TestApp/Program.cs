@@ -26,8 +26,7 @@ namespace TestApp
                 TenantId = "default-tenant-id",
                 Asc = true,
                 Cursor = null,
-                Take = 50,
-                MasterAffiliateId = 9
+                Take = 50
             });
 
             var search = await reportService.SearchAsync(new ReportSearchRequest()
