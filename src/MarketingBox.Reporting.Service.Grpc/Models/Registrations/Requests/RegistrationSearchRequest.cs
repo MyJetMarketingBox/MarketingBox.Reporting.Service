@@ -21,10 +21,7 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Registrations.Requests
         [DataMember(Order = 5)]
         public string TenantId { get; set; }
         
-        [DataMember(Order = 6)]
-        public long? MasterAffiliateId { get; set; }
-        
-        [DataMember(Order = 7)] 
+        [DataMember(Order = 6)] 
         public RegistrationsReportType? Type { get; set; }
     }
 }

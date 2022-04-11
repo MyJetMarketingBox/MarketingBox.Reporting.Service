@@ -39,23 +39,7 @@ namespace MarketingBox.Reporting.Service.Services
 
                 await using var ctx = _databaseContextFactory.Create();
                 IQueryable<RegistrationDetails> query = ctx.RegistrationDetails;
-                
-                if (request.MasterAffiliateId.HasValue)
-                {
-                    var master = await _affiliateService.GetAsync(new ()
-                    {
-                        AffiliateId = (long)request.MasterAffiliateId
-                    });
-                    if (master.Status!=ResponseStatus.Ok)
-                    {
-                        return new Response<IReadOnlyCollection<RegistrationDetails>>
-                        {
-                            Error = master.Error,
-                            Status = master.Status
-                        };
-                    }
-                }
-                
+
                 if (!string.IsNullOrWhiteSpace(request.TenantId))
                     query = query.Where(e => e.TenantId == request.TenantId);
                 if (request.AffiliateId.HasValue)
