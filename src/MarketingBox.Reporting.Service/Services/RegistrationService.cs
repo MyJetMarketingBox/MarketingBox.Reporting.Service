@@ -6,12 +6,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MarketingBox.Reporting.Service.Domain.Models;
+using MarketingBox.Reporting.Service.Domain.Models.Enums;
+using MarketingBox.Reporting.Service.Domain.Models.Registrations;
+using MarketingBox.Reporting.Service.Grpc.Requests.Registrations;
 using Newtonsoft.Json;
-using MarketingBox.Reporting.Service.Grpc.Models.Registrations.Requests;
 using MarketingBox.Sdk.Common.Exceptions;
 using MarketingBox.Sdk.Common.Extensions;
 using MarketingBox.Sdk.Common.Models.Grpc;
-using IAffiliateService = MarketingBox.Affiliate.Service.Grpc.IAffiliateService;
 
 namespace MarketingBox.Reporting.Service.Services
 {
@@ -19,15 +20,12 @@ namespace MarketingBox.Reporting.Service.Services
     {
         private readonly ILogger<RegistrationService> _logger;
         private readonly DatabaseContextFactory _databaseContextFactory;
-        private readonly IAffiliateService _affiliateService;
 
         public RegistrationService(ILogger<RegistrationService> logger,
-            DatabaseContextFactory databaseContextFactory, 
-            IAffiliateService affiliateService)
+            DatabaseContextFactory databaseContextFactory)
         {
             _logger = logger;
             _databaseContextFactory = databaseContextFactory;
-            _affiliateService = affiliateService;
         }
 
         public async Task<Response<IReadOnlyCollection<RegistrationDetails>>> SearchAsync(RegistrationSearchRequest request)
@@ -35,7 +33,7 @@ namespace MarketingBox.Reporting.Service.Services
             try
             {
                 _logger.LogInformation(
-                    $"CustomerReportService.GetCustomersReport receive request : {JsonConvert.SerializeObject(request)}");
+                    "CustomerReportService.GetCustomersReport receive request : {@Request}",request);
 
                 await using var ctx = _databaseContextFactory.Create();
                 IQueryable<RegistrationDetails> query = ctx.RegistrationDetails;
@@ -56,10 +54,9 @@ namespace MarketingBox.Reporting.Service.Services
                         break;
                     case RegistrationsReportType.All:
                         break;
-                    default:
-                        break;
                 }
-                
+
+                var total = query.Count(); 
                 if (request.Asc)
                 {
                     if (request.Cursor.HasValue)
@@ -78,23 +75,24 @@ namespace MarketingBox.Reporting.Service.Services
 
                     query = query.OrderByDescending(x => x.RegistrationId);
                 }
-                query = query.Take(request.Take <= 0 ? 1000 : request.Take);
+
+                if (request.Take.HasValue)
+                {
+                    query = query.Take(request.Take.Value);
+                }
 
                 var result = query.ToList();
-                if (!result.Any())
-                {
-                    throw new NotFoundException("There is no entity for such request.");
-                }
                 
                 return new Response<IReadOnlyCollection<RegistrationDetails>>()
                 {
                     Status = ResponseStatus.Ok,
-                    Data = result
+                    Data = result,
+                    Total = total
                 };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error happened {@context}", request);
+                _logger.LogError(ex, "Error happened for request {@context}", request);
                 return ex.FailedResponse<IReadOnlyCollection<RegistrationDetails>>();
             }
         }

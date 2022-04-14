@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace MarketingBox.Reporting.Service.Grpc.Models.RegistrationsByAffiliate
+namespace MarketingBox.Reporting.Service.Grpc.Requests.Registrations
 {
     [DataContract]
     public class RegistrationByAffiliateRequest

@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MarketingBox.Reporting.Service.Domain.Models;
+using MarketingBox.Reporting.Service.Domain.Models.Enums;
+using MarketingBox.Reporting.Service.Domain.Models.Registrations;
 using MarketingBox.Reporting.Service.Grpc;
-using MarketingBox.Reporting.Service.Grpc.Models.RegistrationsByAffiliate;
+using MarketingBox.Reporting.Service.Grpc.Requests.Registrations;
 using MarketingBox.Reporting.Service.Postgres;
 using MarketingBox.Sdk.Common.Exceptions;
 using MarketingBox.Sdk.Common.Extensions;
@@ -33,7 +35,7 @@ namespace MarketingBox.Reporting.Service.Services
             try
             {
                 _logger.LogInformation(
-                    $"AffiliateReportService.GetRegistrations receive request : {JsonConvert.SerializeObject(request)}");
+                    "AffiliateReportService.GetRegistrations receive request : {@Request}", request);
 
                 await using var ctx = _databaseContextFactory.Create();
                 var query = ctx.RegistrationDetails
@@ -54,8 +56,8 @@ namespace MarketingBox.Reporting.Service.Services
                     default:
                         throw new Exception("Something wrong with GetRegistrations at switch construction.");
                 }
-                
-                var limit = request.Take <= 0 ? 1000 : request.Take;
+
+                var total = query.Count();
                 if (request.Asc)
                 {
                     if (request.Cursor.HasValue)
@@ -75,25 +77,25 @@ namespace MarketingBox.Reporting.Service.Services
                     query = query.OrderByDescending(x => x.RegistrationId);
                 }
 
-                query = query.Take(limit);
+                if (request.Take.HasValue)
+                {
+                    query = query.Take(request.Take.Value);
+                }
 
                 await query.LoadAsync();
-                
+
                 var registrations = query.ToList();
-                if (!registrations.Any())
-                {
-                    throw new NotFoundException("There is no entity for such request.");
-                }
 
                 return new Response<IReadOnlyCollection<RegistrationDetails>>
                 {
                     Status = ResponseStatus.Ok,
-                    Data = registrations
+                    Data = registrations,
+                    Total = total
                 };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error happened {@context} {@message}", request, ex.Message);
+                _logger.LogError(ex, "Error happened for {@context} with message {@message}", request, ex.Message);
                 return ex.FailedResponse<IReadOnlyCollection<RegistrationDetails>>();
             }
         }
@@ -103,7 +105,7 @@ namespace MarketingBox.Reporting.Service.Services
             try
             {
                 _logger.LogInformation(
-                    $"AffiliateReportService.GetRegistration receive request : {JsonConvert.SerializeObject(request)}");
+                    "AffiliateReportService.GetRegistration receive request : {@Request}", request);
 
                 await using var ctx = _databaseContextFactory.Create();
 
@@ -116,6 +118,7 @@ namespace MarketingBox.Reporting.Service.Services
                 {
                     throw new NotFoundException(nameof(request.AffiliateId), request.AffiliateId);
                 }
+
                 return new Response<RegistrationDetails>()
                 {
                     Status = ResponseStatus.Ok,

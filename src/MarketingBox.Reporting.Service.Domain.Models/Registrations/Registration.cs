@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
-using MarketingBox.Reporting.Service.Domain.Models;
+using MarketingBox.Reporting.Service.Domain.Models.Enums;
 
-namespace MarketingBox.Reporting.Service.Grpc.Models.Registrations
+namespace MarketingBox.Reporting.Service.Domain.Models.Registrations
 {
     [DataContract]
     public class Registration
@@ -32,7 +32,5 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Registrations
 
         [DataMember(Order = 9)]
         public CrmStatus CrmStatus{ get; set; }
-
-
     }
 }

@@ -1,9 +1,11 @@
 using System.Threading.Tasks;
 using MarketingBox.Registration.Service.Messages.Registrations;
 using MarketingBox.Reporting.Service.Domain;
-using MarketingBox.Reporting.Service.Domain.Models;
+using MarketingBox.Reporting.Service.Domain.Models.Enums;
+using MarketingBox.Reporting.Service.Engines.Interfaces;
 using MarketingBox.Reporting.Service.Repositories;
-using RegistrationDetails = MarketingBox.Reporting.Service.Domain.Models.RegistrationDetails;
+using MarketingBox.Reporting.Service.Repositories.Interfaces;
+using RegistrationDetails = MarketingBox.Reporting.Service.Domain.Models.Registrations.RegistrationDetails;
 
 namespace MarketingBox.Reporting.Service.Engines;
 
@@ -39,8 +41,8 @@ public class ReportingEngine : IReportingEngine
             AffiliateName = message.RouteInfo.AffiliateName,
             BrandId = message.RouteInfo.BrandId,
             CampaignId = message.RouteInfo.CampaignId,
-            ConversionDate = message.RouteInfo.ConversionDate.Value.DateTime.ToUtc(),
-            DepositDate = message.RouteInfo.DepositDate.Value.DateTime.ToUtc(),
+            ConversionDate = message.RouteInfo.ConversionDate?.DateTime.ToUtc(),
+            DepositDate = message.RouteInfo.DepositDate?.DateTime.ToUtc(),
             CrmStatus = message.RouteInfo.CrmStatus.MapEnum<CrmStatus>(),
             AffCode = message.AdditionalInfo.AffCode,
             Funnel = message.AdditionalInfo.Funnel,
@@ -59,7 +61,7 @@ public class ReportingEngine : IReportingEngine
             CustomerLoginUrl = message.RouteInfo.BrandInfo.LoginUrl,
             CustomerToken = message.RouteInfo.BrandInfo.Token,
             Integration = message.RouteInfo.Integration,
-            IntegrationId = message.RouteInfo.IntegrationId.Value,
+            IntegrationId = message.RouteInfo.IntegrationId ?? default,
             RegistrationId = message.GeneralInfoInternal.RegistrationId,
             Status = message.RouteInfo.Status.MapEnum<RegistrationStatus>(),
             UpdateMode = message.RouteInfo.UpdateMode

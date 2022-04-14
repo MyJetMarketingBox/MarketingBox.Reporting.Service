@@ -8,12 +8,14 @@ using FluentValidation;
 using MarketingBox.Affiliate.Service.Client;
 using MarketingBox.Affiliate.Service.Domain.Models.Country;
 using MarketingBox.Reporting.Service.Domain.Models;
+using MarketingBox.Reporting.Service.Domain.Models.Enums;
 using MarketingBox.Reporting.Service.Domain.Models.Reports;
 using MarketingBox.Reporting.Service.Repositories;
+using MarketingBox.Reporting.Service.Repositories.Interfaces;
 using MarketingBox.Sdk.Common.Exceptions;
 using MarketingBox.Sdk.Common.Extensions;
 using MarketingBox.Sdk.Common.Models.Grpc;
-using ReportSearchRequest = MarketingBox.Reporting.Service.Domain.Models.Reports.Requests.ReportSearchRequest;
+using ReportSearchRequest = MarketingBox.Reporting.Service.Grpc.Requests.Reports.ReportSearchRequest;
 
 namespace MarketingBox.Reporting.Service.Services
 {

@@ -1,5 +1,5 @@
 using FluentValidation;
-using MarketingBox.Reporting.Service.Domain.Models.Reports.Requests;
+using MarketingBox.Reporting.Service.Grpc.Requests.Reports;
 
 namespace MarketingBox.Reporting.Service.Validators;
 

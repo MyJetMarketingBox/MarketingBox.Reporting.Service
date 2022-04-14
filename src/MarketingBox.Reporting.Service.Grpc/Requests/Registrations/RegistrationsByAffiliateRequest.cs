@@ -1,8 +1,8 @@
 using System;
 using System.Runtime.Serialization;
-using MarketingBox.Reporting.Service.Domain.Models;
+using MarketingBox.Reporting.Service.Domain.Models.Enums;
 
-namespace MarketingBox.Reporting.Service.Grpc.Models.RegistrationsByAffiliate
+namespace MarketingBox.Reporting.Service.Grpc.Requests.Registrations
 {
     [DataContract]
     public class RegistrationsByAffiliateRequest
@@ -12,7 +12,7 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.RegistrationsByAffiliate
         [DataMember(Order = 3)] public RegistrationsReportType Type { get; set; }
         [DataMember(Order = 4)] public long AffiliateId { get; set; }
         [DataMember(Order = 10)] public long? Cursor { get; set; }
-        [DataMember(Order = 11)] public int Take { get; set; }
+        [DataMember(Order = 11)] public int? Take { get; set; }
         [DataMember(Order = 12)] public bool Asc { get; set; }
         [DataMember(Order = 13)] public string TenantId { get; set; }
 

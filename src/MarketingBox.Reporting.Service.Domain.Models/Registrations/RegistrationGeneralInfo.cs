@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using Destructurama.Attributed;
 
-namespace MarketingBox.Reporting.Service.Grpc.Models.Registrations
+namespace MarketingBox.Reporting.Service.Domain.Models.Registrations
 {
     [DataContract]
     public class RegistrationGeneralInfo

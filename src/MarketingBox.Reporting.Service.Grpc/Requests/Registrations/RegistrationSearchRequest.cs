@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
-using MarketingBox.Reporting.Service.Domain.Models;
+using MarketingBox.Reporting.Service.Domain.Models.Enums;
 
-namespace MarketingBox.Reporting.Service.Grpc.Models.Registrations.Requests
+namespace MarketingBox.Reporting.Service.Grpc.Requests.Registrations
 {
     [DataContract]
     public class RegistrationSearchRequest
@@ -13,7 +13,7 @@ namespace MarketingBox.Reporting.Service.Grpc.Models.Registrations.Requests
         public long? Cursor { get; set; }
 
         [DataMember(Order = 3)]
-        public int Take { get; set; }
+        public int? Take { get; set; }
 
         [DataMember(Order = 4)]
         public bool Asc { get; set; }

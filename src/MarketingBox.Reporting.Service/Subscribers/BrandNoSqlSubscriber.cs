@@ -5,6 +5,7 @@ using AutoMapper;
 using MarketingBox.Affiliate.Service.MyNoSql.Brands;
 using MarketingBox.Reporting.Service.Domain.Models.Reports;
 using MarketingBox.Reporting.Service.Repositories;
+using MarketingBox.Reporting.Service.Repositories.Interfaces;
 using MyNoSqlServer.Abstractions;
 
 namespace MarketingBox.Reporting.Service.Subscribers;

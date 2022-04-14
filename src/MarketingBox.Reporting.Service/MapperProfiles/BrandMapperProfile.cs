@@ -1,8 +1,6 @@
 using AutoMapper;
 using MarketingBox.Affiliate.Service.MyNoSql.Brands;
 using MarketingBox.Reporting.Service.Domain.Models.Reports;
-using Currency = MarketingBox.Reporting.Service.Domain.Models.Reports.Currency;
-using Plan = MarketingBox.Reporting.Service.Domain.Models.Reports.Plan;
 
 namespace MarketingBox.Reporting.Service.MapperProfiles;
 
@@ -10,7 +8,7 @@ public class BrandMapperProfile : Profile
 {
     public BrandMapperProfile()
     {
-        // CreateMap<BrandNoSql, BrandEntity>()
+        //CreateMap<BrandNoSql, BrandEntity>();
         //     .ForMember(x => x.PayoutAmount,
         //         x => x.MapFrom(z => z.Payout.Amount))
         //     .ForMember(x => x.PayoutCurrency,

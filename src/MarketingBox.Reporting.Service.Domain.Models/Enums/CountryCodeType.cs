@@ -1,4 +1,4 @@
-namespace MarketingBox.Reporting.Service.Domain.Models;
+namespace MarketingBox.Reporting.Service.Domain.Models.Enums;
 
 public enum CountryCodeType
 {

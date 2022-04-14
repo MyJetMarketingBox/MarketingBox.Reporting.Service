@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MarketingBox.Reporting.Service.Domain.Models.Reports;
 using MarketingBox.Reporting.Service.Postgres;
+using MarketingBox.Reporting.Service.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 

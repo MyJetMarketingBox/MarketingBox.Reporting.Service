@@ -1,3 +1,5 @@
+using MarketingBox.Reporting.Service.Domain.Models.Enums;
+
 namespace MarketingBox.Reporting.Service.Domain.Models.Reports;
 
 public class BrandEntity
@@ -17,20 +19,4 @@ public class BrandEntity
     public Currency PayoutCurrency { get; set; }
 
     public Plan PayoutPlan { get; set; }
-}
-
-public enum Plan
-{
-    CPA,
-    CPL,
-    CPC,
-}
-
-public enum Currency
-{
-    USD,
-    EUR,
-    GBP,
-    CHF,
-    BTC,
 }

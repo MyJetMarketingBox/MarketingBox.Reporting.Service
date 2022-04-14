@@ -3,6 +3,7 @@ using MarketingBox.Affiliate.Service.Client;
 using MarketingBox.Affiliate.Service.MyNoSql.Brands;
 using MarketingBox.Registration.Service.Messages.Registrations;
 using MarketingBox.Reporting.Service.Subscribers;
+using MarketingBox.TrackingLink.Service.Messages;
 using MyJetWallet.Sdk.NoSql;
 using MyJetWallet.Sdk.ServiceBus;
 using MyServiceBus.Abstractions;
@@ -24,17 +25,24 @@ namespace MarketingBox.Reporting.Service.Modules
                     Program.LogFactory);
             builder.RegisterCountryClient(Program.Settings.AffiliateServiceUrl, noSqlClient);
             
-            const string queueName = "marketingbox-reporting-service";
+            const string queueReportingName = "marketingbox-reporting-service-local";
             builder.RegisterMyServiceBusSubscriberSingle<RegistrationUpdateMessage>(
                 serviceBusClient,
                 RegistrationUpdateMessage.Topic,
-                queueName,
+                queueReportingName,
                 TopicQueueType.Permanent);
             
-            builder.RegisterType<BrandNoSqlSubscriber>()
-                .As<IStartable>()
-                .SingleInstance()
-                .AutoActivate();
+            const string queueTrackingLinkName = "marketingbox-reporting-service-tracking-link";
+            builder.RegisterMyServiceBusSubscriberSingle<TrackingLinkUpsertMessage>(
+                serviceBusClient,
+                TrackingLinkUpsertMessage.Topic,
+                queueTrackingLinkName,
+                TopicQueueType.PermanentWithSingleConnection);
+            
+            // builder.RegisterType<BrandNoSqlSubscriber>()
+            //     .As<IStartable>()
+            //     .SingleInstance()
+            //     .AutoActivate();
         }
     }
 }

@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using MarketingBox.Reporting.Service.Domain.Models.Enums;
+using MarketingBox.Reporting.Service.Domain.Models.Reports;
+using MarketingBox.Sdk.Common.Models;
 
-namespace MarketingBox.Reporting.Service.Domain.Models.Reports.Requests
+namespace MarketingBox.Reporting.Service.Grpc.Requests.Reports
 {
     [DataContract]
-    public class ReportSearchRequest
+    public class ReportSearchRequest : ValidatableEntity
     {
         [DataMember(Order = 1)] public long? AffiliateId { get; set; }
         [DataMember(Order = 2)] public CountryCodeType? CountryCodeType { get; set; }

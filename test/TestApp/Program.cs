@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using MarketingBox.Reporting.Service.Client;
-using MarketingBox.Reporting.Service.Domain.Models.Reports.Requests;
-using MarketingBox.Reporting.Service.Grpc.Models.Registrations.Requests;
+using MarketingBox.Reporting.Service.Grpc.Requests.Registrations;
+using MarketingBox.Reporting.Service.Grpc.Requests.Reports;
 using ProtoBuf.Grpc.Client;
 
 namespace TestApp

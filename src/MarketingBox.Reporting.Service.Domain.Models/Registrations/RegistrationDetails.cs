@@ -1,7 +1,8 @@
 using System;
 using System.Runtime.Serialization;
+using MarketingBox.Reporting.Service.Domain.Models.Enums;
 
-namespace MarketingBox.Reporting.Service.Domain.Models
+namespace MarketingBox.Reporting.Service.Domain.Models.Registrations
 {
     [DataContract]
     public class RegistrationDetails
