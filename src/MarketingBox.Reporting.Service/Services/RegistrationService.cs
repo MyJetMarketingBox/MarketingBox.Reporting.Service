@@ -5,12 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MarketingBox.Reporting.Service.Domain.Models;
-using MarketingBox.Reporting.Service.Domain.Models.Enums;
 using MarketingBox.Reporting.Service.Domain.Models.Registrations;
 using MarketingBox.Reporting.Service.Grpc.Requests.Registrations;
-using Newtonsoft.Json;
-using MarketingBox.Sdk.Common.Exceptions;
+using MarketingBox.Sdk.Common.Enums;
 using MarketingBox.Sdk.Common.Extensions;
 using MarketingBox.Sdk.Common.Models.Grpc;
 

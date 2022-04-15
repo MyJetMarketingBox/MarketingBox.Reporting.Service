@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.Serialization;
-using MarketingBox.Reporting.Service.Domain.Models.Enums;
+using MarketingBox.Sdk.Common.Enums;
 
 namespace MarketingBox.Reporting.Service.Domain.Models.Registrations
 {

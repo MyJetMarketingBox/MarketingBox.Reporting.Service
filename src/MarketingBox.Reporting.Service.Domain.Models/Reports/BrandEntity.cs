@@ -1,4 +1,4 @@
-using MarketingBox.Reporting.Service.Domain.Models.Enums;
+using MarketingBox.Sdk.Common.Enums;
 
 namespace MarketingBox.Reporting.Service.Domain.Models.Reports;
 

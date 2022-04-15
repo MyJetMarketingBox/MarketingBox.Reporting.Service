@@ -1,10 +1,9 @@
 using System.Threading.Tasks;
 using MarketingBox.Registration.Service.Messages.Registrations;
 using MarketingBox.Reporting.Service.Domain;
-using MarketingBox.Reporting.Service.Domain.Models.Enums;
 using MarketingBox.Reporting.Service.Engines.Interfaces;
-using MarketingBox.Reporting.Service.Repositories;
 using MarketingBox.Reporting.Service.Repositories.Interfaces;
+using MarketingBox.Sdk.Common.Enums;
 using RegistrationDetails = MarketingBox.Reporting.Service.Domain.Models.Registrations.RegistrationDetails;
 
 namespace MarketingBox.Reporting.Service.Engines;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using MarketingBox.Reporting.Service.Domain.Models.Enums;
-using MarketingBox.Reporting.Service.Domain.Models.Reports;
+using MarketingBox.Sdk.Common.Enums;
 using MarketingBox.Sdk.Common.Models;
 
 namespace MarketingBox.Reporting.Service.Grpc.Requests.Reports
