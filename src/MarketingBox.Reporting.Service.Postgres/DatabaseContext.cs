@@ -71,9 +71,7 @@ namespace MarketingBox.Reporting.Service.Postgres
         }
 
         private static void SetTrackingLinkModel(ModelBuilder modelBuilder)
-        {            
-            modelBuilder.HasDefaultSchema(Schema);
-            
+        {
             modelBuilder.Entity<TrackingLink>().ToTable(TrackingLinkTable);
             modelBuilder.Entity<TrackingLink>().OwnsOne(x => x.LinkParameterValues);
             modelBuilder.Entity<TrackingLink>().OwnsOne(x => x.LinkParameterNames);
