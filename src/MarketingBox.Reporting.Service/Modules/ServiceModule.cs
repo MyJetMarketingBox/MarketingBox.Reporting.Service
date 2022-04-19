@@ -25,6 +25,11 @@ namespace MarketingBox.Reporting.Service.Modules
                 .SingleInstance()
                 .AutoActivate();
 
+            builder.RegisterType<TrackingLinkSubscriber>()
+                .As<IStartable>()
+                .SingleInstance()
+                .AutoActivate();
+
             builder.RegisterType<ReportingEngine>()
                 .As<IReportingEngine>()
                 .SingleInstance();
