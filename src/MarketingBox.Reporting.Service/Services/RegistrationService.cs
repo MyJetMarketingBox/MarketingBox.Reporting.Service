@@ -39,6 +39,16 @@ namespace MarketingBox.Reporting.Service.Services
                     query = query.Where(e => e.TenantId == request.TenantId);
                 if (request.AffiliateId.HasValue)
                     query = query.Where(e => e.AffiliateId == request.AffiliateId);
+                if (request.Status.HasValue)
+                    query = query.Where(e => e.Status == request.Status);
+                if (request.CrmStatus.HasValue)
+                    query = query.Where(e => e.CrmStatus == request.CrmStatus);
+                if (!string.IsNullOrWhiteSpace(request.Country))
+                    query = query.Where(e => e.Country == request.Country);
+                if (request.DateFrom.HasValue)
+                    query = query.Where(e => e.CreatedAt >= request.DateFrom);
+                if (request.DateTo.HasValue)
+                    query = query.Where(e => e.CreatedAt <= request.DateTo);
                 
                 switch (request.Type)
                 {
