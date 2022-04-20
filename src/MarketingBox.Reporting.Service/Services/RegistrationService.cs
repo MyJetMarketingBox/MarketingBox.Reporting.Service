@@ -44,7 +44,7 @@ namespace MarketingBox.Reporting.Service.Services
                 if (request.CrmStatus.HasValue)
                     query = query.Where(e => e.CrmStatus == request.CrmStatus);
                 if (!string.IsNullOrWhiteSpace(request.Country))
-                    query = query.Where(e => e.Country == request.Country);
+                    query = query.Where(e => e.CountryAlfa2Code == request.Country);
                 if (request.DateFrom.HasValue)
                     query = query.Where(e => e.CreatedAt >= request.DateFrom);
                 if (request.DateTo.HasValue)

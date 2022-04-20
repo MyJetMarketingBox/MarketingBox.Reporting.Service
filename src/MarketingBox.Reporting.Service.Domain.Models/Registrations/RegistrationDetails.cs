@@ -15,7 +15,7 @@ namespace MarketingBox.Reporting.Service.Domain.Models.Registrations
         [DataMember(Order = 6)] public string Email { get; set; }
         [DataMember(Order = 7)] public string Phone { get; set; }
         [DataMember(Order = 8)] public string Ip { get; set; }
-        [DataMember(Order = 9)] public string Country { get; set; }
+        [DataMember(Order = 9)] public string CountryAlfa2Code { get; set; }
         [DataMember(Order = 10)] public long AffiliateId { get; set; }
         [DataMember(Order = 11)] public long BrandId { get; set; }
         [DataMember(Order = 12)] public long CampaignId { get; set; }
@@ -45,5 +45,6 @@ namespace MarketingBox.Reporting.Service.Domain.Models.Registrations
         [DataMember(Order = 36)] public string CustomerLoginUrl { get; set; }
         [DataMember(Order = 37)] public string CustomerBrand { get; set; }
         [DataMember(Order = 38)] public bool AutologinUsed { get; set; }
+        [DataMember(Order = 39)] public string Password { get; set; }
     }
 }

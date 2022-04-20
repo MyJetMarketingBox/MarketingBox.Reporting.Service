@@ -35,7 +35,7 @@ public class ReportingEngine : IReportingEngine
             Email = message.GeneralInfoInternal.Email,
             Phone = message.GeneralInfoInternal.Phone,
             Ip = message.GeneralInfoInternal.Ip,
-            Country = message.GeneralInfoInternal.CountryAlfa2Code,
+            CountryAlfa2Code = message.GeneralInfoInternal.CountryAlfa2Code,
             AffiliateId = message.RouteInfo.AffiliateId,
             AffiliateName = message.RouteInfo.AffiliateName,
             BrandId = message.RouteInfo.BrandId,
@@ -65,7 +65,8 @@ public class ReportingEngine : IReportingEngine
             Status = message.RouteInfo.Status.MapEnum<RegistrationStatus>(),
             UpdateMode = message.RouteInfo.UpdateMode
                 .MapEnum<DepositUpdateMode>(),
-            AutologinUsed = message.RouteInfo.AutologinUsed
+            AutologinUsed = message.RouteInfo.AutologinUsed,
+            Password = message.GeneralInfoInternal.Password
         };
     }
 }

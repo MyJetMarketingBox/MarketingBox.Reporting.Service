@@ -59,13 +59,13 @@ namespace MarketingBox.Reporting.Service.Postgres
             modelBuilder.Entity<RegistrationDetails>().Property(e => e.Email).HasMaxLength(128);
             modelBuilder.Entity<RegistrationDetails>().Property(e => e.Phone).HasMaxLength(64);
             modelBuilder.Entity<RegistrationDetails>().Property(e => e.Ip).HasMaxLength(64);
-            modelBuilder.Entity<RegistrationDetails>().Property(e => e.Country).HasMaxLength(64);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.CountryAlfa2Code).HasMaxLength(64);
 
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.RegistrationUid).IsUnique();
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.TenantId);
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.AffiliateId);
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.Email);
-            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.Country);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.CountryAlfa2Code);
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.CreatedAt);
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.UpdateMode);
         }
