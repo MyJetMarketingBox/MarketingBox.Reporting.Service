@@ -18,5 +18,6 @@ namespace MarketingBox.Reporting.Service.Grpc.Requests.Registrations
         [DataMember(Order = 9)] public CrmStatus? CrmStatus { get; set; }
         [DataMember(Order = 10)] public DateTime? DateFrom { get; set; }
         [DataMember(Order = 11)] public DateTime? DateTo { get; set; }
+        [DataMember(Order = 12)] public long? RegistrationId { get; set; }
     }
 }

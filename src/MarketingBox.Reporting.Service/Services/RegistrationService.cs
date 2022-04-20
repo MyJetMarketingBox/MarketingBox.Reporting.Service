@@ -49,6 +49,8 @@ namespace MarketingBox.Reporting.Service.Services
                     query = query.Where(e => e.CreatedAt >= request.DateFrom);
                 if (request.DateTo.HasValue)
                     query = query.Where(e => e.CreatedAt <= request.DateTo);
+                if (request.RegistrationId.HasValue)
+                    query = query.Where(e => e.RegistrationId == request.RegistrationId);
                 
                 switch (request.Type)
                 {
@@ -70,7 +72,6 @@ namespace MarketingBox.Reporting.Service.Services
                     {
                         query = query.Where(x => x.RegistrationId > request.Cursor);
                     }
-
                     query = query.OrderBy(x => x.RegistrationId);
                 }
                 else
