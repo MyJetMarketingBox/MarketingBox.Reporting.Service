@@ -26,7 +26,7 @@ namespace MarketingBox.Reporting.Service.Modules
             builder.RegisterCountryClient(Program.Settings.AffiliateServiceUrl, noSqlClient);
             builder.RegisterAffiliateServiceClient(Program.Settings.AffiliateServiceUrl);
             
-            const string queueReportingName = "marketingbox-reporting-service-local";
+            const string queueReportingName = "marketingbox-reporting-service";
             builder.RegisterMyServiceBusSubscriberSingle<RegistrationUpdateMessage>(
                 serviceBusClient,
                 RegistrationUpdateMessage.Topic,

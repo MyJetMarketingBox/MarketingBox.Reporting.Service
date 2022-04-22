@@ -28,7 +28,7 @@ public class ReportingEngine : IReportingEngine
         return new RegistrationDetails
         {
             RegistrationUid = message.GeneralInfoInternal.RegistrationUid,
-            CreatedAt = message.GeneralInfoInternal.CreatedAt.DateTime.ToUtc(),
+            CreatedAt = message.GeneralInfoInternal.CreatedAt.ToUtc(),
             TenantId = message.TenantId,
             FirstName = message.GeneralInfoInternal.FirstName,
             LastName = message.GeneralInfoInternal.LastName,
@@ -40,8 +40,8 @@ public class ReportingEngine : IReportingEngine
             AffiliateName = message.RouteInfo.AffiliateName,
             BrandId = message.RouteInfo.BrandId,
             CampaignId = message.RouteInfo.CampaignId,
-            ConversionDate = message.RouteInfo.ConversionDate?.DateTime.ToUtc(),
-            DepositDate = message.RouteInfo.DepositDate?.DateTime.ToUtc(),
+            ConversionDate = message.RouteInfo.ConversionDate?.ToUtc(),
+            DepositDate = message.RouteInfo.DepositDate?.ToUtc(),
             CrmStatus = message.RouteInfo.CrmStatus.MapEnum<CrmStatus>(),
             AffCode = message.AdditionalInfo.AffCode,
             Funnel = message.AdditionalInfo.Funnel,
