@@ -6,6 +6,8 @@ using MarketingBox.Reporting.Service.Grpc.Requests.Reports;
 using MarketingBox.Reporting.Service.Postgres;
 using MarketingBox.Reporting.Service.Repositories;
 using MarketingBox.Reporting.Service.Repositories.Interfaces;
+using MarketingBox.Reporting.Service.Services;
+using MarketingBox.Reporting.Service.Services.Interfaces;
 using MarketingBox.Reporting.Service.Subscribers;
 using MarketingBox.Reporting.Service.Validators;
 
@@ -48,6 +50,10 @@ namespace MarketingBox.Reporting.Service.Modules
             
             builder.RegisterType<TrackingLinkRepository>()
                 .As<ITrackingLinkRepository>()
+                .SingleInstance();
+            
+            builder.RegisterType<BrandBoxReportService>()
+                .As<IBrandBoxReportService>()
                 .SingleInstance();
         }
     }

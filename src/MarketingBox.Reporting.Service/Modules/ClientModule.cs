@@ -24,13 +24,14 @@ namespace MarketingBox.Reporting.Service.Modules
                     Program.ReloadedSettings(e => e.MarketingBoxServiceBusHostPort), 
                     Program.LogFactory);
             builder.RegisterCountryClient(Program.Settings.AffiliateServiceUrl, noSqlClient);
+            builder.RegisterAffiliateServiceClient(Program.Settings.AffiliateServiceUrl);
             
             const string queueReportingName = "marketingbox-reporting-service-local";
             builder.RegisterMyServiceBusSubscriberSingle<RegistrationUpdateMessage>(
                 serviceBusClient,
                 RegistrationUpdateMessage.Topic,
                 queueReportingName,
-                TopicQueueType.Permanent);
+                TopicQueueType.PermanentWithSingleConnection);
             
             const string queueTrackingLinkName = "marketingbox-reporting-service-tracking-link";
             builder.RegisterMyServiceBusSubscriberSingle<TrackingLinkUpsertMessage>(
@@ -39,10 +40,10 @@ namespace MarketingBox.Reporting.Service.Modules
                 queueTrackingLinkName,
                 TopicQueueType.PermanentWithSingleConnection);
             
-            // builder.RegisterType<BrandNoSqlSubscriber>()
-            //     .As<IStartable>()
-            //     .SingleInstance()
-            //     .AutoActivate();
+            builder.RegisterType<BrandNoSqlSubscriber>()
+                .As<IStartable>()
+                .SingleInstance()
+                .AutoActivate();
         }
     }
 }

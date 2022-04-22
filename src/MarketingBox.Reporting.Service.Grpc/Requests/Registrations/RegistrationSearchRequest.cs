@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using MarketingBox.Sdk.Common.Enums;
 
@@ -19,5 +20,6 @@ namespace MarketingBox.Reporting.Service.Grpc.Requests.Registrations
         [DataMember(Order = 10)] public DateTime? DateFrom { get; set; }
         [DataMember(Order = 11)] public DateTime? DateTo { get; set; }
         [DataMember(Order = 12)] public long? RegistrationId { get; set; }
+        [DataMember(Order = 13)] public List<long> BrandBoxIds { get; set; }
     }
 }

@@ -9,6 +9,6 @@ namespace MarketingBox.Reporting.Service.Repositories.Interfaces
     public interface IRegistrationDetailsRepository
     {
         Task SaveAsync(RegistrationDetails entity);
-        Task<IEnumerable<Report>> SearchAsync(ReportSearchRequest request);
+        Task<(List<Report>, int)> SearchAsync(ReportSearchRequest request);
     }
 }

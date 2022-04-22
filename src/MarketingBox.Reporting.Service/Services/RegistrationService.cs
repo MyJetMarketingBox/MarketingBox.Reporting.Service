@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MarketingBox.Reporting.Service.Domain.Models.Registrations;
 using MarketingBox.Reporting.Service.Grpc.Requests.Registrations;
+using MarketingBox.Reporting.Service.Services.Interfaces;
 using MarketingBox.Sdk.Common.Enums;
 using MarketingBox.Sdk.Common.Extensions;
 using MarketingBox.Sdk.Common.Models.Grpc;
@@ -17,20 +18,24 @@ namespace MarketingBox.Reporting.Service.Services
     {
         private readonly ILogger<RegistrationService> _logger;
         private readonly DatabaseContextFactory _databaseContextFactory;
+        IBrandBoxReportService _brandBoxReportService;
 
         public RegistrationService(ILogger<RegistrationService> logger,
-            DatabaseContextFactory databaseContextFactory)
+            DatabaseContextFactory databaseContextFactory,
+            IBrandBoxReportService brandBoxReportService)
         {
             _logger = logger;
             _databaseContextFactory = databaseContextFactory;
+            _brandBoxReportService = brandBoxReportService;
         }
 
-        public async Task<Response<IReadOnlyCollection<RegistrationDetails>>> SearchAsync(RegistrationSearchRequest request)
+        public async Task<Response<IReadOnlyCollection<RegistrationDetails>>> SearchAsync(
+            RegistrationSearchRequest request)
         {
             try
             {
                 _logger.LogInformation(
-                    "CustomerReportService.GetCustomersReport receive request : {@Request}",request);
+                    "CustomerReportService.GetCustomersReport receive request : {@Request}", request);
 
                 await using var ctx = _databaseContextFactory.Create();
                 IQueryable<RegistrationDetails> query = ctx.RegistrationDetails;
@@ -51,27 +56,34 @@ namespace MarketingBox.Reporting.Service.Services
                     query = query.Where(e => e.CreatedAt <= request.DateTo);
                 if (request.RegistrationId.HasValue)
                     query = query.Where(e => e.RegistrationId == request.RegistrationId);
-                
+
                 switch (request.Type)
                 {
                     case RegistrationsReportType.Registrations:
                         query = query.Where(e => e.Status == RegistrationStatus.Registered);
                         break;
                     case RegistrationsReportType.Ftd:
-                        query = query.Where(e => e.Status == RegistrationStatus.Approved || 
+                        query = query.Where(e => e.Status == RegistrationStatus.Approved ||
                                                  e.Status == RegistrationStatus.Deposited);
                         break;
                     case RegistrationsReportType.All:
                         break;
                 }
 
-                var total = query.Count(); 
+                if (request.BrandBoxIds != null && request.BrandBoxIds.Any())
+                {
+                    var brandIds = await _brandBoxReportService.GetBrandIdsFromBrandBoxes(request.BrandBoxIds);
+                    query = query.Where(x => brandIds.Contains(x.BrandId));
+                }
+
+                var total = query.Count();
                 if (request.Asc)
                 {
                     if (request.Cursor.HasValue)
                     {
                         query = query.Where(x => x.RegistrationId > request.Cursor);
                     }
+
                     query = query.OrderBy(x => x.RegistrationId);
                 }
                 else
@@ -90,7 +102,7 @@ namespace MarketingBox.Reporting.Service.Services
                 }
 
                 var result = query.ToList();
-                
+
                 return new Response<IReadOnlyCollection<RegistrationDetails>>()
                 {
                     Status = ResponseStatus.Ok,

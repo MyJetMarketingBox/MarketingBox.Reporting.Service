@@ -48,12 +48,13 @@ namespace MarketingBox.Reporting.Service.Services
                     request.CountryCode = country.Alfa2Code;
                 }
 
-                var result = await _repository.SearchAsync(request);
+                var (result, total) = await _repository.SearchAsync(request);
                 
                 return new Response<IReadOnlyCollection<Report>>()
                 {
                     Status = ResponseStatus.Ok,
-                    Data =  result.ToList()
+                    Data =  result,
+                    Total = total
                 };
             }
             catch (Exception e)

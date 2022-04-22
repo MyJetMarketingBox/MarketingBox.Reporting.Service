@@ -30,13 +30,13 @@ public class TrackingLinkSubscriber : IStartable
     {
         try
         {
-            _logger.LogError("Processing message {@Message}", message);
+            _logger.LogInformation("Processing message {@Message}", message);
 
             var request = _mapper.Map<Domain.Models.TrackingLinks.TrackingLink>(message.TrackingLink);
             
             await _repository.CreateOrUpdateAsync(request);
             
-            _logger.LogError("Message {@Message} was processed", message);
+            _logger.LogInformation("Message {@Message} was processed", message);
         }
         catch (Exception e)
         {
