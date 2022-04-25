@@ -53,14 +53,14 @@ namespace MarketingBox.Reporting.Service.Postgres
 
             modelBuilder.Entity<RegistrationDetails>().HasKey(e => e.RegistrationUid);
 
-            modelBuilder.Entity<RegistrationDetails>().Property(e => e.RegistrationUid).HasMaxLength(64);
-            modelBuilder.Entity<RegistrationDetails>().Property(e => e.TenantId).HasMaxLength(64);
-            modelBuilder.Entity<RegistrationDetails>().Property(e => e.FirstName).HasMaxLength(64);
-            modelBuilder.Entity<RegistrationDetails>().Property(e => e.LastName).HasMaxLength(64);
-            modelBuilder.Entity<RegistrationDetails>().Property(e => e.Email).HasMaxLength(128);
-            modelBuilder.Entity<RegistrationDetails>().Property(e => e.Phone).HasMaxLength(64);
-            modelBuilder.Entity<RegistrationDetails>().Property(e => e.Ip).HasMaxLength(64);
-            modelBuilder.Entity<RegistrationDetails>().Property(e => e.CountryAlfa2Code).HasMaxLength(64);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.RegistrationUid);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.TenantId);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.FirstName);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.LastName);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.Email);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.Phone);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.Ip);
+            modelBuilder.Entity<RegistrationDetails>().Property(e => e.CountryAlfa2Code);
 
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.RegistrationUid).IsUnique();
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.TenantId);
