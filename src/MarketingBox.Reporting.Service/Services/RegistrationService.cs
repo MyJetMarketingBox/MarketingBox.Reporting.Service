@@ -77,7 +77,7 @@ namespace MarketingBox.Reporting.Service.Services
                 }
 
                 var total = query.Count();
-                if (request.Asc)
+                if (request.Asc.Value)
                 {
                     if (request.Cursor.HasValue)
                     {
