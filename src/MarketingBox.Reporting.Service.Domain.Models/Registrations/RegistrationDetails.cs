@@ -15,7 +15,7 @@ namespace MarketingBox.Reporting.Service.Domain.Models.Registrations
         [DataMember(Order = 6)] public string Email { get; set; }
         [DataMember(Order = 7)] public string Phone { get; set; }
         [DataMember(Order = 8)] public string Ip { get; set; }
-        [DataMember(Order = 9)] public string CountryAlfa2Code { get; set; }
+        [DataMember(Order = 9)] public int CountryId { get; set; }
         [DataMember(Order = 10)] public long AffiliateId { get; set; }
         [DataMember(Order = 11)] public long BrandId { get; set; }
         [DataMember(Order = 12)] public long CampaignId { get; set; }

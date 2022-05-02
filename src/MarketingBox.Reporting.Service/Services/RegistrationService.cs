@@ -42,20 +42,46 @@ namespace MarketingBox.Reporting.Service.Services
 
                 if (!string.IsNullOrWhiteSpace(request.TenantId))
                     query = query.Where(e => e.TenantId == request.TenantId);
-                if (request.AffiliateId.HasValue)
-                    query = query.Where(e => e.AffiliateId == request.AffiliateId);
-                if (request.Status.HasValue)
-                    query = query.Where(e => e.Status == request.Status);
-                if (request.CrmStatus.HasValue)
-                    query = query.Where(e => e.CrmStatus == request.CrmStatus);
-                if (!string.IsNullOrWhiteSpace(request.Country))
-                    query = query.Where(e => e.CountryAlfa2Code == request.Country);
+                if (!string.IsNullOrWhiteSpace(request.FirstName))
+                    query = query.Where(e => e.FirstName
+                        .ToLower()
+                        .Contains(request.FirstName.ToLowerInvariant()));
+                if (!string.IsNullOrWhiteSpace(request.LastName))
+                    query = query.Where(e => e.LastName
+                        .ToLower()
+                        .Contains(request.LastName.ToLowerInvariant()));
+                if (!string.IsNullOrWhiteSpace(request.Email))
+                    query = query.Where(e => e.Email
+                        .ToLower()
+                        .Contains(request.Email.ToLowerInvariant()));
+                if (!string.IsNullOrWhiteSpace(request.Phone))
+                    query = query.Where(e => e.Phone.Contains(request.Phone));
+                if (request.AffiliateIds.Any())
+                    query = query.Where(e => request.AffiliateIds.Contains(e.AffiliateId));
+                if (request.Statuses.Any())
+                    query = query.Where(e => request.Statuses.Contains(e.Status));
+                if (request.CrmStatuses.Any())
+                    query = query.Where(e => request.CrmStatuses.Contains(e.CrmStatus));
+                if (request.CountryIds.Any())
+                    query = query.Where(e => request.CountryIds.Contains(e.CountryId));
+                if (request.RegistrationIds.Any())
+                    query = query.Where(e => request.RegistrationIds.Contains(e.RegistrationId));
+                if (request.IntegrationIds.Any())
+                    query = query.Where(e => request.IntegrationIds.Contains(e.IntegrationId));
+                if (request.BrandIds.Any())
+                    query = query.Where(e => request.BrandIds.Contains(e.BrandId));
+                if (request.CampaignIds.Any())
+                    query = query.Where(e => request.CampaignIds.Contains(e.CampaignId));
+                if (request.BrandBoxIds.Any())
+                {
+                    var brandIds = await _brandBoxReportService.GetBrandIdsFromBrandBoxes(request.BrandBoxIds);
+                    query = query.Where(x => brandIds.Contains(x.BrandId));
+                }
+                
                 if (request.DateFrom.HasValue)
                     query = query.Where(e => e.CreatedAt >= request.DateFrom);
                 if (request.DateTo.HasValue)
                     query = query.Where(e => e.CreatedAt <= request.DateTo);
-                if (request.RegistrationId.HasValue)
-                    query = query.Where(e => e.RegistrationId == request.RegistrationId);
 
                 switch (request.Type)
                 {
@@ -68,12 +94,6 @@ namespace MarketingBox.Reporting.Service.Services
                         break;
                     case RegistrationsReportType.All:
                         break;
-                }
-
-                if (request.BrandBoxIds != null && request.BrandBoxIds.Any())
-                {
-                    var brandIds = await _brandBoxReportService.GetBrandIdsFromBrandBoxes(request.BrandBoxIds);
-                    query = query.Where(x => brandIds.Contains(x.BrandId));
                 }
 
                 var total = query.Count();

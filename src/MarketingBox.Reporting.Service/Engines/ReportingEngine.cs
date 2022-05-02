@@ -35,7 +35,7 @@ public class ReportingEngine : IReportingEngine
             Email = message.GeneralInfoInternal.Email,
             Phone = message.GeneralInfoInternal.Phone,
             Ip = message.GeneralInfoInternal.Ip,
-            CountryAlfa2Code = message.GeneralInfoInternal.CountryAlfa2Code,
+            CountryId = message.GeneralInfoInternal.CountryId,
             AffiliateId = message.RouteInfo.AffiliateId,
             AffiliateName = message.RouteInfo.AffiliateName,
             BrandId = message.RouteInfo.BrandId,

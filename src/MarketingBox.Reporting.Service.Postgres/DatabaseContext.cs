@@ -53,20 +53,20 @@ namespace MarketingBox.Reporting.Service.Postgres
 
             modelBuilder.Entity<RegistrationDetails>().HasKey(e => e.RegistrationUid);
 
-            modelBuilder.Entity<RegistrationDetails>().Property(e => e.RegistrationUid);
-            modelBuilder.Entity<RegistrationDetails>().Property(e => e.TenantId);
-            modelBuilder.Entity<RegistrationDetails>().Property(e => e.FirstName);
-            modelBuilder.Entity<RegistrationDetails>().Property(e => e.LastName);
-            modelBuilder.Entity<RegistrationDetails>().Property(e => e.Email);
-            modelBuilder.Entity<RegistrationDetails>().Property(e => e.Phone);
-            modelBuilder.Entity<RegistrationDetails>().Property(e => e.Ip);
-            modelBuilder.Entity<RegistrationDetails>().Property(e => e.CountryAlfa2Code);
-
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.RegistrationUid).IsUnique();
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.TenantId);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.FirstName);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.LastName);
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.AffiliateId);
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.Email);
-            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.CountryAlfa2Code);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.Phone);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.Status);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.CrmStatus);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.CountryId);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.RegistrationId);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.IntegrationId);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.BrandId);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.CampaignId);
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.CreatedAt);
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.UpdateMode);
         }
