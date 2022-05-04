@@ -34,6 +34,9 @@ namespace MarketingBox.Reporting.Service.Services
         {
             try
             {
+                request.ValidateEntity();
+                
+                
                 _logger.LogInformation(
                     "CustomerReportService.GetCustomersReport receive request : {@Request}", request);
 

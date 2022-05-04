@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
+using MarketingBox.Sdk.Common.Attributes;
 using MarketingBox.Sdk.Common.Enums;
+using MarketingBox.Sdk.Common.Models;
 
 namespace MarketingBox.Reporting.Service.Grpc.Requests.Registrations
 {
     [DataContract]
-    public class RegistrationSearchRequest
+    public class RegistrationSearchRequest : ValidatableEntity
     {
         [DataMember(Order = 1)] public List<long> AffiliateIds { get; set; } = new ();
         [DataMember(Order = 2)] public long? Cursor { get; set; }
         [DataMember(Order = 3)] public int? Take { get; set; }
         [DataMember(Order = 4)] public bool? Asc { get; set; } = false;
         [DataMember(Order = 5)] public string? TenantId { get; set; }
-        [DataMember(Order = 6)] public RegistrationsReportType? Type { get; set; }
+        [DataMember(Order = 6), Required, IsEnum] public RegistrationsReportType? Type { get; set; }
         [DataMember(Order = 7)] public List<int> CountryIds { get; set; } = new ();
         [DataMember(Order = 8)] public List<RegistrationStatus> Statuses { get; set; } = new ();
         [DataMember(Order = 9)] public List<CrmStatus> CrmStatuses { get; set; } = new ();
