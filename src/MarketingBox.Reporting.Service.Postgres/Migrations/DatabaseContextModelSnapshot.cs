@@ -18,37 +18,37 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("reporting-service")
-                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("ProductVersion", "6.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("MarketingBox.Reporting.Service.Domain.Models.AffiliateAccess", b =>
+            modelBuilder.Entity("MarketingBox.Reporting.Service.Domain.Models.Brands.BrandEntity", b =>
                 {
                     b.Property<long>("Id")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("AffiliateId")
+                    b.Property<string>("TenantId")
+                        .HasColumnType("text");
+
+                    b.Property<long?>("IntegrationId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("MasterAffiliateId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("IntegrationType")
+                        .HasColumnType("integer");
 
-                    b.HasKey("Id");
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
 
-                    b.HasIndex("AffiliateId");
+                    b.HasKey("Id", "TenantId");
 
-                    b.HasIndex("MasterAffiliateId", "AffiliateId")
-                        .IsUnique();
-
-                    b.ToTable("affiliate_access", "reporting-service");
+                    b.ToTable("brands", "reporting-service");
                 });
 
-            modelBuilder.Entity("MarketingBox.Reporting.Service.Domain.Models.RegistrationDetails", b =>
+            modelBuilder.Entity("MarketingBox.Reporting.Service.Domain.Models.Registrations.RegistrationDetails", b =>
                 {
                     b.Property<string>("RegistrationUid")
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("text");
 
                     b.Property<string>("AffCode")
                         .HasColumnType("text");
@@ -59,6 +59,9 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                     b.Property<string>("AffiliateName")
                         .HasColumnType("text");
 
+                    b.Property<bool>("AutologinUsed")
+                        .HasColumnType("boolean");
+
                     b.Property<long>("BrandId")
                         .HasColumnType("bigint");
 
@@ -68,9 +71,8 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                     b.Property<DateTime?>("ConversionDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Country")
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                    b.Property<int>("CountryId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -94,12 +96,10 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
+                        .HasColumnType("text");
 
                     b.Property<string>("FirstName")
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Funnel")
                         .HasColumnType("text");
@@ -111,16 +111,16 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Ip")
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("text");
 
                     b.Property<string>("LastName")
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("text");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("text");
 
                     b.Property<string>("Phone")
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("text");
 
                     b.Property<long>("RegistrationId")
                         .HasColumnType("bigint");
@@ -159,8 +159,7 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("TenantId")
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
+                        .HasColumnType("text");
 
                     b.Property<int>("UpdateMode")
                         .HasColumnType("integer");
@@ -169,14 +168,32 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
 
                     b.HasIndex("AffiliateId");
 
-                    b.HasIndex("Country");
+                    b.HasIndex("BrandId");
+
+                    b.HasIndex("CampaignId");
+
+                    b.HasIndex("CountryId");
 
                     b.HasIndex("CreatedAt");
 
+                    b.HasIndex("CrmStatus");
+
                     b.HasIndex("Email");
+
+                    b.HasIndex("FirstName");
+
+                    b.HasIndex("IntegrationId");
+
+                    b.HasIndex("LastName");
+
+                    b.HasIndex("Phone");
+
+                    b.HasIndex("RegistrationId");
 
                     b.HasIndex("RegistrationUid")
                         .IsUnique();
+
+                    b.HasIndex("Status");
 
                     b.HasIndex("TenantId");
 
@@ -185,38 +202,111 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                     b.ToTable("registrations_details", "reporting-service");
                 });
 
-            modelBuilder.Entity("MarketingBox.Reporting.Service.Domain.Models.Reports.BrandEntity", b =>
+            modelBuilder.Entity("MarketingBox.Reporting.Service.Domain.Models.TrackingLinks.TrackingLink", b =>
                 {
                     b.Property<long>("Id")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("TenantId")
+                    b.Property<long>("ClickId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("AffiliateId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("BrandId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Link")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Name")
+                    b.Property<long?>("RegistrationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("UniqueId")
+                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<decimal>("PayoutAmount")
-                        .HasColumnType("numeric");
+                    b.HasKey("Id", "ClickId");
 
-                    b.Property<int>("PayoutCurrency")
-                        .HasColumnType("integer");
+                    b.HasIndex("ClickId")
+                        .IsUnique();
 
-                    b.Property<int>("PayoutPlan")
-                        .HasColumnType("integer");
+                    b.HasIndex("UniqueId");
 
-                    b.Property<decimal>("RevenueAmount")
-                        .HasColumnType("numeric");
+                    b.ToTable("trackinglinks", "reporting-service");
+                });
 
-                    b.Property<int>("RevenueCurrency")
-                        .HasColumnType("integer");
+            modelBuilder.Entity("MarketingBox.Reporting.Service.Domain.Models.TrackingLinks.TrackingLink", b =>
+                {
+                    b.OwnsOne("MarketingBox.Reporting.Service.Domain.Models.TrackingLinks.LinkParameterNames", "LinkParameterNames", b1 =>
+                        {
+                            b1.Property<long>("TrackingLinkId")
+                                .HasColumnType("bigint");
 
-                    b.Property<int>("RevenuePlan")
-                        .HasColumnType("integer");
+                            b1.Property<long>("TrackingLinkClickId")
+                                .HasColumnType("bigint");
 
-                    b.HasKey("Id", "TenantId");
+                            b1.Property<string>("ClickId")
+                                .HasColumnType("text");
 
-                    b.ToTable("brands", "reporting-service");
+                            b1.Property<string>("Language")
+                                .HasColumnType("text");
+
+                            b1.Property<string>("MPC_1")
+                                .HasColumnType("text");
+
+                            b1.Property<string>("MPC_2")
+                                .HasColumnType("text");
+
+                            b1.Property<string>("MPC_3")
+                                .HasColumnType("text");
+
+                            b1.Property<string>("MPC_4")
+                                .HasColumnType("text");
+
+                            b1.HasKey("TrackingLinkId", "TrackingLinkClickId");
+
+                            b1.ToTable("trackinglinks", "reporting-service");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TrackingLinkId", "TrackingLinkClickId");
+                        });
+
+                    b.OwnsOne("MarketingBox.Reporting.Service.Domain.Models.TrackingLinks.LinkParameterValues", "LinkParameterValues", b1 =>
+                        {
+                            b1.Property<long>("TrackingLinkId")
+                                .HasColumnType("bigint");
+
+                            b1.Property<long>("TrackingLinkClickId")
+                                .HasColumnType("bigint");
+
+                            b1.Property<string>("Language")
+                                .HasColumnType("text");
+
+                            b1.Property<string>("MPC_1")
+                                .HasColumnType("text");
+
+                            b1.Property<string>("MPC_2")
+                                .HasColumnType("text");
+
+                            b1.Property<string>("MPC_3")
+                                .HasColumnType("text");
+
+                            b1.Property<string>("MPC_4")
+                                .HasColumnType("text");
+
+                            b1.HasKey("TrackingLinkId", "TrackingLinkClickId");
+
+                            b1.ToTable("trackinglinks", "reporting-service");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TrackingLinkId", "TrackingLinkClickId");
+                        });
+
+                    b.Navigation("LinkParameterNames");
+
+                    b.Navigation("LinkParameterValues");
                 });
 #pragma warning restore 612, 618
         }

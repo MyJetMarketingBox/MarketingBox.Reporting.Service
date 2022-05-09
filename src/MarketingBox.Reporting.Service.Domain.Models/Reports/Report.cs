@@ -17,29 +17,29 @@ namespace MarketingBox.Reporting.Service.Domain.Models.Reports
         [DataMember(Order = 4)]
         public int FtdCount { get; set; }
 
-        [DataMember(Order = 5)]
-        public decimal Payout { get; set; }
-
-        [DataMember(Order = 6)]
-        public decimal Revenue { get; set; }
-
-        [DataMember(Order = 7)]
-        public decimal? Cr { get; set; }
-        
-        [DataMember(Order = 8)]
-        public decimal Pl { get; set; }
-        
-        [DataMember(Order = 9)]
-        public decimal? Epc { get; set; }
-        
-        [DataMember(Order = 10)]
-        public decimal? Epl { get; set; }
-        
-        [DataMember(Order = 11)]
-        public decimal? Roi { get; set; }
-        
-        [DataMember(Order = 12)]
-        public decimal? Clicks { get; set; }
+        // [DataMember(Order = 5)]
+        // public decimal Payout { get; set; }
+        //
+        // [DataMember(Order = 6)]
+        // public decimal Revenue { get; set; }
+        //
+        // [DataMember(Order = 7)]
+        // public decimal? Cr { get; set; }
+        //
+        // [DataMember(Order = 8)]
+        // public decimal Pl { get; set; }
+        //
+        // [DataMember(Order = 9)]
+        // public decimal? Epc { get; set; }
+        //
+        // [DataMember(Order = 10)]
+        // public decimal? Epl { get; set; }
+        //
+        // [DataMember(Order = 11)]
+        // public decimal? Roi { get; set; }
+        //
+        // [DataMember(Order = 12)]
+        // public decimal? Clicks { get; set; }
         
         [DataMember(Order = 13)]
         public int FailedCount { get; set; }

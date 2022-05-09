@@ -9,4 +9,9 @@
     <ProjectReference Include="..\MarketingBox.Reporting.Service.Domain\MarketingBox.Reporting.Service.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Destructurama.Attributed" Version="3.0.0" />
+    <PackageReference Include="MarketingBox.Sdk.Common" Version="1.0.13" />
+  </ItemGroup>
+
 </Project>

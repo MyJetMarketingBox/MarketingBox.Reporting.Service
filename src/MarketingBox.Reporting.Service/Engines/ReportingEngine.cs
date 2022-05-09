@@ -1,9 +1,10 @@
 using System.Threading.Tasks;
 using MarketingBox.Registration.Service.Messages.Registrations;
 using MarketingBox.Reporting.Service.Domain;
-using MarketingBox.Reporting.Service.Domain.Models;
-using MarketingBox.Reporting.Service.Repositories;
-using RegistrationDetails = MarketingBox.Reporting.Service.Domain.Models.RegistrationDetails;
+using MarketingBox.Reporting.Service.Engines.Interfaces;
+using MarketingBox.Reporting.Service.Repositories.Interfaces;
+using MarketingBox.Sdk.Common.Enums;
+using RegistrationDetails = MarketingBox.Reporting.Service.Domain.Models.Registrations.RegistrationDetails;
 
 namespace MarketingBox.Reporting.Service.Engines;
 
@@ -26,21 +27,21 @@ public class ReportingEngine : IReportingEngine
     {
         return new RegistrationDetails
         {
-            RegistrationUid = message.GeneralInfo.RegistrationUId,
-            CreatedAt = message.GeneralInfo.CreatedAt.ToUtc(),
+            RegistrationUid = message.GeneralInfoInternal.RegistrationUid,
+            CreatedAt = message.GeneralInfoInternal.CreatedAt.ToUtc(),
             TenantId = message.TenantId,
-            FirstName = message.GeneralInfo.FirstName,
-            LastName = message.GeneralInfo.LastName,
-            Email = message.GeneralInfo.Email,
-            Phone = message.GeneralInfo.Phone,
-            Ip = message.GeneralInfo.Ip,
-            Country = message.GeneralInfo.Country,
+            FirstName = message.GeneralInfoInternal.FirstName,
+            LastName = message.GeneralInfoInternal.LastName,
+            Email = message.GeneralInfoInternal.Email,
+            Phone = message.GeneralInfoInternal.Phone,
+            Ip = message.GeneralInfoInternal.Ip,
+            CountryId = message.GeneralInfoInternal.CountryId,
             AffiliateId = message.RouteInfo.AffiliateId,
             AffiliateName = message.RouteInfo.AffiliateName,
             BrandId = message.RouteInfo.BrandId,
             CampaignId = message.RouteInfo.CampaignId,
-            ConversionDate = message.RouteInfo.ConversionDate,
-            DepositDate = message.RouteInfo.DepositDate,
+            ConversionDate = message.RouteInfo.ConversionDate?.ToUtc(),
+            DepositDate = message.RouteInfo.DepositDate?.ToUtc(),
             CrmStatus = message.RouteInfo.CrmStatus.MapEnum<CrmStatus>(),
             AffCode = message.AdditionalInfo.AffCode,
             Funnel = message.AdditionalInfo.Funnel,
@@ -54,16 +55,18 @@ public class ReportingEngine : IReportingEngine
             Sub8 = message.AdditionalInfo.Sub8,
             Sub9 = message.AdditionalInfo.Sub9,
             Sub10 = message.AdditionalInfo.Sub10,
-            CustomerBrand = message.RouteInfo.CustomerInfo.Brand,
-            CustomerId = message.RouteInfo.CustomerInfo.CustomerId,
-            CustomerLoginUrl = message.RouteInfo.CustomerInfo.LoginUrl,
-            CustomerToken = message.RouteInfo.CustomerInfo.Token,
+            CustomerBrand = message.RouteInfo.BrandInfo.Brand,
+            CustomerId = message.RouteInfo.BrandInfo.CustomerId,
+            CustomerLoginUrl = message.RouteInfo.BrandInfo.LoginUrl,
+            CustomerToken = message.RouteInfo.BrandInfo.Token,
             Integration = message.RouteInfo.Integration,
-            IntegrationId = message.RouteInfo.IntegrationId,
-            RegistrationId = message.GeneralInfo.RegistrationId,
+            IntegrationId = message.RouteInfo.IntegrationId ?? default,
+            RegistrationId = message.GeneralInfoInternal.RegistrationId,
             Status = message.RouteInfo.Status.MapEnum<RegistrationStatus>(),
             UpdateMode = message.RouteInfo.UpdateMode
                 .MapEnum<DepositUpdateMode>(),
+            AutologinUsed = message.RouteInfo.AutologinUsed,
+            Password = message.GeneralInfoInternal.Password
         };
     }
 }

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Autofac;
 using MarketingBox.Registration.Service.Messages.Registrations;
 using MarketingBox.Reporting.Service.Engines;
+using MarketingBox.Reporting.Service.Engines.Interfaces;
 
 namespace MarketingBox.Reporting.Service.Subscribers
 {

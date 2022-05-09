@@ -3,8 +3,10 @@ using System.Linq;
 using Autofac;
 using AutoMapper;
 using MarketingBox.Affiliate.Service.MyNoSql.Brands;
+using MarketingBox.Reporting.Service.Domain.Models.Brands;
 using MarketingBox.Reporting.Service.Domain.Models.Reports;
 using MarketingBox.Reporting.Service.Repositories;
+using MarketingBox.Reporting.Service.Repositories.Interfaces;
 using MyNoSqlServer.Abstractions;
 
 namespace MarketingBox.Reporting.Service.Subscribers;
@@ -33,7 +35,7 @@ public class BrandNoSqlSubscriber : IStartable
     private void HandleDelete(IReadOnlyList<BrandNoSql> obj)
     {
         _brandRepository
-            .DeleteAsync(obj.Select(x => _mapper.Map<BrandEntity>(x)))
+            .DeleteAsync(obj.Select(x => _mapper.Map<BrandEntity>(x.Brand)))
             .GetAwaiter()
             .GetResult();
     }
@@ -41,7 +43,7 @@ public class BrandNoSqlSubscriber : IStartable
     private void HandleUpdate(IReadOnlyList<BrandNoSql> obj)
     {
         _brandRepository
-            .CreateOrUpdateAsync(obj.Select(x => _mapper.Map<BrandEntity>(x)))
+            .CreateOrUpdateAsync(obj.Select(x => _mapper.Map<BrandEntity>(x.Brand)))
             .GetAwaiter()
             .GetResult();
     }

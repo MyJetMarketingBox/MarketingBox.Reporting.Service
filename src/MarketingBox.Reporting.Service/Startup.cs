@@ -57,6 +57,7 @@ namespace MarketingBox.Reporting.Service
                 endpoints.MapGrpcSchema<RegistrationService, IRegistrationService>();
                 
                 endpoints.MapGrpcSchema<AffiliateService, IAffiliateService>();
+                endpoints.MapGrpcSchema<TrackingLinkReportService, ITrackingLinkReportService>();
 
                 endpoints.MapGrpcSchemaRegistry();
 

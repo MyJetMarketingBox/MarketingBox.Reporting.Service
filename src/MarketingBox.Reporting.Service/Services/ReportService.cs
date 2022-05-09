@@ -1,12 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using MarketingBox.Reporting.Service.Grpc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
-using MarketingBox.Reporting.Service.Grpc.Models.Reports;
-using MarketingBox.Reporting.Service.Grpc.Models.Common;
-using MarketingBox.Reporting.Service.Repositories;
-using ReportSearchRequest = MarketingBox.Reporting.Service.Domain.Models.Reports.Requests.ReportSearchRequest;
+using FluentValidation;
+using MarketingBox.Affiliate.Service.Client;
+using MarketingBox.Affiliate.Service.Domain.Models.Country;
+using MarketingBox.Reporting.Service.Domain.Models.Reports;
+using MarketingBox.Reporting.Service.Repositories.Interfaces;
+using MarketingBox.Sdk.Common.Enums;
+using MarketingBox.Sdk.Common.Exceptions;
+using MarketingBox.Sdk.Common.Extensions;
+using MarketingBox.Sdk.Common.Models.Grpc;
+using ReportSearchRequest = MarketingBox.Reporting.Service.Grpc.Requests.Reports.ReportSearchRequest;
 
 namespace MarketingBox.Reporting.Service.Services
 {
@@ -14,36 +21,66 @@ namespace MarketingBox.Reporting.Service.Services
     {
         private readonly ILogger<ReportService> _logger;
         private readonly IRegistrationDetailsRepository _repository;
-        public ReportService(ILogger<ReportService> logger,
-            IRegistrationDetailsRepository repository)
+        private readonly ICountryClient _countryClient;
+        private readonly IValidator<ReportSearchRequest> _validator;
+
+        public ReportService(
+            ILogger<ReportService> logger,
+            IRegistrationDetailsRepository repository,
+            ICountryClient countryClient,
+            IValidator<ReportSearchRequest> validator)
         {
             _logger = logger;
             _repository = repository;
+            _countryClient = countryClient;
+            _validator = validator;
         }
 
-        public async Task<ReportSearchResponse> SearchAsync(ReportSearchRequest request)
+        public async Task<Response<IReadOnlyCollection<Report>>> SearchAsync(ReportSearchRequest request)
         {
             try
             {
-                var result = await _repository.SearchAsync(request);
-                return new ReportSearchResponse
+                await _validator.ValidateAndThrowAsync(request);
+                
+                if (!string.IsNullOrEmpty(request.CountryCode) && request.CountryCodeType.HasValue)
                 {
-                    Reports =  result.ToList()
+                    var country = await GetCountry(request.CountryCodeType.Value,request.CountryCode.ToUpper());
+                    request.CountryCode = country.Alfa2Code;
+                }
+
+                var (result, total) = await _repository.SearchAsync(request);
+                
+                return new Response<IReadOnlyCollection<Report>>()
+                {
+                    Status = ResponseStatus.Ok,
+                    Data =  result,
+                    Total = total
                 };
             }
             catch (Exception e)
             {
                 _logger.LogError(e, "Error happened {@context}", request);
 
-                return new ReportSearchResponse()
-                {
-                    Error = new Error()
-                    {
-                        Message = "Internal error happened",
-                        Type = ErrorType.Unknown
-                    }
-                };
+                return e.FailedResponse<IReadOnlyCollection<Report>>();
             }
+        }
+        
+        private async Task<Country> GetCountry(CountryCodeType countryCodeType, string countryCode)
+        {
+            var countries = await _countryClient.GetCountries();
+            var country = countryCodeType switch
+            {
+                CountryCodeType.Numeric => countries.FirstOrDefault(x => x.Numeric == countryCode),
+                CountryCodeType.Alfa2Code => countries.FirstOrDefault(x => x.Alfa2Code == countryCode),
+                CountryCodeType.Alfa3Code => countries.FirstOrDefault(x => x.Alfa3Code == countryCode),
+                _ => throw new ArgumentOutOfRangeException(nameof(countryCodeType), countryCodeType, null)
+            };
+            if (country is null)
+            {
+                throw new NotFoundException($"Country with code {countryCodeType}", countryCode);
+            }
+
+            return country;
         }
     }
 }
