@@ -1,6 +1,5 @@
 ﻿using MarketingBox.Reporting.Service.Domain.Models.Brands;
 using MarketingBox.Reporting.Service.Domain.Models.Registrations;
-using MarketingBox.Reporting.Service.Domain.Models.Reports;
 using MarketingBox.Reporting.Service.Domain.Models.TrackingLinks;
 using Microsoft.EntityFrameworkCore;
 using MyJetWallet.Sdk.Postgres;
@@ -88,6 +87,5 @@ namespace MarketingBox.Reporting.Service.Postgres
             modelBuilder.Entity<TrackingLink>().HasIndex(x => x.ClickId).IsUnique();
             modelBuilder.Entity<TrackingLink>().HasIndex(x => x.UniqueId);
         }
-
     }
 }

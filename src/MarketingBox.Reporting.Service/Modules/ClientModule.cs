@@ -4,6 +4,7 @@ using MarketingBox.Affiliate.Service.MyNoSql.Brands;
 using MarketingBox.Registration.Service.Messages.Registrations;
 using MarketingBox.Reporting.Service.Subscribers;
 using MarketingBox.TrackingLink.Service.Messages;
+using Microsoft.Extensions.Logging;
 using MyJetWallet.Sdk.NoSql;
 using MyJetWallet.Sdk.ServiceBus;
 using MyServiceBus.Abstractions;
@@ -14,9 +15,9 @@ namespace MarketingBox.Reporting.Service.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterAffiliateServiceClient(Program.Settings.AffiliateServiceUrl);
-            
-            var noSqlClient = builder.CreateNoSqlClient(Program.ReloadedSettings(e => e.MyNoSqlReaderHostPort));
+            var noSqlClient = builder.CreateNoSqlClient(
+                Program.ReloadedSettings(e => e.MyNoSqlReaderHostPort).Invoke(),
+                new LoggerFactory());
             builder.RegisterMyNoSqlReader<BrandNoSql>(noSqlClient, BrandNoSql.TableName);
             
             var serviceBusClient = builder
