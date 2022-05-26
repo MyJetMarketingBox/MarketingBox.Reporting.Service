@@ -107,7 +107,7 @@ where case
     end
   and case
           when @Country is not null then
-              rd."CountryAlfa2Code" = @Country
+              rd."Country" = @Country
           else true
     end
   and case
@@ -178,7 +178,7 @@ where case
     end
   and case
           when @Country is not null then
-              rd."CountryAlfa2Code" = @Country
+              rd."Country" = @Country
           else true
     end
   and case
