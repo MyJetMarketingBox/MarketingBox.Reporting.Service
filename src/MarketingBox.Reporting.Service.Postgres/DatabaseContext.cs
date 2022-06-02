@@ -86,6 +86,7 @@ namespace MarketingBox.Reporting.Service.Postgres
             modelBuilder.Entity<TrackingLink>().HasKey(x => new {x.Id, x.ClickId});
             modelBuilder.Entity<TrackingLink>().HasIndex(x => x.ClickId).IsUnique();
             modelBuilder.Entity<TrackingLink>().HasIndex(x => x.UniqueId);
+            modelBuilder.Entity<TrackingLink>().HasIndex(x => x.OfferId);
         }
     }
 }

@@ -25,4 +25,9 @@
     <ProjectReference Include="..\MarketingBox.Reporting.Service.Domain\MarketingBox.Reporting.Service.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Migrations\20220602142531_Add_OfferId.cs" />
+    <Compile Remove="Migrations\20220602142531_Add_OfferId.Designer.cs" />
+  </ItemGroup>
+
 </Project>

@@ -18,7 +18,7 @@ namespace MarketingBox.Reporting.Service.Services
     {
         private readonly ILogger<RegistrationService> _logger;
         private readonly DatabaseContextFactory _databaseContextFactory;
-        IBrandBoxReportService _brandBoxReportService;
+        readonly IBrandBoxReportService _brandBoxReportService;
 
         public RegistrationService(ILogger<RegistrationService> logger,
             DatabaseContextFactory databaseContextFactory,
@@ -35,7 +35,6 @@ namespace MarketingBox.Reporting.Service.Services
             try
             {
                 request.ValidateEntity();
-                
                 
                 _logger.LogInformation(
                     "CustomerReportService.GetCustomersReport receive request : {@Request}", request);
