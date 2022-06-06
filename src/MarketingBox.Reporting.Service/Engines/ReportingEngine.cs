@@ -60,12 +60,12 @@ public class ReportingEngine : IReportingEngine
             CustomerLoginUrl = message.RouteInfo.BrandInfo.LoginUrl,
             CustomerToken = message.RouteInfo.BrandInfo.Token,
             Integration = message.RouteInfo.Integration,
-            IntegrationId = message.RouteInfo.IntegrationId ?? default,
+            IntegrationId = message.RouteInfo.IntegrationId,
             RegistrationId = message.GeneralInfoInternal.RegistrationId,
             Status = message.RouteInfo.Status,
             UpdateMode = message.RouteInfo.UpdateMode,
             AutologinUsed = message.RouteInfo.AutologinUsed,
-            Password = message.GeneralInfoInternal.Password
+            OfferId = message.RouteInfo.OfferId
         };
     }
 }

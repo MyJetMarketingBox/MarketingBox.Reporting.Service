@@ -24,12 +24,21 @@ namespace MarketingBox.Reporting.Service.Grpc.Requests.Registrations
         [DataMember(Order = 11)] public DateTime? DateTo { get; set; }
         [DataMember(Order = 12)] public List<long> RegistrationIds { get; set; } = new ();
         [DataMember(Order = 13)] public List<long> BrandBoxIds { get; set; } = new ();
-        [DataMember(Order = 14)] public List<long> IntegrationIds { get; set; } = new ();
+        [DataMember(Order = 14)] public List<long?> IntegrationIds { get; set; } = new ();
         [DataMember(Order = 15)] public List<long> BrandIds { get; set; } = new ();
         [DataMember(Order = 16)] public List<long> CampaignIds { get; set; } = new ();
         [DataMember(Order = 17)] public string FirstName { get; set; }
         [DataMember(Order = 18)] public string LastName { get; set; }
         [DataMember(Order = 19)] public string Email { get; set; }
         [DataMember(Order = 20)] public string Phone { get; set; }
+        [DataMember(Order = 16)] public List<long?> OfferIds { get; set; } = new ();
+        [DataMember(Order = 11)] public DateTimeType? DateType { get; set; } = DateTimeType.RegistrationDate;
+    }
+
+    public enum DateTimeType
+    {
+        RegistrationDate,
+        DepositDate,
+        ConversionDate
     }
 }

@@ -66,6 +66,7 @@ namespace MarketingBox.Reporting.Service.Postgres
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.IntegrationId);
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.BrandId);
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.CampaignId);
+            modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.OfferId);
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.CreatedAt);
             modelBuilder.Entity<RegistrationDetails>().HasIndex(e => e.UpdateMode);
         }

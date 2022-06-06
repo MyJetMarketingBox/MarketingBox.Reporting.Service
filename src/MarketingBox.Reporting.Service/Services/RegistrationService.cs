@@ -35,7 +35,7 @@ namespace MarketingBox.Reporting.Service.Services
             try
             {
                 request.ValidateEntity();
-                
+
                 _logger.LogInformation(
                     "CustomerReportService.GetCustomersReport receive request : {@Request}", request);
 
@@ -56,6 +56,7 @@ namespace MarketingBox.Reporting.Service.Services
                     query = query.Where(e => e.Email
                         .ToLower()
                         .Contains(request.Email.ToLowerInvariant()));
+
                 if (!string.IsNullOrWhiteSpace(request.Phone))
                     query = query.Where(e => e.Phone.Contains(request.Phone));
                 if (request.AffiliateIds.Any())
@@ -79,11 +80,49 @@ namespace MarketingBox.Reporting.Service.Services
                     var brandIds = await _brandBoxReportService.GetBrandIdsFromBrandBoxes(request.BrandBoxIds);
                     query = query.Where(x => brandIds.Contains(x.BrandId));
                 }
-                
+
+                if (request.OfferIds.Any())
+                    query = query.Where(e => request.OfferIds.Contains(e.OfferId));
+
+                DateTime? dateFrom = null;
+                DateTime? dateTo = null;
                 if (request.DateFrom.HasValue)
-                    query = query.Where(e => e.CreatedAt >= request.DateFrom);
+                {
+                    dateFrom = request.DateFrom.Value.Date;
+                }
+
                 if (request.DateTo.HasValue)
-                    query = query.Where(e => e.CreatedAt <= request.DateTo);
+                {
+                    dateTo = request.DateTo.Value.Date.Add(new TimeSpan(23, 59, 59));
+                }
+
+                switch (request.DateType)
+                {
+                    case DateTimeType.DepositDate:
+                    {
+                        if (dateFrom.HasValue)
+                            query = query.Where(e => e.DepositDate >= dateFrom);
+                        if (dateTo.HasValue)
+                            query = query.Where(e => e.DepositDate <= dateTo);
+                        break;
+                    }
+                    case DateTimeType.ConversionDate:
+                    {
+                        if (dateFrom.HasValue)
+                            query = query.Where(e => e.ConversionDate >= dateFrom);
+                        if (dateTo.HasValue)
+                            query = query.Where(e => e.ConversionDate <= dateTo);
+                        break;
+                    }
+                    case DateTimeType.RegistrationDate:
+                    {
+                        if (dateFrom.HasValue)
+                            query = query.Where(e => e.CreatedAt >= dateFrom);
+                        if (dateTo.HasValue)
+                            query = query.Where(e => e.CreatedAt <= dateTo);
+                        break;
+                    }
+                }
 
                 switch (request.Type)
                 {
