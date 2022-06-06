@@ -75,7 +75,7 @@ namespace MarketingBox.Reporting.Service.Services
                 if (request.BrandIds.Any())
                     query = query.Where(e => request.BrandIds.Contains(e.BrandId));
                 if (request.CampaignIds.Any())
-                    query = query.Where(e => request.CampaignIds.Contains(e.CampaignId));
+                    query = query.Where(e => e.CampaignId.HasValue && request.CampaignIds.Contains(e.CampaignId.Value));
                 if (request.BrandBoxIds.Any())
                 {
                     var brandIds = await _brandBoxReportService.GetBrandIdsFromBrandBoxes(request.BrandBoxIds);

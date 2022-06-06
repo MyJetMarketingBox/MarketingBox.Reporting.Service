@@ -65,7 +65,9 @@ public class ReportingEngine : IReportingEngine
             Status = message.RouteInfo.Status,
             UpdateMode = message.RouteInfo.UpdateMode,
             AutologinUsed = message.RouteInfo.AutologinUsed,
-            OfferId = message.RouteInfo.OfferId
+            OfferId = message.RouteInfo.OfferId,
+            OfferName = message.RouteInfo.OfferName,
+            CampaignName = message.RouteInfo.CampaignName
         };
     }
 }
