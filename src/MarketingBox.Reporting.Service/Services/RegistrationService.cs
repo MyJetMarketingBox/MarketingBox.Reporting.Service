@@ -70,7 +70,8 @@ namespace MarketingBox.Reporting.Service.Services
                 if (request.RegistrationIds.Any())
                     query = query.Where(e => request.RegistrationIds.Contains(e.RegistrationId));
                 if (request.IntegrationIds.Any())
-                    query = query.Where(e => request.IntegrationIds.Contains(e.IntegrationId));
+                    query = query.Where(e =>
+                        e.IntegrationId.HasValue && request.IntegrationIds.Contains(e.IntegrationId.Value));
                 if (request.BrandIds.Any())
                     query = query.Where(e => request.BrandIds.Contains(e.BrandId));
                 if (request.CampaignIds.Any())
@@ -82,7 +83,7 @@ namespace MarketingBox.Reporting.Service.Services
                 }
 
                 if (request.OfferIds.Any())
-                    query = query.Where(e => request.OfferIds.Contains(e.OfferId));
+                    query = query.Where(e => e.OfferId.HasValue && request.OfferIds.Contains(e.OfferId.Value));
 
                 DateTime? dateFrom = null;
                 DateTime? dateTo = null;
