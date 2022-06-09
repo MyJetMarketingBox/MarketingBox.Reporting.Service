@@ -3,6 +3,7 @@ using System;
 using MarketingBox.Reporting.Service.Postgres;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MarketingBox.Reporting.Service.Postgres.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20220606103323_Add_OfferId_index")]
+    partial class Add_OfferId_index
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,11 +67,8 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                     b.Property<long>("BrandId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("CampaignId")
+                    b.Property<long>("CampaignId")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("CampaignName")
-                        .HasColumnType("text");
 
                     b.Property<DateTime?>("ConversionDate")
                         .HasColumnType("timestamp with time zone");
@@ -121,9 +120,6 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
 
                     b.Property<long?>("OfferId")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("OfferName")
-                        .HasColumnType("text");
 
                     b.Property<string>("Phone")
                         .HasColumnType("text");

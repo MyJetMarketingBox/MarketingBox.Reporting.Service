@@ -18,14 +18,14 @@ namespace MarketingBox.Reporting.Service.Domain.Models.Registrations
         [DataMember(Order = 9)] public int CountryId { get; set; }
         [DataMember(Order = 10)] public long AffiliateId { get; set; }
         [DataMember(Order = 11)] public long BrandId { get; set; }
-        [DataMember(Order = 12)] public long CampaignId { get; set; }
+        [DataMember(Order = 12)] public long? CampaignId { get; set; }
         [DataMember(Order = 13)] public string AffiliateName { get; set; }
         [DataMember(Order = 14)] public DateTime? ConversionDate { get; set; }
         [DataMember(Order = 15)] public DateTime? DepositDate { get; set; }
         [DataMember(Order = 16)] public CrmStatus CrmStatus { get; set; }
         [DataMember(Order = 17)] public long RegistrationId { get; set; }
         [DataMember(Order = 18)] public string Integration { get; set; }
-        [DataMember(Order = 19)] public long IntegrationId { get; set; }
+        [DataMember(Order = 19)] public long? IntegrationId { get; set; }
         [DataMember(Order = 20)] public RegistrationStatus Status { get; set; }
         [DataMember(Order = 21)] public DepositUpdateMode UpdateMode { get; set; }
         [DataMember(Order = 22)] public string Funnel { get; set; }
@@ -45,6 +45,8 @@ namespace MarketingBox.Reporting.Service.Domain.Models.Registrations
         [DataMember(Order = 36)] public string CustomerLoginUrl { get; set; }
         [DataMember(Order = 37)] public string CustomerBrand { get; set; }
         [DataMember(Order = 38)] public bool AutologinUsed { get; set; }
-        [DataMember(Order = 39)] public string Password { get; set; }
+        [DataMember(Order = 39)] public long? OfferId { get; set; }
+        [DataMember(Order = 40)] public string OfferName { get; set; }
+        [DataMember(Order = 41)] public string CampaignName { get; set; }
     }
 }

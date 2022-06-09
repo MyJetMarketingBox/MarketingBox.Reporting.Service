@@ -15,4 +15,6 @@ public class TrackingLink
     [DataMember(Order = 8)] public string UniqueId { get; set; }
     
     [DataMember(Order = 9)] public long? RegistrationId { get; set; }
+    [DataMember(Order = 10)] public string TenantId { get; set; }
+    [DataMember(Order = 11)] public long? OfferId { get; set; }
 }

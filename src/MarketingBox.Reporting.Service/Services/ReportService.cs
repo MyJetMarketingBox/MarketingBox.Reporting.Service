@@ -5,7 +5,7 @@ using MarketingBox.Reporting.Service.Grpc;
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using FluentValidation;
-using MarketingBox.Affiliate.Service.Client;
+using MarketingBox.Affiliate.Service.Client.Interfaces;
 using MarketingBox.Affiliate.Service.Domain.Models.Country;
 using MarketingBox.Reporting.Service.Domain.Models.Reports;
 using MarketingBox.Reporting.Service.Repositories.Interfaces;

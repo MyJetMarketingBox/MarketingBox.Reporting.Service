@@ -18,7 +18,7 @@ namespace MarketingBox.Reporting.Service.Services
     {
         private readonly ILogger<RegistrationService> _logger;
         private readonly DatabaseContextFactory _databaseContextFactory;
-        IBrandBoxReportService _brandBoxReportService;
+        readonly IBrandBoxReportService _brandBoxReportService;
 
         public RegistrationService(ILogger<RegistrationService> logger,
             DatabaseContextFactory databaseContextFactory,
@@ -35,8 +35,7 @@ namespace MarketingBox.Reporting.Service.Services
             try
             {
                 request.ValidateEntity();
-                
-                
+
                 _logger.LogInformation(
                     "CustomerReportService.GetCustomersReport receive request : {@Request}", request);
 
@@ -57,6 +56,7 @@ namespace MarketingBox.Reporting.Service.Services
                     query = query.Where(e => e.Email
                         .ToLower()
                         .Contains(request.Email.ToLowerInvariant()));
+
                 if (!string.IsNullOrWhiteSpace(request.Phone))
                     query = query.Where(e => e.Phone.Contains(request.Phone));
                 if (request.AffiliateIds.Any())
@@ -70,21 +70,60 @@ namespace MarketingBox.Reporting.Service.Services
                 if (request.RegistrationIds.Any())
                     query = query.Where(e => request.RegistrationIds.Contains(e.RegistrationId));
                 if (request.IntegrationIds.Any())
-                    query = query.Where(e => request.IntegrationIds.Contains(e.IntegrationId));
+                    query = query.Where(e =>
+                        e.IntegrationId.HasValue && request.IntegrationIds.Contains(e.IntegrationId.Value));
                 if (request.BrandIds.Any())
                     query = query.Where(e => request.BrandIds.Contains(e.BrandId));
                 if (request.CampaignIds.Any())
-                    query = query.Where(e => request.CampaignIds.Contains(e.CampaignId));
+                    query = query.Where(e => e.CampaignId.HasValue && request.CampaignIds.Contains(e.CampaignId.Value));
                 if (request.BrandBoxIds.Any())
                 {
                     var brandIds = await _brandBoxReportService.GetBrandIdsFromBrandBoxes(request.BrandBoxIds);
                     query = query.Where(x => brandIds.Contains(x.BrandId));
                 }
-                
+
+                if (request.OfferIds.Any())
+                    query = query.Where(e => e.OfferId.HasValue && request.OfferIds.Contains(e.OfferId.Value));
+
+                DateTime? dateFrom = null;
+                DateTime? dateTo = null;
                 if (request.DateFrom.HasValue)
-                    query = query.Where(e => e.CreatedAt >= request.DateFrom);
+                {
+                    dateFrom = request.DateFrom.Value.Date;
+                }
+
                 if (request.DateTo.HasValue)
-                    query = query.Where(e => e.CreatedAt <= request.DateTo);
+                {
+                    dateTo = request.DateTo.Value.Date.Add(new TimeSpan(23, 59, 59));
+                }
+
+                switch (request.DateType)
+                {
+                    case DateTimeType.DepositDate:
+                    {
+                        if (dateFrom.HasValue)
+                            query = query.Where(e => e.DepositDate >= dateFrom);
+                        if (dateTo.HasValue)
+                            query = query.Where(e => e.DepositDate <= dateTo);
+                        break;
+                    }
+                    case DateTimeType.ConversionDate:
+                    {
+                        if (dateFrom.HasValue)
+                            query = query.Where(e => e.ConversionDate >= dateFrom);
+                        if (dateTo.HasValue)
+                            query = query.Where(e => e.ConversionDate <= dateTo);
+                        break;
+                    }
+                    case DateTimeType.RegistrationDate:
+                    {
+                        if (dateFrom.HasValue)
+                            query = query.Where(e => e.CreatedAt >= dateFrom);
+                        if (dateTo.HasValue)
+                            query = query.Where(e => e.CreatedAt <= dateTo);
+                        break;
+                    }
+                }
 
                 switch (request.Type)
                 {

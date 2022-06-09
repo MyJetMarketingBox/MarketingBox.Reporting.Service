@@ -3,6 +3,7 @@ using System;
 using MarketingBox.Reporting.Service.Postgres;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MarketingBox.Reporting.Service.Postgres.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20220602150452_Add_OfferId")]
+    partial class Add_OfferId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,11 +67,8 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                     b.Property<long>("BrandId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("CampaignId")
+                    b.Property<long>("CampaignId")
                         .HasColumnType("bigint");
-
-                    b.Property<string>("CampaignName")
-                        .HasColumnType("text");
 
                     b.Property<DateTime?>("ConversionDate")
                         .HasColumnType("timestamp with time zone");
@@ -110,7 +109,7 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                     b.Property<string>("Integration")
                         .HasColumnType("text");
 
-                    b.Property<long?>("IntegrationId")
+                    b.Property<long>("IntegrationId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Ip")
@@ -119,10 +118,7 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("text");
 
-                    b.Property<long?>("OfferId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("OfferName")
+                    b.Property<string>("Password")
                         .HasColumnType("text");
 
                     b.Property<string>("Phone")
@@ -191,8 +187,6 @@ namespace MarketingBox.Reporting.Service.Postgres.Migrations
                     b.HasIndex("IntegrationId");
 
                     b.HasIndex("LastName");
-
-                    b.HasIndex("OfferId");
 
                     b.HasIndex("Phone");
 

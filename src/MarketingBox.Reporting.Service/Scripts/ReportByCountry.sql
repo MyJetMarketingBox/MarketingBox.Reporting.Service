@@ -64,7 +64,7 @@ INSERT INTO aggregation_of_ftds
 --  DepRevenue,
 --  LeadPayout,
 --  LeadRevenue)
-select rd."CountryAlfa2Code"                              as Name,
+select rd."Country"                              as Name,
        count(*) filter ( where rd."Status" = 3 ) as FtdCount
 --        case br."PayoutPlan"
 --            when 0 then br."PayoutAmount" --CPA Plan for deposit payout
@@ -99,7 +99,7 @@ where rd."ConversionDate" is not null
     end
   and case
           when @Country is not null then
-                  rd."CountryAlfa2Code" = @Country
+                  rd."Country" = @Country
           else true
     end
   and case
@@ -135,7 +135,7 @@ INSERT INTO aggregation_of_registrations
 --  DepRevenue,
 --  LeadPayout,
 --  LeadRevenue)
-select rd."CountryAlfa2Code"                                       as Name,
+select rd."Country"                                       as Name,
        count(*) filter ( where rd."Status" in (1, 2, 3) ) as RegistrationCount,
        count(*) filter ( where rd."Status" = 0 )          as FailedCount,
        count(*) filter ( where rd."Status" = 4 )          as UnassignedCount
@@ -172,7 +172,7 @@ where case
     end
   and case
           when @Country is not null then
-                  rd."CountryAlfa2Code" = @Country
+                  rd."Country" = @Country
           else true
     end
   and case

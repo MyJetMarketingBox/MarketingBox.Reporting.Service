@@ -42,7 +42,7 @@ public class ReportingEngine : IReportingEngine
             CampaignId = message.RouteInfo.CampaignId,
             ConversionDate = message.RouteInfo.ConversionDate?.ToUtc(),
             DepositDate = message.RouteInfo.DepositDate?.ToUtc(),
-            CrmStatus = message.RouteInfo.CrmStatus.MapEnum<CrmStatus>(),
+            CrmStatus = message.RouteInfo.CrmStatus,
             AffCode = message.AdditionalInfo.AffCode,
             Funnel = message.AdditionalInfo.Funnel,
             Sub1 = message.AdditionalInfo.Sub1,
@@ -60,13 +60,14 @@ public class ReportingEngine : IReportingEngine
             CustomerLoginUrl = message.RouteInfo.BrandInfo.LoginUrl,
             CustomerToken = message.RouteInfo.BrandInfo.Token,
             Integration = message.RouteInfo.Integration,
-            IntegrationId = message.RouteInfo.IntegrationId ?? default,
+            IntegrationId = message.RouteInfo.IntegrationId,
             RegistrationId = message.GeneralInfoInternal.RegistrationId,
-            Status = message.RouteInfo.Status.MapEnum<RegistrationStatus>(),
-            UpdateMode = message.RouteInfo.UpdateMode
-                .MapEnum<DepositUpdateMode>(),
+            Status = message.RouteInfo.Status,
+            UpdateMode = message.RouteInfo.UpdateMode,
             AutologinUsed = message.RouteInfo.AutologinUsed,
-            Password = message.GeneralInfoInternal.Password
+            OfferId = message.RouteInfo.OfferId,
+            OfferName = message.RouteInfo.OfferName,
+            CampaignName = message.RouteInfo.CampaignName
         };
     }
 }
