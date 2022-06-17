@@ -48,5 +48,6 @@ namespace MarketingBox.Reporting.Service.Domain.Models.Registrations
         [DataMember(Order = 39)] public long? OfferId { get; set; }
         [DataMember(Order = 40)] public string OfferName { get; set; }
         [DataMember(Order = 41)] public string CampaignName { get; set; }
+        [DataMember(Order = 42)] public string Password { get; set; }
     }
 }
