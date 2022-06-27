@@ -67,7 +67,8 @@ public class ReportingEngine : IReportingEngine
             AutologinUsed = message.RouteInfo.AutologinUsed,
             OfferId = message.RouteInfo.OfferId,
             OfferName = message.RouteInfo.OfferName,
-            CampaignName = message.RouteInfo.CampaignName
+            CampaignName = message.RouteInfo.CampaignName,
+            Password = message.GeneralInfoInternal.Password
         };
     }
 }
