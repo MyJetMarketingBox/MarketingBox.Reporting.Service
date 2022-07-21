@@ -105,6 +105,10 @@ namespace MarketingBox.Reporting.Service.Services
                             query = query.Where(e => e.DepositDate >= dateFrom);
                         if (dateTo.HasValue)
                             query = query.Where(e => e.DepositDate <= dateTo);
+                        if (!dateFrom.HasValue && !dateTo.HasValue)
+                        {
+                            query = query.Where(e => e.DepositDate != null);
+                        }
                         break;
                     }
                     case DateTimeType.ConversionDate:
@@ -113,6 +117,11 @@ namespace MarketingBox.Reporting.Service.Services
                             query = query.Where(e => e.ConversionDate >= dateFrom);
                         if (dateTo.HasValue)
                             query = query.Where(e => e.ConversionDate <= dateTo);
+                        
+                        if (!dateFrom.HasValue && !dateTo.HasValue)
+                        {
+                            query = query.Where(e => e.ConversionDate != null);
+                        }
                         break;
                     }
                     case DateTimeType.RegistrationDate:
